@@ -212,6 +212,68 @@ if((true)) {
     }
 }
 
+type GraphEntry = {
+    links: string[],
+    route: string[] | null,
+};
+type Graph = Map<string, GraphEntry>;
+type PathfindCfg = {
+    disallow: Set<string>,
+};
+function pathfind(start: string, graph: Graph, cfg: PathfindCfg) {
+    const toprocess: string[][] = [];
+    toprocess.push([start]);
+    while(toprocess.length > 0) {
+        const itm0 = toprocess.shift()!;
+        pathfindStep(itm0, graph, toprocess, cfg);
+    }
+}
+function pathfindStep(route: string[], graph: Graph, toprocess: string[][], cfg: PathfindCfg) {
+    const itm = route[route.length - 1];
+    const node = graph.get(itm);
+    if(node != null && (node.route == null || route.length < node.route.length)) {
+        node.route = route;
+        for(const link of node.links) {
+            if(cfg.disallow.has(link)) continue;
+            toprocess.push([...route, link]);
+        }
+    }
+}
+
+function makePfGraph(): Graph {
+    const res: Graph = new Map();
+    for(const [pn, pv] of places.entries()) {
+        res.set(pn, {
+            links: pv.links.map(link => link.place_name),
+            route: null,
+        });
+    }
+    return res;
+}
+
+{
+    const result = new Map<string, {route_in: string[], route_out: string[]}>();
+    const START = "Front Entry";
+    const cfg: PathfindCfg = {
+        disallow: new Set(["Outside", "Waterways"]),
+    };
+    const graph = makePfGraph();
+    pathfind(START, graph, cfg);
+    console.log(graph);
+    for(const [name, val] of graph) {
+        const sgraph = makePfGraph();
+        pathfind(name, sgraph, cfg);
+        const feres = sgraph.get(START);
+
+        result.set(name, {
+            route_in: val.route ?? [],
+            route_out: feres?.route ?? [],
+        });
+    }
+
+    console.log(result);
+}
+
 // NEXT STEP:
 // - for every room:
 //   - find the closest path from Front Entry to the room
