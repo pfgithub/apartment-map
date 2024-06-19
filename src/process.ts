@@ -26,6 +26,13 @@ for(const line of lines) {
             teleport: false,
             one_way: false,
         });
+    }else if(line.startsWith("-> ")) {
+        const cont = line.substring(3);
+        thisplace!.links.push({
+            place_name: cont,
+            teleport: false,
+            one_way: true,
+        });
     }else{
         const lm = line.match(/^\[(.+?)\] (.+?):$/);
         if(!lm) throw new Error("Match failed: "+line);
@@ -65,10 +72,14 @@ for(const [self_name, place] of places.entries()) {
     }).join(",");
     console.log(res);
 }
-console.log("One way connections ("+one_ways.size+"):");
-for(const mb of one_ways.values()) console.log("- "+mb);
-console.log("Missing Contents ("+missing_content.size+"):");
-for(const link of missing_content.values()) console.log("- "+link);
+if(one_ways.size > 0) {
+    console.log("One way connections ("+one_ways.size+"):");
+    for(const mb of one_ways.values()) console.log("- "+mb);
+}
+if(missing_content.size > 0) {
+    console.log("Missing Contents ("+missing_content.size+"):");
+    for(const link of missing_content.values()) console.log("- "+link);
+}
 
 // cmdgen
 type Color = "dark_blue" | "red";
@@ -147,9 +158,9 @@ for(const [i, page] of bookpages.entries()) {
 }
 rescmd += "]";
 rescmd += ",title:"+JSON.stringify("Find Your Way™");
-rescmd += ",author:"+JSON.stringify("NovaWay");
+rescmd += ",author:"+JSON.stringify("NovaWays");
 rescmd += "}]";
-if((true)) {
+if((false)) {
     if(rescmd.length > 32500) {
         console.log("rescmd too long:", rescmd.length);
     }else{

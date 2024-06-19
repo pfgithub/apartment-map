@@ -29,11 +29,11 @@
 [UL 1-3] Upper Loft:
 - Cave Museum
 - Water Temple
-- Bamboo Forest
+-> Bamboo Forest
 [WT 1] Water Temple:
 - Upper Loft
 [BF 1-12] Bamboo Forest:
-- Inner Forest
+-> Inner Forest
 - Backroom A
 - Dumpinggrounds
 - Outside
@@ -45,7 +45,7 @@
 - Wale Hall
 - Lower Loft
 - Breakfast
-- Backroom A
+-> Backroom A
 - Ununhallium
 - Berry Walkway
 [BK] Breakfast:
@@ -72,7 +72,7 @@
 - Silver Washroom Access
 - Waterways
 [WW 1] Waterways:
-- Crown Hall
+-> Crown Hall
 - Gemstone Foyer L
 - Aquarius
 - Art Hall
@@ -84,7 +84,7 @@
 - Wave Road
 - Lower Barrier Path
 [GF 2-5] Gemstone Foyer U:
-- Slimeyard
+-> Slimeyard
 - Upper Barrier Path
 [UB 1-3] Upper Barrier Path:
 - Gemstone Foyer U
@@ -94,7 +94,7 @@
 - Gemstone Foyer L
 [WR 1-3] Wave Road:
 - Gemstone Foyer L
-- Outside
+-> Outside
 - Chocolate Bypass
 [CB 1-3] Chocolate Bypass:
 - Wave Road
@@ -111,10 +111,10 @@
 - Big Tree
 - Unnamed-2
 [BT 1-2] Big Tree:
-- Black Halls
+-> Black Halls
 - Outer Forest
 - Neartown
-- Upper Loft
+-> Upper Loft
 - Library
 [NE 1-3] Neartown:
 - Big Tree
@@ -125,7 +125,7 @@
 [DW 1-4] Dynaway:
 - Neartown
 - Byth
-- Sara Park
+-> Sara Park
 - Neither Forest
 - Glowslabs
 - Outside
@@ -154,11 +154,12 @@
 [NF] Neither Forest:
 - Dynaway
 [BH] Black Halls:
-- Decontamination
-- Gsbrick
+-> Decontamination
+-> Gsbrick
 [GB] Gsbrick:
 - Backroom B
 [BB] Backroom B:
+- Gsbrick
 - Backroom A 
 [BA] Backroom A:
 - Backroom B
@@ -173,7 +174,7 @@
 - Backroom M
 [BM 1-2] Backroom M:
 - Backroom C
-- Backroom D
+-> Backroom D
 [BD] Backroom D:
 - Backroom A
 - Outside
@@ -195,7 +196,7 @@
 - Observation Car
 [OC] Observation Car:
 - Dining Car
-- Observation Car
+- Coach Car
 [CC] Coach Car:
 - Observation Car
 [OA] Ocean:
@@ -208,7 +209,9 @@
 - Inner Forest
 [AH 1-2] Art Hall:
 - Rose Hall
+- Cave Museum
 - Greenpath
+- Waterways
 [GP 1-2] Greenpath:
 - Art Hall
 [UN 1] Ununhallium:
@@ -217,3 +220,38 @@
 - River Hall
 [U1 1] Unnamed-1:
 - Front Entry
+[AQ 1-4] Aquarius:
+- Waterways
+- Glass Hall
+[GH 1-8] Glass Hall:
+- Aquarius
+- Upper Barrier Path
+- Rose Hall
+[LY 1] Library:
+- Upper Barrier Path
+- Maple Grove
+- Big Tree
+[MG 1] Maple Grove:
+- Library
+[SY 1-2] Slimeyard:
+- Outer Forest
+- Flora Trail
+-> Inner Forest
+[FT 1-3] Flora Trail:
+- Slimeyard
+[U2] Unnamed-2:
+- Outer Forest
+[DE] Decontamination:
+-> Outer Forest
+- Space Station
+[SS] Space Station:
+- Decontamination
+- Lunar Surface
+- Attic
+[LS] Lunar Surface:
+- Space Station
+[VS] Vents:
+-> Outside
+[AT 1-28] Attic:
+- Space Station
+-> Chocolate Bypass
