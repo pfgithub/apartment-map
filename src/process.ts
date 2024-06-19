@@ -219,6 +219,7 @@ type GraphEntry = {
 type Graph = Map<string, GraphEntry>;
 type PathfindCfg = {
     disallow: Set<string>,
+    allow_monodi: boolean,
 };
 function pathfind(start: string, graph: Graph, cfg: PathfindCfg) {
     const toprocess: string[][] = [];
@@ -233,8 +234,14 @@ function pathfindStep(route: string[], graph: Graph, toprocess: string[][], cfg:
     const node = graph.get(itm);
     if(node != null && (node.route == null || route.length < node.route.length)) {
         node.route = route;
+        if(cfg.disallow.has(itm) && route.length > 1) return;
         for(const link of node.links) {
-            if(cfg.disallow.has(link)) continue;
+            if(!cfg.allow_monodi) {
+                const backlink = graph.get(link);
+                if(!backlink?.links.includes(itm)) {
+                    break;
+                }
+            }
             toprocess.push([...route, link]);
         }
     }
@@ -256,18 +263,24 @@ function makePfGraph(): Graph {
     const START = "Front Entry";
     const cfg: PathfindCfg = {
         disallow: new Set(["Outside", "Waterways"]),
+        allow_monodi: false,
     };
-    const graph = makePfGraph();
-    pathfind(START, graph, cfg);
-    console.log(graph);
-    for(const [name, val] of graph) {
+    const graph_bidi = makePfGraph();
+    pathfind(START, graph_bidi, cfg);
+    const graph_monodi = makePfGraph();
+    pathfind(START, graph_monodi, {...cfg, allow_monodi: true});
+    for(const [name, val] of graph_bidi) {
+        const val_mono = graph_monodi.get(name);
         const sgraph = makePfGraph();
         pathfind(name, sgraph, cfg);
+        const sgraph_mono = makePfGraph();
+        pathfind(name, sgraph_mono, {...cfg, allow_monodi: true});
         const feres = sgraph.get(START);
+        const feres_mono = sgraph_mono.get(START);
 
         result.set(name, {
-            route_in: val.route ?? [],
-            route_out: feres?.route ?? [],
+            route_in: val.route ?? val_mono?.route ?? [],
+            route_out: feres?.route ?? feres_mono?.route ?? [],
         });
     }
 
@@ -280,3 +293,5 @@ function makePfGraph(): Graph {
 //   - find the closest path from the room to Front Entry
 //   - do not go through Outside or Waterways
 // - or don't do this, just give people the book
+// TODO WITH PATHFINDING:
+// - prefer bidi pathways
