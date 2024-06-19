@@ -17,3 +17,8 @@ Room types:
 - Basic:
   - 1 bed
   - 1 respawn point
+
+We should be able to get everywhere:
+- Starting at the entrance
+- Without going Outside
+- Without going through Waterways (except for WW-x rooms)

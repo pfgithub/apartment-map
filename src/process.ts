@@ -14,6 +14,7 @@ type Link = {
 type Place = {
     id: string,
     links: Link[],
+    backlinks: string[],
 };
 const places = new Map<string, Place>();
 const used_tlid_set = new Set();
@@ -45,9 +46,17 @@ for(const line of lines) {
         thisplace = {
             id: tlid,
             links: [],
+            backlinks: [],
         };
         if(places.has(matchname)) throw new Error("duplicate name: "+matchname);
         places.set(matchname, thisplace);
+    }
+}
+for(const [placename, place] of places.entries()) {
+    for(const link of place.links) {
+        const rv = places.get(link.place_name);
+        if(!rv) continue;
+        rv.backlinks.push(placename);
     }
 }
 
@@ -84,7 +93,7 @@ if(missing_content.size > 0) {
 }
 
 // cmdgen
-type Color = "dark_blue" | "red";
+type Color = "black" | "dark_blue" | "dark_green" | "dark_gray" | "gray" | "green" | "red";
 type ClickEvent = {action: "change_page", value: `${number}`};
 type HoverEvent = {action: "show_text", contents: string};
 type TextItm = {
@@ -97,10 +106,13 @@ type TextItm = {
 type Text = string | TextItm;
 type BookLine = Text[];
 type BookPage = BookLine[];
-const bookpages: BookPage[] = [[]];
-function addtext(line: BookLine) {
+const bookpages: BookPage[] = [];
+function addtext(text: Text[]) {
+    if(bookpages.length === 0) bookpages.push([]);
     const lastpage = bookpages[bookpages.length - 1];
-    lastpage.push(line);
+    if(lastpage.length === 0) lastpage.push([]);
+    const lastsegment = lastpage[lastpage.length - 1];
+    lastsegment.push(...text);
 }
 function pagebreak() {
     bookpages.push([]);
@@ -110,9 +122,10 @@ function cmp(a: string, b: string): -1 | 0 | 1 {
 }
 let link_values: {ce: TextItm, link: string}[] = [];
 const page_results = new Map<string, number>();
-function getlink(place: string, text: string): TextItm {
+function getlink(place: string, text: string, color: Color): TextItm {
     const ce: TextItm = {
         text: text,
+        color: color === "black" ? undefined : color,
         // hoverEvent: {
         //     action: "show_text",
         //     contents: link.place_name,
@@ -121,21 +134,44 @@ function getlink(place: string, text: string): TextItm {
     link_values.push({ce, link: place});
     return ce;
 }
-addtext([
-    "Begin:\n",
-    getlink("Outside", "Outside"),
-]);
-for(const [self_name, place] of [...places.entries()].sort((a, b) => cmp(a[0], b[0]))) {
+
+const sortedplaces = [...places.entries()].sort((a, b) => cmp(a[0], b[0]));
+const outsideindex = sortedplaces.findIndex(([a]) => a === "Outside");
+sortedplaces.unshift(...sortedplaces.splice(outsideindex, 1));
+addtext(["Table of Contents:\n"]);
+for(const [i, [self_name, place]] of sortedplaces.entries()) {
+    if(i !== 0) addtext([", "]);
+    addtext([getlink(self_name, place.id, "black")]);
+}
+for(const [self_name, place] of sortedplaces) {
     pagebreak();
-    addtext([self_name]);
-    for(const link of [...place.links].sort((a, b) => cmp(a.place_name, b.place_name))) {
-        // we should go over forwards links and backlinks
-        // so eg `a: b`, `b: c d`, `c: b`
-        // B:
-        // <-  a
-        // <-> c
-        //  -> d
-        addtext(["\n-> ",getlink(link.place_name, link.place_name)]);
+    addtext([{
+        text: "[H] ",
+        clickEvent: {
+            action: "change_page",
+            value: "0",
+        },
+    }, self_name]);
+    const backlinks_only = new Set(place.backlinks);
+    const fwdlinks_only = new Set(place.links.map(link => link.place_name));
+    const bothlinks = new Set<string>();
+    for(const backlink of backlinks_only) {
+        if(fwdlinks_only.has(backlink)) {
+            backlinks_only.delete(backlink);
+            fwdlinks_only.delete(backlink);
+            bothlinks.add(backlink);
+        }
+    }
+
+
+    for(const link of [...backlinks_only].sort()) {
+        addtext(["\n<-  ",getlink(link, link, "dark_gray")]);
+    }
+    for(const link of [...bothlinks].sort()) {
+        addtext(["\n<-> ",getlink(link, link, "dark_blue")]);
+    }
+    for(const link of [...fwdlinks_only].sort()) {
+        addtext(["\n -> ",getlink(link, link, "red")]);
     }
     page_results.set(self_name, bookpages.length);
 }
@@ -146,10 +182,9 @@ for(const link_value of link_values) {
             action: "change_page",
             value: `${resnum}`,
         };
-        link_value.ce.color = "dark_blue";
-        link_value.ce.underlined = true;
     }else{
-        link_value.ce.color = "red";
+        // :/
+        link_value.ce.underlined = undefined;
     }
 }
 
@@ -165,20 +200,20 @@ for(const [i, page] of bookpages.entries()) {
     rescmd += strpg;
 }
 rescmd += "]";
-rescmd += ",title:"+JSON.stringify("Find Your Way™");
-rescmd += ",author:"+JSON.stringify("NovaWays");
+rescmd += ",title:"+JSON.stringify("Appt Swites Map 1.0");
+rescmd += ",author:"+JSON.stringify("NovaWays: Find Your Way™");
 rescmd += "}]";
-if((false)) {
+if((true)) {
+    await Bun.write("dist/cmd", rescmd, {makePath: true});
+    console.log((((rescmd.length / 32500) * 100) |0)+"%");
     if(rescmd.length > 32500) {
         console.log("rescmd too long:", rescmd.length);
     }else{
-        console.log(rescmd);
-        console.log((((rescmd.length / 32500) * 100) |0)+"%");
     }
 }
 
-
-// nearestfinder
-// start @ outside
-// mark everything reachable as 'nearest: outside'
-// loop again but mark with the full path
+// NEXT STEP:
+// - for every room:
+//   - find the closest path from Front Entry to the room
+//   - find the closest path from the room to Front Entry
+//   - do not go through Outside or Waterways
