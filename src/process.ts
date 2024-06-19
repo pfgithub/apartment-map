@@ -217,3 +217,4 @@ if((true)) {
 //   - find the closest path from Front Entry to the room
 //   - find the closest path from the room to Front Entry
 //   - do not go through Outside or Waterways
+// - or don't do this, just give people the book
