@@ -84,15 +84,7 @@ type TextItm = {
 type Text = string | TextItm;
 type BookLine = Text[];
 type BookPage = BookLine[];
-const bookpages: BookPage[] = [
-    [["", {text: "a", underlined:true,color:"dark_blue", clickEvent: {
-        action: "change_page",
-        value: "2",
-    }, hoverEvent: {
-        action: "show_text",
-        contents: "Board Area",
-    }}]],
-];
+const bookpages: BookPage[] = [[]];
 function addtext(line: BookLine) {
     const lastpage = bookpages[bookpages.length - 1];
     lastpage.push(line);
@@ -100,22 +92,31 @@ function addtext(line: BookLine) {
 function pagebreak() {
     bookpages.push([]);
 }
+function cmp(a: string, b: string): -1 | 0 | 1 {
+    return a > b ? 1 : a === b ? 0 : -1;
+}
 let link_values: {ce: TextItm, link: string}[] = [];
 const page_results = new Map<string, number>();
-for(const [self_name, place] of places.entries()) {
+function getlink(place: string, text: string): TextItm {
+    const ce: TextItm = {
+        text: text,
+        // hoverEvent: {
+        //     action: "show_text",
+        //     contents: link.place_name,
+        // },
+    };
+    link_values.push({ce, link: place});
+    return ce;
+}
+addtext([
+    "Begin:\n",
+    getlink("Outside", "Outside"),
+]);
+for(const [self_name, place] of [...places.entries()].sort((a, b) => cmp(a[0], b[0]))) {
     pagebreak();
     addtext([self_name]);
-    for(const link of place.links) {
-        const ce: TextItm = {
-            text: link.place_name,
-            color: "dark_blue",
-            // hoverEvent: {
-            //     action: "show_text",
-            //     contents: link.place_name,
-            // },
-        };
-        link_values.push({ce, link: link.place_name});
-        addtext(["\n-> ",ce]);
+    for(const link of [...place.links].sort((a, b) => cmp(a.place_name, b.place_name))) {
+        addtext(["\n-> ",getlink(link.place_name, link.place_name)]);
     }
     page_results.set(self_name, bookpages.length);
 }
@@ -126,6 +127,7 @@ for(const link_value of link_values) {
             action: "change_page",
             value: `${resnum}`,
         };
+        link_value.ce.color = "dark_blue";
         link_value.ce.underlined = true;
     }else{
         link_value.ce.color = "red";
@@ -136,16 +138,22 @@ let rescmd = "/give @p written_book[written_book_content={";
 rescmd += "pages:[";
 for(const [i, page] of bookpages.entries()) {
     if(i !== 0) rescmd += ",";
-    rescmd += JSON.stringify(JSON.stringify(page));
+    let strpg = JSON.stringify(JSON.stringify(page));
+    strpg = strpg.substring(1, strpg.length - 1);
+    strpg = strpg.replaceAll("\\\"", "\"");
+    strpg = strpg.replaceAll("'", "\\'");
+    strpg = "'" + strpg + "'";
+    rescmd += strpg;
 }
 rescmd += "]";
 rescmd += ",title:"+JSON.stringify("Find Your Way™");
 rescmd += ",author:"+JSON.stringify("NovaWay");
 rescmd += "}]";
-if((false)) {
+if((true)) {
     if(rescmd.length > 32500) {
         console.log("rescmd too long:", rescmd.length);
     }else{
         console.log(rescmd);
+        console.log((((rescmd.length / 32500) * 100) |0)+"%");
     }
 }
