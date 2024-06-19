@@ -79,11 +79,11 @@
 - Pool
 - Cave Museum
 - Silver Washroom
-[GF 1] Gemstone Foyer L:
+[GL 1] Gemstone Foyer L:
 - Waterways
 - Wave Road
 - Lower Barrier Path
-[GU 2-5] Gemstone Foyer U:
+[GF 2-5] Gemstone Foyer U:
 - Slimeyard
 - Upper Barrier Path
 [UB 1-3] Upper Barrier Path:
@@ -215,3 +215,5 @@
 - Morning Hall
 [BO 1-10] Board Area:
 - River Hall
+[U1 1] Unnamed-1:
+- Front Entry
