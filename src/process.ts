@@ -53,9 +53,9 @@ for(const line of lines) {
 
 // console.log(places);
 
+const places_strs: string[] = [];
 const missing_content = new Set<string>();
 const one_ways = new Set<string>();
-console.log("Places ("+places.size+"):");
 for(const [self_name, place] of places.entries()) {
     const res = "- "+place.id + ": " + place.links.map(link => {
         const linkres = places.get(link.place_name);
@@ -69,9 +69,11 @@ for(const [self_name, place] of places.entries()) {
             one_ways.add(self_name + " -> " + link.place_name);
         }
         return linkres.id;
-    }).join(",");
-    console.log(res);
+    }).sort().join(",");
+    places_strs.push(res);
 }
+console.log("Places ("+places_strs.length+"):");
+for(const place of places_strs.sort()) console.log(place);
 if(one_ways.size > 0) {
     console.log("One way connections ("+one_ways.size+"):");
     for(const mb of one_ways.values()) console.log("- "+mb);
