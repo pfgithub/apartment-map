@@ -1,0 +1,105 @@
+[OS] Outside:
+- Front Entry
+[FE 1-3] Front Entry:
+- Outside
+- Rose Hall
+- Berry Walkway
+- Crown Hall
+- Unnamed-1
+[BW] Berry Walkway:
+- Front Entry
+- Lobby Access
+- Morning Hall
+- Pool
+[PL] Pool:
+- Berry Walkway
+- Waterways
+- Cave Museum
+[CM 1-17] Cave Museum:
+- Pool
+- Upper Loft
+- Outside
+- Art Hall
+- Waterways
+[UL 1-3] Upper Loft:
+- Cave Museum
+- Water Temple
+- Bamboo Forest
+[WT 1] Water Temple:
+- Upper Loft
+[BF 1-12] Bamboo Forest:
+- Inner Forest
+- Outside
+[IF 1] Inner Forest:
+- Morning Hall
+- Dumpinggrounds
+[MH 1] Morning Hall:
+- Inner Forest
+- Wale Hall
+- Lower Loft
+- Breakfast
+- Back Access
+- Ununhallium
+- Berry Walkway
+[BK] Breakfast:
+- Morning Hall
+[LL 1-4] Lower Loft:
+- Morning Hall
+[WH 1-2] Wale Hall:
+- Morning Hall
+- River Hall
+[RI 1-9] River Hall:
+- Wale Hall
+- Rose Hall
+- Board Area
+[RH 1-5] Rose Hall:
+- River Hall
+- Art Hall
+- Front Entry
+- Silver Washroom Access
+- Glass Hall
+[SA] Silver Washroom Access:
+- Rose Hall
+- Silver Washroom
+[SW] Silver Washroom:
+- Silver Washroom Access
+- Waterways
+[WW 1] Waterways:
+- Crown Hall
+- Gemstone Foyer
+- Aquarius
+- Art Hall
+- Pool
+- Cave Museum
+- Silver Washroom
+[GF 1] Gemstone Foyer L:
+- Waterways
+- Wave Road
+- Lower Barrier Path
+[GF 2-5] Gemstone Foyer U:
+- Slimeyard
+- Upper Barrier Path
+[UB 1-3] Upper Barrier Path:
+- Gemstone Foyer U
+- Glass Hall
+- Library
+[LB] Lower Barrier Path:
+- Gemstone Foyer L
+[WR 1-3] Wave Road:
+- Gemstone Foyer L
+- Outside
+- Chocolate Bypass
+[CB 1-3] Chocolate Bypass:
+- Wave Road
+- Outer Forest
+- Desert Golf
+- Smoking
+[DG] Desert Golf:
+- Chocolate Bypass
+[SK] Smoking:
+- Chocolate Bypass
+[OF 1-2] Outer Forest:
+- Chocolate Bypass
+- Slimeyard
+- Big Tree
+- Unnamed-2
