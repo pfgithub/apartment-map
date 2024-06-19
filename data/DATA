@@ -2,6 +2,9 @@
 - Front Entry
 - Cave Museum
 - Bamboo Forest
+- Dynaway
+- Backroom D
+- Dumpinggrounds
 [FE 1-3] Front Entry:
 - Outside
 - Rose Hall
@@ -31,6 +34,8 @@
 - Upper Loft
 [BF 1-12] Bamboo Forest:
 - Inner Forest
+- Backroom A
+- Dumpinggrounds
 - Outside
 [IF 1] Inner Forest:
 - Morning Hall
@@ -40,7 +45,7 @@
 - Wale Hall
 - Lower Loft
 - Breakfast
-- Back Access
+- Backroom A
 - Ununhallium
 - Berry Walkway
 [BK] Breakfast:
@@ -111,3 +116,102 @@
 - Neartown
 - Upper Loft
 - Library
+[NE 1-3] Neartown:
+- Big Tree
+- Dynaway
+- Store Botcx
+[SX 1] Store Botcx:
+- Neartown
+[DW 1-4] Dynaway:
+- Neartown
+- Byth
+- Sara Park
+- Neither Forest
+- Glowslabs
+- Outside
+- Dynaland
+[NV] Never:
+- Sara Hall
+[GS 1] Glowslabs:
+- Dynaway
+[DY 1] Dynaland:
+- Dynaway
+[BY 2] Byth:
+- Dynaway
+- Sara Hall
+- Vychute
+[SH 1] Sara Hall:
+- Never
+- Byth
+- Sara Park
+- Evelator
+[EV] Evelator:
+- Sara Hall
+[VY] Vychute:
+- Byth
+[SP] Sara Park:
+- Sara Hall
+[NF] Neither Forest:
+- Dynaway
+[BH] Black Halls:
+- Decontamination
+- Gsbrick
+[GB] Gsbrick:
+- Backroom B
+[BB] Backroom B:
+- Backroom A 
+[BA] Backroom A:
+- Backroom B
+- Backroom C
+- Backroom D
+- Bamboo Forest
+- Lower Trash Chute
+[LT] Lower Trash Chute:
+- Backroom A
+[BC 1-3] Backroom C:
+- Backroom A
+- Backroom M
+[BM 1-2] Backroom M:
+- Backroom C
+- Backroom D
+[BD] Backroom D:
+- Backroom A
+- Outside
+[LA] Lobby Access:
+- Berry Walkway
+- Lobby F2
+[L2] Lobby F2:
+- Lobby Access
+- Ocean
+- Lobby F1
+[L1] Lobby F1:
+- Lobby F2
+- Sleeper Car
+[SC 1-9] Sleeper Car:
+- Lobby F1
+- Dining Car
+[DC] Dining Car:
+- Sleeper Car
+- Observation Car
+[OC] Observation Car:
+- Dining Car
+- Observation Car
+[CC] Coach Car:
+- Observation Car
+[OA] Ocean:
+- Lobby F2
+[CH 1-5] Crown Hall:
+- Front Entry
+[DU] Dumpinggrounds:
+- Outside
+- Bamboo Forest
+- Inner Forest
+[AH 1-2] Art Hall:
+- Rose Hall
+- Greenpath
+[GP 1-2] Greenpath:
+- Art Hall
+[UN 1] Ununhallium:
+- Morning Hall
+[BO 1-10] Board Area:
+- River Hall

@@ -3,12 +3,17 @@
 // - we can put a bunch horizontal
 // - everything should fit
 
-const data = await Bun.file("data/DATA").text();
-const lines = data.split("\n").filter(l => l.trim());
+const data: string = await Bun.file("data/DATA").text();
+const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
+type Link = {
+    place_name: string,
+    teleport: boolean,
+    one_way: boolean,
+};
 type Place = {
     id: string,
-    links: string[],
+    links: Link[],
 };
 const places = new Map<string, Place>();
 const used_tlid_set = new Set();
@@ -16,9 +21,14 @@ let thisplace: Place | null = null;
 for(const line of lines) {
     if(line.startsWith("- ")) {
         const cont = line.substring(2);
-        thisplace!.links.push(cont);
+        thisplace!.links.push({
+            place_name: cont,
+            teleport: false,
+            one_way: false,
+        });
     }else{
-        const lm = line.match(/\[(.+?)\] (.+?):/);
+        const lm = line.match(/^\[(.+?)\] (.+?):$/);
+        if(!lm) throw new Error("Match failed: "+line);
         const matchnum = lm![1]!;
         const matchnumsplit = matchnum.split(" ");
         const matchname = lm![2]!;
@@ -36,18 +46,20 @@ for(const line of lines) {
 
 // console.log(places);
 
-const missing_content = new Set();
-const one_ways = new Set();
+const missing_content = new Set<string>();
+const one_ways = new Set<string>();
 console.log("Places ("+places.size+"):");
 for(const [self_name, place] of places.entries()) {
     const res = "- "+place.id + ": " + place.links.map(link => {
-        const linkres = places.get(link);
+        const linkres = places.get(link.place_name);
         if(linkres == null) {
-            missing_content.add(link);
+            missing_content.add(link.place_name);
             return "??";
         }
-        if(!linkres.links.includes(self_name)) {
-            one_ways.add(self_name + " -> " + link);
+        const bidi = linkres.links.find(itm => itm.place_name === self_name);
+        if(bidi && link.one_way) throw new Error("bidi link marked one-way: "+self_name +" <-> "+link);
+        if(!bidi && !link.one_way) {
+            one_ways.add(self_name + " -> " + link.place_name);
         }
         return linkres.id;
     }).join(",");
