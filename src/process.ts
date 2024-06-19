@@ -129,6 +129,12 @@ for(const [self_name, place] of [...places.entries()].sort((a, b) => cmp(a[0], b
     pagebreak();
     addtext([self_name]);
     for(const link of [...place.links].sort((a, b) => cmp(a.place_name, b.place_name))) {
+        // we should go over forwards links and backlinks
+        // so eg `a: b`, `b: c d`, `c: b`
+        // B:
+        // <-  a
+        // <-> c
+        //  -> d
         addtext(["\n-> ",getlink(link.place_name, link.place_name)]);
     }
     page_results.set(self_name, bookpages.length);
@@ -170,3 +176,9 @@ if((false)) {
         console.log((((rescmd.length / 32500) * 100) |0)+"%");
     }
 }
+
+
+// nearestfinder
+// start @ outside
+// mark everything reachable as 'nearest: outside'
+// loop again but mark with the full path
