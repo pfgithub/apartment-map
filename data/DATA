@@ -1,5 +1,7 @@
 [OS] Outside:
 - Front Entry
+- Cave Museum
+- Bamboo Forest
 [FE 1-3] Front Entry:
 - Outside
 - Rose Hall
@@ -66,7 +68,7 @@
 - Waterways
 [WW 1] Waterways:
 - Crown Hall
-- Gemstone Foyer
+- Gemstone Foyer L
 - Aquarius
 - Art Hall
 - Pool
@@ -103,3 +105,9 @@
 - Slimeyard
 - Big Tree
 - Unnamed-2
+[BT 1-2] Big Tree:
+- Black Halls
+- Outer Forest
+- Neartown
+- Upper Loft
+- Library
