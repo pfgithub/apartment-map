@@ -204,7 +204,7 @@ rescmd += ",title:"+JSON.stringify("Appt Swites Map 1.0");
 rescmd += ",author:"+JSON.stringify("NovaWays: Find Your Way™");
 rescmd += "}]";
 if((true)) {
-    await Bun.write("dist/cmd", rescmd, {makePath: true});
+    await Bun.write("dist/cmd", rescmd, {createPath: true});
     console.log((((rescmd.length / 32500) * 100) |0)+"%");
     if(rescmd.length > 32500) {
         console.log("rescmd too long:", rescmd.length);
@@ -284,7 +284,9 @@ function makePfGraph(): Graph {
         });
     }
 
-    console.log(result);
+    if((false)) {
+        console.log("Pathfinding results", result);
+    }
 }
 
 // NEXT STEP:

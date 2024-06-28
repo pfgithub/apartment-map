@@ -116,6 +116,7 @@
 - Neartown
 -> Upper Loft
 - Library
+- Night Hall
 [NE 1-3] Neartown:
 - Big Tree
 - Dynaway
@@ -255,3 +256,14 @@
 [AT 1-28] Attic:
 - Space Station
 -> Chocolate Bypass
+[NH] Night Hall:
+- Night Town
+- Big Tree
+- Byplyr Brook
+[BP 1-3] Byplyr Brook:
+- Night Hall
+-> Unnamed-3
+[U3] Unnamed-3:
+-> Backroom B
+[NT 1-9] Night Town:
+- Night Hall
