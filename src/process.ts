@@ -199,13 +199,13 @@ for(const [self_name, place] of sortedplaces) {
     const getid = (place: string): string => places.get(place)!.id;
 
     for(const link of [...backlinks_only].sort()) {
-        addtext(["\n<-  ",getlink(link, colors.dark + colors.italic + getid(link))]);
+        addtext([getlink(link, "\n<-  " + colors.dark + colors.italic + getid(link))]);
     }
     for(const link of [...bothlinks].sort()) {
-        addtext(["\n<-> ",getlink(link, colors.blue + getid(link))]);
+        addtext([getlink(link,"\n<-> " + colors.blue + getid(link))]);
     }
     for(const link of [...fwdlinks_only].sort()) {
-        addtext(["\n -> ",getlink(link, colors.red + getid(link))]);
+        addtext([getlink(link,"\n -> " + colors.red + getid(link))]);
     }
     page_results.set(self_name, bookpages.length);
 }
