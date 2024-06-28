@@ -376,6 +376,10 @@ await Bun.write("dist/graph.json", JSON.stringify(res_graph), {createPath: true}
 // ooh graphviz does trees
 // https://graphviz.org/Gallery/directed/psg.html
 // I wanted this for qxc/customvariants
+// 
+// @dagrejs/dagre
+// - does straight line crossing minimization
+// - look at its wiki for how to actually use
 
 // NEXT STEP:
 // - for every room:
