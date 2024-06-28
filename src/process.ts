@@ -371,6 +371,12 @@ for(const [self_name, place] of sortedplaces) {
 await Bun.write("dist/index.html", Bun.file("src/graph.html"), {createPath: true});
 await Bun.write("dist/graph.json", JSON.stringify(res_graph), {createPath: true});
 
+// GRAPHS:
+// try graphviz
+// ooh graphviz does trees
+// https://graphviz.org/Gallery/directed/psg.html
+// I wanted this for qxc/customvariants
+
 // NEXT STEP:
 // - for every room:
 //   - find the closest path from Front Entry to the room
