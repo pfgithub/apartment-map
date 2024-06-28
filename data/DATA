@@ -178,6 +178,7 @@
 -> Backroom D
 [BD] Backroom D:
 - Backroom A
+- Backroom E
 - Outside
 [LA] Lobby Access:
 - Berry Walkway
@@ -263,7 +264,12 @@
 [BP 1-3] Byplyr Brook:
 - Night Hall
 -> Unnamed-3
+- Lantern Path
 [U3] Unnamed-3:
 -> Backroom B
 [NT 1-9] Night Town:
 - Night Hall
+[LP] Lantern Path:
+- Byplyr Brook
+[BE] Backroom E:
+- Backroom D
