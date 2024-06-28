@@ -329,6 +329,48 @@ function makePfGraph(): Graph {
     }
 }
 
+type ResGraphNode = {
+    id: string,
+    group?: string,
+};
+type ResGraphLink = {
+    source: string,
+    target: string,
+    value: number,
+};
+type ResGraph = {
+    nodes: ResGraphNode[],
+    links: ResGraphLink[],
+};
+
+const res_graph: ResGraph = {
+    nodes: [],
+    links: [],
+};
+
+for(const [self_name, place] of sortedplaces) {
+    res_graph.nodes.push({
+        id: self_name,
+        group: "0",
+    });
+
+    const fwdlinks = new Set(place.links.map(link => link.place_name));
+    
+    for(const link of fwdlinks) {
+        res_graph.links.push({
+            source: self_name,
+            target: link,
+            value: 1.0,
+            // unfortunately, the graph view optimizes for line width
+            // but i want the graph to optimize for least overlapping
+            //    edges
+        });
+    }
+}
+
+await Bun.write("dist/index.html", Bun.file("src/graph.html"), {createPath: true});
+await Bun.write("dist/graph.json", JSON.stringify(res_graph), {createPath: true});
+
 // NEXT STEP:
 // - for every room:
 //   - find the closest path from Front Entry to the room
