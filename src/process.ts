@@ -173,6 +173,9 @@ sortedplaces.unshift(...sortedplaces.splice(outsideindex, 1));
 addtext([colors.bold + "Table of Contents:\n"]);
 for(const [i, [self_name, place]] of sortedplaces.entries()) {
     addtext([getlink(self_name, (i !== 0 ? " " : "") + place.id)]);
+    // there can be 84 on the first page, leaving room for the last
+    // line to say "continued on next page", then 91 on
+    // subsequent pages
 }
 
 for(const [self_name, place] of sortedplaces) {
