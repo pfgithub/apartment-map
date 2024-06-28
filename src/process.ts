@@ -108,11 +108,19 @@ type BookLine = Text[];
 type BookPage = BookLine[];
 const bookpages: BookPage[] = [];
 function addtext(text: Text[]) {
+    for(const bit of text) addonetext(bit);
+}
+function addonetext(text: Text) {
     if(bookpages.length === 0) bookpages.push([]);
     const lastpage = bookpages[bookpages.length - 1];
     if(lastpage.length === 0) lastpage.push([]);
     const lastsegment = lastpage[lastpage.length - 1];
-    lastsegment.push(...text);
+    const lastbit_i = lastsegment.length - 1;
+    if(typeof lastsegment[lastbit_i] === "string" && typeof text === "string") {
+        lastsegment[lastbit_i] += text;
+    }else{
+        lastsegment.push(text);
+    }
 }
 function pagebreak() {
     bookpages.push([]);
@@ -122,10 +130,9 @@ function cmp(a: string, b: string): -1 | 0 | 1 {
 }
 let link_values: {ce: TextItm, link: string}[] = [];
 const page_results = new Map<string, number>();
-function getlink(place: string, text: string, color: Color): TextItm {
+function getlink(place: string, text: string): TextItm {
     const ce: TextItm = {
         text: text,
-        color: color === "black" ? undefined : color,
         // hoverEvent: {
         //     action: "show_text",
         //     contents: link.place_name,
@@ -135,23 +142,49 @@ function getlink(place: string, text: string, color: Color): TextItm {
     return ce;
 }
 
+const colors = {
+    "red": "§4",
+    "light_red": "§c",
+    "gold": "§6",
+    "yellow": "§e",
+    "dark_green": "§2",
+    "lime": "§a",
+    "cyan": "§b",
+    "dark_cyan": "§3",
+    "blue": "§1",
+    "light_blue": "§9",
+    "magenta": "§d",
+    "purple": "§5",
+    "white": "§f",
+    "light": "§7",
+    "dark": "§8",
+    "black": "§0",
+    "bold": "§l",
+    "underline": "§n",
+    "italic": "§o",
+    "magic": "§k",
+    "strikethrough": "§m",
+    "reset": "§r",
+};
+
 const sortedplaces = [...places.entries()].sort((a, b) => cmp(a[0], b[0]));
 const outsideindex = sortedplaces.findIndex(([a]) => a === "Outside");
 sortedplaces.unshift(...sortedplaces.splice(outsideindex, 1));
-addtext(["Table of Contents:\n"]);
+addtext([colors.bold + "Table of Contents:\n"]);
 for(const [i, [self_name, place]] of sortedplaces.entries()) {
-    if(i !== 0) addtext([", "]);
-    addtext([getlink(self_name, place.id, "black")]);
+    addtext([getlink(self_name, (i !== 0 ? " " : "") + place.id)]);
 }
+
 for(const [self_name, place] of sortedplaces) {
     pagebreak();
     addtext([{
-        text: "[H] ",
+        // text: "["+colors.blue+colors.underline+place.id+colors.reset+"] "+self_name,
+        text: colors.bold + place.id,
         clickEvent: {
             action: "change_page",
             value: "0",
         },
-    }, self_name]);
+    }," · " + self_name + "\n"]);
     const backlinks_only = new Set(place.backlinks);
     const fwdlinks_only = new Set(place.links.map(link => link.place_name));
     const bothlinks = new Set<string>();
@@ -163,15 +196,16 @@ for(const [self_name, place] of sortedplaces) {
         }
     }
 
+    const getid = (place: string): string => places.get(place)!.id;
 
     for(const link of [...backlinks_only].sort()) {
-        addtext(["\n<-  ",getlink(link, link, "dark_gray")]);
+        addtext(["\n<-  ",getlink(link, colors.dark + colors.italic + getid(link))]);
     }
     for(const link of [...bothlinks].sort()) {
-        addtext(["\n<-> ",getlink(link, link, "dark_blue")]);
+        addtext(["\n<-> ",getlink(link, colors.blue + getid(link))]);
     }
     for(const link of [...fwdlinks_only].sort()) {
-        addtext(["\n -> ",getlink(link, link, "red")]);
+        addtext(["\n -> ",getlink(link, colors.red + getid(link))]);
     }
     page_results.set(self_name, bookpages.length);
 }
@@ -184,7 +218,6 @@ for(const link_value of link_values) {
         };
     }else{
         // :/
-        link_value.ce.underlined = undefined;
     }
 }
 
@@ -196,18 +229,19 @@ for(const [i, page] of bookpages.entries()) {
     strpg = strpg.substring(1, strpg.length - 1);
     strpg = strpg.replaceAll("\\\"", "\"");
     strpg = strpg.replaceAll("'", "\\'");
+    strpg = strpg.replaceAll("§", "\\\\u00A7");
     strpg = "'" + strpg + "'";
     rescmd += strpg;
 }
 rescmd += "]";
-rescmd += ",title:"+JSON.stringify("Appt Swites Map 1.0");
+rescmd += ",title:"+JSON.stringify("Swites Appt Mints Map 1.1");
 rescmd += ",author:"+JSON.stringify("NovaWays: Find Your Way™");
 rescmd += "}]";
 if((true)) {
     await Bun.write("dist/cmd", rescmd, {createPath: true});
     console.log((((rescmd.length / 32500) * 100) |0)+"%");
     if(rescmd.length > 32500) {
-        console.log("rescmd too long:", rescmd.length);
+        console.log("rescmd too long:", rescmd.length+" ("+(rescmd.length - 32500)+" over)");
     }else{
     }
 }
