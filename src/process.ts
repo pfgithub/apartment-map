@@ -176,6 +176,9 @@ for(const [i, [self_name, place]] of sortedplaces.entries()) {
     // there can be 84 on the first page, leaving room for the last
     // line to say "continued on next page", then 91 on
     // subsequent pages
+    // there's a limit of 100 pages in a book though so :/
+    // we can start to put multiple entries on one page if we need
+    //  (and remove the newline betwen the title and the links)
 }
 
 for(const [self_name, place] of sortedplaces) {
