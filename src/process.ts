@@ -3,7 +3,7 @@
 // - we can put a bunch horizontal
 // - everything should fit
 
-const data: string = await Bun.file("data/DATA").text();
+import data from "../data/DATA.txt" with {type: "text"};
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
 type Link = {
@@ -243,14 +243,6 @@ rescmd += "]";
 rescmd += ",title:"+JSON.stringify("Swites Appt Mints Map 1.1");
 rescmd += ",author:"+JSON.stringify("NovaWays: Find Your Way™");
 rescmd += "}]";
-if((true)) {
-    await Bun.write("dist/cmd", rescmd, {createPath: true});
-    console.log((((rescmd.length / 32500) * 100) |0)+"%");
-    if(rescmd.length > 32500) {
-        console.log("rescmd too long:", rescmd.length+" ("+(rescmd.length - 32500)+" over)");
-    }else{
-    }
-}
 
 type GraphEntry = {
     links: string[],
@@ -368,8 +360,17 @@ for(const [self_name, place] of sortedplaces) {
     }
 }
 
-await Bun.write("dist/index.html", Bun.file("src/graph.html"), {createPath: true});
-await Bun.write("dist/graph.json", JSON.stringify(res_graph), {createPath: true});
+export const graph_json = res_graph;
+export const cmd_mc = rescmd;
+
+if(import.meta.main) {
+    await Bun.write("dist/cmd", rescmd, {createPath: true});
+    console.log((((rescmd.length / 32500) * 100) |0)+"%");
+    if(rescmd.length > 32500) {
+        console.log("rescmd too long:", rescmd.length+" ("+(rescmd.length - 32500)+" over)");
+    }else{
+    }
+}
 
 // GRAPHS:
 // try graphviz
