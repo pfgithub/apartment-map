@@ -1,5 +1,5 @@
 import {createRoot} from "react-dom/client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Graph from "graphology";
 import ReactECharts from 'echarts-for-react';
 
@@ -28,6 +28,9 @@ type EChartsNode = {
     itemStyle: {
         color: string;
     };
+    x?: number;
+    y?: number;
+    fixed?: boolean;
 };
 
 type EChartsEdge = {
@@ -53,6 +56,8 @@ function App() {
     const [endPoint, setEndPoint] = useState<PlaceName | null>(null);
     const [path, setPath] = useState<PlaceName[] | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<PlaceName | null>(null);
+    const [nodePositions, setNodePositions] = useState<Record<string, [number, number]>>({});
+    const isInitialized = useRef(false);
 
     const getGraphOption = useMemo(() => {
         const nodes: EChartsNode[] = Object.keys(mapData.places).map(name => ({
@@ -61,7 +66,10 @@ function App() {
             symbolSize: 20,
             itemStyle: {
                 color: '#67B7D1'
-            }
+            },
+            x: nodePositions[name]?.[0],
+            y: nodePositions[name]?.[1],
+            fixed: !!nodePositions[name]
         }));
 
         const edges: EChartsEdge[] = [];
@@ -110,7 +118,12 @@ function App() {
                 draggable: true,
                 force: {
                     repulsion: 1000,
-                    edgeLength: 200
+                    edgeLength: 200,
+                    gravity: 0.1,
+                    initLayout: 'circular',
+                    layoutAnimation: false,
+                    friction: 0.1,
+                    seed: 42  // Fixed seed for consistent initial layout
                 },
                 emphasis: {
                     focus: 'adjacency'
@@ -130,7 +143,23 @@ function App() {
                 }
             }]
         };
-    }, []);
+    }, [nodePositions]);
+
+    // Save node positions after initial layout
+    const onChartReady = (chart: any) => {
+        if (!isInitialized.current) {
+            setTimeout(() => {
+                const positions: Record<string, [number, number]> = {};
+                chart.getEchartsInstance().getModel().getSeriesByIndex(0).getData().each((idx: number) => {
+                    const item = chart.getEchartsInstance().getModel().getSeriesByIndex(0).getData().getItemLayout(idx);
+                    const name = chart.getEchartsInstance().getModel().getSeriesByIndex(0).getData().getName(idx);
+                    positions[name] = [item.x, item.y];
+                });
+                setNodePositions(positions);
+                isInitialized.current = true;
+            }, 1000); // Wait for force layout to settle
+        }
+    };
 
     const onChartClick = (params: any) => {
         if (params.dataType === 'node') {
@@ -148,6 +177,7 @@ function App() {
                 onEvents={{
                     click: onChartClick
                 }}
+                onChartReady={onChartReady}
             />
             {selectedLocation && (
                 <div className="w-1/4 bg-gray-100 p-4 overflow-y-auto">
