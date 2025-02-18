@@ -290,6 +290,7 @@ function makePfGraph(): Graph {
     return res;
 }
 
+let pathfinding_results;
 {
     const result = new Map<string, {route_in: string[], route_out: string[]}>();
     const START = "Front Entry";
@@ -316,6 +317,7 @@ function makePfGraph(): Graph {
         });
     }
 
+    pathfinding_results = [...result.entries()];
     if((false)) {
         console.log("Pathfinding results", result);
     }
@@ -362,6 +364,8 @@ for(const [self_name, place] of sortedplaces) {
 
 export const graph_json = res_graph;
 export const cmd_mc = rescmd;
+export const sortedplaces_json = Object.fromEntries(sortedplaces);
+export const pathfinding_results_json = Object.fromEntries(pathfinding_results);
 
 if(import.meta.main) {
     await Bun.write("dist/cmd", rescmd, {createPath: true});

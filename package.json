@@ -3,17 +3,22 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "^1.2.2"
+    "@types/bun": "^1.2.2",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "bun-plugin-tailwind": "^0.0.14",
     "bun-types": "^1.2.2",
     "d3": "^7.9.0",
     "graphology": "^0.26.0",
     "graphology-layout-forceatlas2": "^0.10.1",
     "graphology-layout-noverlap": "^0.4.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "sigma": "^3.0.1"
   }
 }
