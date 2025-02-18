@@ -1,7 +1,7 @@
 import {createRoot} from "react-dom/client";
 import { useEffect, useMemo, useState, useRef } from "react";
 import Graph from "graphology";
-import ReactECharts from 'echarts-for-react';
+import ReactECharts, { type EChartsOption } from 'echarts-for-react';
 
 type PlaceName = string & {__is_place_name: true};
 type PlaceId = string & {__is_place_id: true};
@@ -20,6 +20,8 @@ type PlaceLink = {
     teleport: boolean,
     one_way: boolean,
 };
+
+const mapData: Map = await fetch("/places.json").then(r => r.json());
 
 type EChartsNode = {
     id: string;
@@ -48,118 +50,95 @@ type EChartsParams = {
     dataType: 'node' | 'edge';
     data: EChartsNode;
 };
+const nodes: EChartsNode[] = Object.keys(mapData.places).map(name => ({
+    id: name,
+    name: name,
+    symbolSize: 20,
+    itemStyle: {
+        color: '#67B7D1'
+    },
+    x: undefined,
+    y: undefined,
+    fixed: false
+}));
 
-const mapData: Map = await fetch("/places.json").then(r => r.json());
+const edges: EChartsEdge[] = [];
+const processedEdges = new Set<string>();
+
+Object.entries(mapData.places).forEach(([sourceName, place]) => {
+    place.links.forEach(link => {
+        const edgeId = [sourceName, link.place_name].sort().join('-');
+        if (!processedEdges.has(edgeId)) {
+            processedEdges.add(edgeId);
+            
+            // Check if there's a reverse link
+            const targetPlace = mapData.places[link.place_name];
+            const hasReverseLink = targetPlace.links.some(l => l.place_name === sourceName);
+            
+            edges.push({
+                source: sourceName,
+                target: link.place_name,
+                lineStyle: {
+                    color: hasReverseLink ? '#888888' : '#67B7D1',
+                    width: hasReverseLink ? 8 : 2,
+                },
+                symbol: hasReverseLink ? ['arrow', 'arrow'] : ['none', 'arrow'],
+                symbolSize: [8, 8]
+            });
+        }
+    });
+});
+
+const graphOption: EChartsOption = {
+    tooltip: {
+        show: true,
+        formatter: (params: any) => {
+            if (params.dataType === 'node') {
+                return params.data.name;
+            }
+            return '';
+        }
+    },
+    series: [{
+        type: 'graph',
+        layout: 'force',
+        data: nodes,
+        links: edges,
+        roam: true,
+        draggable: true,
+        force: {
+            repulsion: 1000,
+            edgeLength: 200,
+            gravity: 0.1,
+            initLayout: 'circular',
+            layoutAnimation: false,
+            friction: 0.1,
+            seed: 42  // Fixed seed for consistent initial layout
+        },
+        emphasis: {
+            focus: 'adjacency'
+        },
+        label: {
+            show: true,
+            position: 'right',
+            formatter: '{b}'
+        },
+        lineStyle: {
+            curveness: 0.1
+        },
+        select: {
+            itemStyle: {
+                color: '#ff0000'
+            }
+        }
+    }]
+};
 
 function App() {
     const [startPoint, setStartPoint] = useState<PlaceName | null>(null);
     const [endPoint, setEndPoint] = useState<PlaceName | null>(null);
     const [path, setPath] = useState<PlaceName[] | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<PlaceName | null>(null);
-    const [nodePositions, setNodePositions] = useState<Record<string, [number, number]>>({});
-    const isInitialized = useRef(false);
-
-    const getGraphOption = useMemo(() => {
-        const nodes: EChartsNode[] = Object.keys(mapData.places).map(name => ({
-            id: name,
-            name: name,
-            symbolSize: 20,
-            itemStyle: {
-                color: '#67B7D1'
-            },
-            x: nodePositions[name]?.[0],
-            y: nodePositions[name]?.[1],
-            fixed: !!nodePositions[name]
-        }));
-
-        const edges: EChartsEdge[] = [];
-        const processedEdges = new Set<string>();
-
-        Object.entries(mapData.places).forEach(([sourceName, place]) => {
-            place.links.forEach(link => {
-                const edgeId = [sourceName, link.place_name].sort().join('-');
-                if (!processedEdges.has(edgeId)) {
-                    processedEdges.add(edgeId);
-                    
-                    // Check if there's a reverse link
-                    const targetPlace = mapData.places[link.place_name];
-                    const hasReverseLink = targetPlace.links.some(l => l.place_name === sourceName);
-                    
-                    edges.push({
-                        source: sourceName,
-                        target: link.place_name,
-                        lineStyle: {
-                            color: hasReverseLink ? '#888888' : '#67B7D1',
-                            width: hasReverseLink ? 8 : 2,
-                        },
-                        symbol: hasReverseLink ? ['arrow', 'arrow'] : ['none', 'arrow'],
-                        symbolSize: [8, 8]
-                    });
-                }
-            });
-        });
-
-        return {
-            tooltip: {
-                show: true,
-                formatter: (params: any) => {
-                    if (params.dataType === 'node') {
-                        return params.data.name;
-                    }
-                    return '';
-                }
-            },
-            series: [{
-                type: 'graph',
-                layout: 'force',
-                data: nodes,
-                links: edges,
-                roam: true,
-                draggable: true,
-                force: {
-                    repulsion: 1000,
-                    edgeLength: 200,
-                    gravity: 0.1,
-                    initLayout: 'circular',
-                    layoutAnimation: false,
-                    friction: 0.1,
-                    seed: 42  // Fixed seed for consistent initial layout
-                },
-                emphasis: {
-                    focus: 'adjacency'
-                },
-                label: {
-                    show: true,
-                    position: 'right',
-                    formatter: '{b}'
-                },
-                lineStyle: {
-                    curveness: 0.1
-                },
-                select: {
-                    itemStyle: {
-                        color: '#ff0000'
-                    }
-                }
-            }]
-        };
-    }, [nodePositions]);
-
-    // Save node positions after initial layout
-    const onChartReady = (chart: any) => {
-        if (!isInitialized.current) {
-            setTimeout(() => {
-                const positions: Record<string, [number, number]> = {};
-                chart.getEchartsInstance().getModel().getSeriesByIndex(0).getData().each((idx: number) => {
-                    const item = chart.getEchartsInstance().getModel().getSeriesByIndex(0).getData().getItemLayout(idx);
-                    const name = chart.getEchartsInstance().getModel().getSeriesByIndex(0).getData().getName(idx);
-                    positions[name] = [item.x, item.y];
-                });
-                setNodePositions(positions);
-                isInitialized.current = true;
-            }, 1000); // Wait for force layout to settle
-        }
-    };
 
     const onChartClick = (params: any) => {
         if (params.dataType === 'node') {
@@ -167,17 +146,14 @@ function App() {
         }
     };
 
-    const placeNames = Object.keys(mapData.places) as PlaceName[];
-
     return (
         <div className="h-screen flex relative">
             <ReactECharts
-                option={getGraphOption}
+                option={graphOption}
                 style={{ height: '100%', width: '75%' }}
                 onEvents={{
                     click: onChartClick
                 }}
-                onChartReady={onChartReady}
             />
             {selectedLocation && (
                 <div className="w-1/4 bg-gray-100 p-4 overflow-y-auto">
