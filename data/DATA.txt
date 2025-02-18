@@ -281,14 +281,20 @@
 [BR] Bynker Path:
 - Koral Ankyir
 - Backroom B
+- Hollows Path
+[HP] Hollows Path
+- Bynker Path
 - Granite Cave
 [GC] Granite Cave:
-- Bynker Path
+- Hollows Path
 - Andesite Cave
 [AC] Andesite Cave:
 - Granite Cave
 - Ice Cave
 - Basalt Cave
+- Goop House
+- Svi Van Korter Forest Trail
+- Basin Path
 [IC] Ice Cave:
 - Andesite Cave
 - Cozy Campfire
@@ -329,5 +335,81 @@
 [SB] Svar Block:
 - Diorite Cave
 - Upper Never
+- Purtle Cower
+- Kurs Hause
+- Wittle Oaks
 [NN] Upper Never:
 - Svar Block
+- Never Fortress
+-> Svar Maiir Lookout
+[NS] Never Fortress:
+- Upper Never
+[PC] Purtle Cower:
+- Svar Block
+- Byfer Slax
+[BS] Byfer Slax:
+- Purtle Cower
+- Norsmatch
+- Svar Maiir Lookout
+- Pearl Oaks
+[NM] Norsmatch:
+- Byfer Slax
+[SL] Svar Maiir Lookout:
+- Byfer Slax
+[PO] Pearl Oaks:
+- Byfer Slax
+- Mushroom Bush
+[MB] Mushroom Bush:
+- Pearl Oaks
+- Cort Connector
+[KC] Cort Connector:
+- Mushroom Bush
+- Mycelium Train
+[MT] Mycelium Train:
+- Cort Connector
+- Porris Oaks
+[PR] Porris Oaks:
+- Mycelium Train
+- Ice Rink
+- Steam Maze
+- Quiper Blick
+[IR] Ice Rink:
+- Porris Oaks
+[QB] Quiper Blick:
+- Porris Oaks
+[SM] Steam Maze:
+- Porris Oaks
+- Ice Maze
+[IM] Ice Maze:
+- Steam Maze
+[KH] Kurs Hause:
+- Svar Block
+[WO] Wittle Oaks:
+- Svar Block
+- Vortis Aquaduct
+- Sno Hut
+[VA] Vortis Aquaduct:
+- Wittle Oaks
+[ST] Sno Hut:
+- Wittle Oaks
+- Sno Pak
+[SO] Sno Pak:
+- Sno Hut
+- Kori Kaves
+[KI] Kori Kaves:
+- Sno Pak
+- Hardkore Parkore
+[HP] Hardkore Parkore:
+- Kori Kaves
+- Park Rink
+[PK] Park Rink
+- Hardkore Parkore
+[GO] Goop House
+- Andesite Cave
+[VK] Svi Van Korter Forest Trail
+- Andesite Cave
+[BN] Basin Path
+- Andesite Cave
+- Cancyn Building B
+[YB] Cancyn Building B
+- Basin Path

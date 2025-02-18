@@ -35,7 +35,7 @@ for(const line of lines) {
             one_way: true,
         });
     }else{
-        const lm = line.match(/^\[(.+?)\] (.+?):$/);
+        const lm = line.match(/^\[(.+?)\] (.+?):?$/);
         if(!lm) throw new Error("Match failed: "+line);
         const matchnum = lm![1]!;
         const matchnumsplit = matchnum.split(" ");
@@ -202,7 +202,11 @@ for(const [self_name, place] of sortedplaces) {
         }
     }
 
-    const getid = (place: string): string => places.get(place)!.id;
+    const getid = (place: string): string => {
+        const pgr = places.get(place);
+        if(pgr == null) throw new Error("missing "+place);
+        return pgr.id;
+    }
 
     for(const link of [...backlinks_only].sort()) {
         addtext([getlink(link, "\n<-  " + colors.dark + colors.italic + getid(link))]);
