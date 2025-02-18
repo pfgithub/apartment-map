@@ -284,56 +284,115 @@ function App() {
 
     return (
         <div>
-            <div className="mb-6 p-4 bg-gray-100 rounded">
-                <h3 className="text-lg font-semibold mb-2">Route Planning</h3>
-                <div className="flex gap-4 items-center">
-                    <div>
-                        <span className="font-medium">Start:</span> {startPoint || 'Select a location'}
+            <div className="mb-6 p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                <h3 className="text-xl font-bold mb-4 text-gray-800">Route Planning</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                        <span className="text-sm text-gray-600 block mb-1">Starting Point</span>
+                        <div className="font-medium text-lg">
+                            {startPoint ? (
+                                <span className="flex items-center">
+                                    <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                                    {startPoint}
+                                </span>
+                            ) : (
+                                <span className="text-gray-400 italic">Click a location to set start</span>
+                            )}
+                        </div>
                     </div>
-                    <div>
-                        <span className="font-medium">End:</span> {endPoint || 'Select another location'}
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                        <span className="text-sm text-gray-600 block mb-1">Destination</span>
+                        <div className="font-medium text-lg">
+                            {endPoint ? (
+                                <span className="flex items-center">
+                                    <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                                    {endPoint}
+                                </span>
+                            ) : (
+                                <span className="text-gray-400 italic">Click another location to set destination</span>
+                            )}
+                        </div>
                     </div>
-                    {route && (
-                        <button
-                            onClick={() => {
-                                setStartPoint(null);
-                                setEndPoint(null);
-                                setRoute(null);
-                                chart.setOption({
-                                    series: [{
-                                        ...(graphOption.series as GraphSeriesOption[])[0],
-                                        links: edges
-                                    } as GraphSeriesOption]
-                                });
-                            }}
-                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                            Clear Route
-                        </button>
-                    )}
                 </div>
                 {route && (
-                    <div className="mt-4">
-                        <h4 className="font-medium mb-2">Route Instructions:</h4>
-                        <ol className="list-decimal list-inside space-y-1">
-                            {route.path.map((place, index) => (
-                                <li key={index} className="pl-2">
-                                    {place}
-                                    {index < route.path.length - 1 && (
-                                        <span className="text-gray-500">
-                                            {mapData.places[place].links.find(
-                                                l => l.place_name === route.path[index + 1]
-                                            )?.teleport ? ' (Teleport) ' : ' → '}
-                                        </span>
-                                    )}
-                                </li>
-                            ))}
-                        </ol>
-                        {route.containsTeleport && (
-                            <p className="mt-2 text-purple-600">
-                                This route includes teleportation points.
-                            </p>
-                        )}
+                    <div className="mt-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h4 className="text-lg font-semibold text-gray-800">Route Instructions</h4>
+                            <button
+                                onClick={() => {
+                                    setStartPoint(null);
+                                    setEndPoint(null);
+                                    setRoute(null);
+                                    chart.setOption({
+                                        series: [{
+                                            ...(graphOption.series as GraphSeriesOption[])[0],
+                                            links: edges
+                                        } as GraphSeriesOption]
+                                    });
+                                }}
+                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2 border border-gray-300"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Clear Route
+                            </button>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <ol className="relative border-l border-gray-200 ml-3">
+                                {route.path.map((place, index) => {
+                                    const isLast = index === route.path.length - 1;
+                                    const nextPlace = route.path[index + 1];
+                                    const isTeleport = !isLast && 
+                                        mapData.places[place].links.find(
+                                            l => l.place_name === nextPlace
+                                        )?.teleport;
+                                    
+                                    // Check if this is a one-way path
+                                    const isOneWay = !isLast && !mapData.places[nextPlace].links.some(
+                                        l => l.place_name === place
+                                    );
+                                    
+                                    return (
+                                        <li key={index} className="mb-6 ml-6 last:mb-0">
+                                            <span className={`absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-8 ring-white
+                                                ${index === 0 ? 'bg-green-500' : isLast ? 'bg-red-500' : 'bg-blue-500'}`}>
+                                                {index + 1}
+                                            </span>
+                                            <div className="flex flex-col">
+                                                <h3 className="font-medium text-gray-900">{place}</h3>
+                                                {!isLast && (
+                                                    <div className="mt-1 flex items-center gap-2">
+                                                        {isTeleport ? (
+                                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                                Teleport
+                                                            </span>
+                                                        ) : (
+                                                            <svg className="w-5 h-5 text-gray-400 my-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                            </svg>
+                                                        )}
+                                                        {isOneWay && (
+                                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                                One-way
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                            {route.containsTeleport && (
+                                <div className="mt-4 flex items-center gap-2 text-purple-700 bg-purple-50 p-3 rounded-lg">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    <span className="font-medium">This route includes teleportation points</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
