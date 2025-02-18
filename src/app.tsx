@@ -110,10 +110,14 @@ function findShortestPath(
         { place: start, path: [start], hasTeleport: false, cost: 0 }
     ];
     
-    const getPathCost = (place: PlaceName) => {
+    const getPathCost = (link: PlaceLink) => {
         // Penalize paths through Outside and Waterways
-        if (place === 'Outside' || place === 'Waterways' || place === 'Dynaway') {
-            return 10; // Higher cost for these locations
+        if (link.place_name === 'Outside' || link.place_name === 'Waterways' || link.place_name === 'Dynaway') {
+            return 20; // Higher cost for these locations
+        }
+        // Penalize one-way routes
+        if(link.one_way) {
+            return 5;
         }
         return 1; // Normal cost for other locations
     };
@@ -136,7 +140,7 @@ function findShortestPath(
             
             for (const link of currentPlace.links) {
                 if (!visited.has(link.place_name)) {
-                    const newCost = cost + getPathCost(link.place_name);
+                    const newCost = cost + getPathCost(link);
                     queue.push({
                         place: link.place_name,
                         path: [...path, link.place_name],
