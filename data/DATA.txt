@@ -399,7 +399,7 @@
 [KI] Kori Kaves:
 - Sno Pak
 - Hardkore Parkore
-[HP] Hardkore Parkore:
+[HK] Hardkore Parkore:
 - Kori Kaves
 - Park Rink
 [PK] Park Rink

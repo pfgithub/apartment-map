@@ -367,9 +367,9 @@ function App() {
                                         )?.teleport;
                                     
                                     // Check if this is a one-way path
-                                    const isOneWay = !isLast && !mapData.places[nextPlace].links.some(
-                                        l => l.place_name === place
-                                    );
+                                    const isOneWay = mapData.places[place].links.find(
+                                        l => l.place_name === nextPlace
+                                    )?.one_way;
                                     
                                     return (
                                         <li key={index} className="mb-6 ml-6 last:mb-0">
