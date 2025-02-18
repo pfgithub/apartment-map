@@ -161,7 +161,8 @@
 - Backroom B
 [BB] Backroom B:
 - Gsbrick
-- Backroom A 
+- Backroom A
+- Bynker Path
 [BA] Backroom A:
 - Backroom B
 - Backroom C
@@ -243,6 +244,7 @@
 - Slimeyard
 [U2] Unnamed-2:
 - Outer Forest
+- Koral Ankyir
 [DE] Decontamination:
 -> Outer Forest
 - Space Station
@@ -273,3 +275,59 @@
 - Byplyr Brook
 [BE] Backroom E:
 - Backroom D
+[KA] Koral Ankyir:
+- Unnamed-2
+- Bynker Path
+[BR] Bynker Path:
+- Koral Ankyir
+- Backroom B
+- Granite Cave
+[GC] Granite Cave:
+- Bynker Path
+- Andesite Cave
+[AC] Andesite Cave:
+- Granite Cave
+- Ice Cave
+- Basalt Cave
+[IC] Ice Cave:
+- Andesite Cave
+- Cozy Campfire
+- Unnamed-4
+[CY] Cozy Campfire:
+- Ice Cave
+[U4] Unnamed-4:
+- Ice Cave
+- Basalt River
+[BI] Basalt River:
+- Unnamed-4
+- Basalt Cove
+[BL] Basalt Cove:
+- Basalt River
+- Mushroom Cave
+[BV] Basalt Cave:
+- Andesite Cave
+- Blackstone Cave
+- Crimson Cave
+[KK] Blackstone Cave:
+- Basalt Cave
+[CK] Crimson Cave:
+- Basalt Cave
+- Warped Cave
+[WK] Warped Cave:
+- Crimson Cave
+- Diorite Cave
+[DK] Diorite Cave:
+- Warped Cave
+- Borgic Mirror
+- Mushroom Cave
+- Svar Block
+[GM] Borgic Mirror:
+- Diorite Cave
+[MC] Mushroom Cave:
+- Diorite Cave
+- Basalt Cove
+[SB] Svar Block:
+- Diorite Cave
+- Upper Never
+[NN] Upper Never:
+- Svar Block

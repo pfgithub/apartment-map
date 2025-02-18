@@ -112,7 +112,7 @@ function findShortestPath(
     
     const getPathCost = (place: PlaceName) => {
         // Penalize paths through Outside and Waterways
-        if (place === 'Outside' || place === 'Waterways') {
+        if (place === 'Outside' || place === 'Waterways' || place === 'Dynaway') {
             return 10; // Higher cost for these locations
         }
         return 1; // Normal cost for other locations
