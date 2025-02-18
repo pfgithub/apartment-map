@@ -52,6 +52,7 @@ function App() {
     const [startPoint, setStartPoint] = useState<PlaceName | null>(null);
     const [endPoint, setEndPoint] = useState<PlaceName | null>(null);
     const [path, setPath] = useState<PlaceName[] | null>(null);
+    const [selectedLocation, setSelectedLocation] = useState<PlaceName | null>(null);
 
     const getGraphOption = useMemo(() => {
         const nodes: EChartsNode[] = Object.keys(mapData.places).map(name => ({
@@ -121,10 +122,21 @@ function App() {
                 },
                 lineStyle: {
                     curveness: 0.1
+                },
+                select: {
+                    itemStyle: {
+                        color: '#ff0000'
+                    }
                 }
             }]
         };
     }, []);
+
+    const onChartClick = (params: any) => {
+        if (params.dataType === 'node') {
+            setSelectedLocation(params.data.name as PlaceName);
+        }
+    };
 
     const placeNames = Object.keys(mapData.places) as PlaceName[];
 
@@ -132,8 +144,97 @@ function App() {
         <div className="h-screen flex relative">
             <ReactECharts
                 option={getGraphOption}
-                style={{ height: '100%', width: '100%' }}
+                style={{ height: '100%', width: '75%' }}
+                onEvents={{
+                    click: onChartClick
+                }}
             />
+            {selectedLocation && (
+                <div className="w-1/4 bg-gray-100 p-4 overflow-y-auto">
+                    <h2 className="text-xl font-bold mb-4">{selectedLocation}</h2>
+                    
+                    {/* Calculate the different types of links */}
+                    {(() => {
+                        const currentPlace = mapData.places[selectedLocation];
+                        const linkNames = new Set(currentPlace.links.map(l => l.place_name));
+                        const backlinkNames = new Set(currentPlace.backlinks);
+
+                        // Places that only have backlinks to here
+                        const backlinksOnly = currentPlace.backlinks.filter(name => !linkNames.has(name));
+                        
+                        // Places that have both links and backlinks
+                        const bidirectional = currentPlace.backlinks.filter(name => linkNames.has(name));
+                        
+                        // Places that we can only link to (no backlinks)
+                        const linksOnly = currentPlace.links.filter(link => !backlinkNames.has(link.place_name));
+
+                        return (
+                            <>
+                                {/* Backlinks-only section */}
+                                {backlinksOnly.length > 0 && (
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold mb-2">Can reach here from:</h3>
+                                        <div className="space-y-2">
+                                            {backlinksOnly.map((placeName) => (
+                                                <button
+                                                    key={placeName}
+                                                    onClick={() => setSelectedLocation(placeName)}
+                                                    className="block w-full text-left px-3 py-2 bg-white rounded shadow hover:bg-blue-50 transition-colors"
+                                                >
+                                                    {placeName}
+                                                    <span className="text-red-600 ml-2">(Can't go that way)</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Bidirectional section */}
+                                {bidirectional.length > 0 && (
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold mb-2">Two-way connections:</h3>
+                                        <div className="space-y-2">
+                                            {bidirectional.map((placeName) => (
+                                                <button
+                                                    key={placeName}
+                                                    onClick={() => setSelectedLocation(placeName)}
+                                                    className="block w-full text-left px-3 py-2 bg-white rounded shadow hover:bg-blue-50 transition-colors"
+                                                >
+                                                    {placeName}
+                                                    {currentPlace.links.find(l => l.place_name === placeName)?.teleport && 
+                                                        <span className="text-purple-600 ml-2">(Teleport)</span>
+                                                    }
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Links-only section */}
+                                {linksOnly.length > 0 && (
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold mb-2">One-way to:</h3>
+                                        <div className="space-y-2">
+                                            {linksOnly.map((link) => (
+                                                <button
+                                                    key={link.place_name}
+                                                    onClick={() => setSelectedLocation(link.place_name)}
+                                                    className="block w-full text-left px-3 py-2 bg-white rounded shadow hover:bg-blue-50 transition-colors"
+                                                >
+                                                    {link.place_name}
+                                                    {link.teleport && 
+                                                        <span className="text-purple-600 ml-2">(Teleport)</span>
+                                                    }
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        );
+                    })()}
+                </div>
+            )}
         </div>
     );
 }
