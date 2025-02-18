@@ -52,13 +52,13 @@ type EChartsParams = {
 const nodes: EChartsNode[] = Object.keys(mapData.places).map(name => ({
     id: name,
     name: name,
-    symbolSize: 20,
+    symbolSize: name === 'Outside' ? 40 : 20,
     itemStyle: {
         color: '#67B7D1'
     },
     x: undefined,
     y: undefined,
-    fixed: false,
+    fixed: name === 'Outside',
 }));
 
 const edges: EChartsEdge[] = [];
@@ -100,12 +100,28 @@ function findShortestPath(
     mapData: Map
 ): Route | null {
     const visited = new Set<PlaceName>();
-    const queue: { place: PlaceName; path: PlaceName[]; hasTeleport: boolean }[] = [
-        { place: start, path: [start], hasTeleport: false }
+    // Priority queue with cost as priority
+    const queue: { 
+        place: PlaceName; 
+        path: PlaceName[]; 
+        hasTeleport: boolean;
+        cost: number;
+    }[] = [
+        { place: start, path: [start], hasTeleport: false, cost: 0 }
     ];
     
+    const getPathCost = (place: PlaceName) => {
+        // Penalize paths through Outside and Waterways
+        if (place === 'Outside' || place === 'Waterways') {
+            return 10; // Higher cost for these locations
+        }
+        return 1; // Normal cost for other locations
+    };
+    
     while (queue.length > 0) {
-        const { place, path, hasTeleport } = queue.shift()!;
+        // Sort by cost - lowest cost first
+        queue.sort((a, b) => a.cost - b.cost);
+        const { place, path, hasTeleport, cost } = queue.shift()!;
         
         if (place === end) {
             return {
@@ -120,10 +136,12 @@ function findShortestPath(
             
             for (const link of currentPlace.links) {
                 if (!visited.has(link.place_name)) {
+                    const newCost = cost + getPathCost(link.place_name);
                     queue.push({
                         place: link.place_name,
                         path: [...path, link.place_name],
-                        hasTeleport: hasTeleport || link.teleport
+                        hasTeleport: hasTeleport || link.teleport,
+                        cost: newCost
                     });
                 }
             }
