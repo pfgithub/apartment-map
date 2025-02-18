@@ -152,6 +152,60 @@ function App() {
         };
     }, []);
 
+    useEffect(() => {
+        if (!graphInstance || !hoveredNode) {
+            // Reset all nodes and edges to default colors if no node is hovered
+            graphInstance?.forEachNode((node: string) => {
+                graphInstance.setNodeAttribute(node, 'color', '#67B7D1');
+            });
+            graphInstance?.forEachEdge((edge: string) => {
+                const isTeleportion = graphInstance.getEdgeAttribute(edge, 'isTeleportion');
+                graphInstance.setEdgeAttribute(edge, 'color', isTeleportion ? '#FF5733' : '#333333');
+            });
+            return;
+        }
+
+        // Set all nodes and edges to a muted color first
+        graphInstance.forEachNode((node: string) => {
+            graphInstance.setNodeAttribute(node, 'color', '#D3D3D3');
+        });
+        graphInstance.forEachEdge((edge: string) => {
+            graphInstance.setEdgeAttribute(edge, 'color', '#E0E0E0');
+        });
+
+        // Highlight the hovered node
+        graphInstance.setNodeAttribute(hoveredNode, 'color', '#FFA500');
+
+        // Get all neighbors (both incoming and outgoing)
+        const neighbors = new Set<string>();
+        
+        // Add outgoing connections
+        mapData.places[hoveredNode].links.forEach(link => {
+            neighbors.add(link.place_name);
+            const edgeId = graphInstance.edge(hoveredNode, link.place_name);
+            if (edgeId) {
+                graphInstance.setEdgeAttribute(edgeId, 'color', '#FFA500');
+                graphInstance.setEdgeAttribute(edgeId, 'size', 3);
+            }
+        });
+
+        // Add incoming connections
+        mapData.places[hoveredNode].backlinks.forEach(backlink => {
+            neighbors.add(backlink);
+            const edgeId = graphInstance.edge(backlink, hoveredNode);
+            if (edgeId) {
+                graphInstance.setEdgeAttribute(edgeId, 'color', '#FFA500');
+                graphInstance.setEdgeAttribute(edgeId, 'size', 3);
+            }
+        });
+
+        // Highlight all neighboring nodes
+        neighbors.forEach(neighbor => {
+            graphInstance.setNodeAttribute(neighbor, 'color', '#FFD700');
+        });
+
+    }, [hoveredNode, graphInstance]);
+
     const placeNames = Object.keys(mapData.places) as PlaceName[];
 
     return (
