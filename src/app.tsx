@@ -1,5 +1,5 @@
 import * as echarts from 'echarts';
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 
 type PlaceName = string & {__is_place_name: true};
@@ -58,7 +58,7 @@ const nodes: EChartsNode[] = Object.keys(mapData.places).map(name => ({
     },
     x: undefined,
     y: undefined,
-    fixed: false
+    fixed: false,
 }));
 
 const edges: EChartsEdge[] = [];
@@ -88,6 +88,63 @@ Object.entries(mapData.places).forEach(([sourceName, place]) => {
     });
 });
 
+// Add these new types and functions after the existing types
+type Route = {
+    path: PlaceName[];
+    containsTeleport: boolean;
+};
+
+function findShortestPath(
+    start: PlaceName,
+    end: PlaceName,
+    mapData: Map
+): Route | null {
+    const visited = new Set<PlaceName>();
+    const queue: { place: PlaceName; path: PlaceName[]; hasTeleport: boolean }[] = [
+        { place: start, path: [start], hasTeleport: false }
+    ];
+    
+    while (queue.length > 0) {
+        const { place, path, hasTeleport } = queue.shift()!;
+        
+        if (place === end) {
+            return {
+                path,
+                containsTeleport: hasTeleport
+            };
+        }
+        
+        if (!visited.has(place)) {
+            visited.add(place);
+            const currentPlace = mapData.places[place];
+            
+            for (const link of currentPlace.links) {
+                if (!visited.has(link.place_name)) {
+                    queue.push({
+                        place: link.place_name,
+                        path: [...path, link.place_name],
+                        hasTeleport: hasTeleport || link.teleport
+                    });
+                }
+            }
+        }
+    }
+    
+    return null;
+}
+
+// Add this type before the graphOption declaration
+type GraphSeriesOption = echarts.GraphSeriesOption & {
+    force?: {
+        repulsion?: number;
+        edgeLength?: number;
+        gravity?: number;
+        initLayout?: 'circular';
+        layoutAnimation?: boolean;
+        friction?: number;
+    };
+};
+
 const graphOption: echarts.EChartsOption = {
     tooltip: {
         show: true,
@@ -111,11 +168,14 @@ const graphOption: echarts.EChartsOption = {
             gravity: 0.1,
             initLayout: 'circular',
             layoutAnimation: false,
-            friction: 0.1,
-            seed: 42  // Fixed seed for consistent initial layout
+            friction: 0.1
         },
         emphasis: {
-            focus: 'adjacency'
+            focus: 'adjacency',
+            lineStyle: {
+                width: 4,
+                color: '#ff0000'
+            }
         },
         label: {
             show: true,
@@ -123,14 +183,15 @@ const graphOption: echarts.EChartsOption = {
             formatter: '{b}'
         },
         lineStyle: {
-            curveness: 0.1
+            curveness: 0.1,
+            width: 2
         },
         select: {
             itemStyle: {
                 color: '#ff0000'
             }
         }
-    }]
+    } as GraphSeriesOption]
 };
 
 const chartDom = document.getElementById("chart-here") as HTMLElement;
@@ -145,13 +206,138 @@ chart.on('click', (params: any) => {
         onClick?.(params.data.name as PlaceName);
     }
 });
+chart.on('finished', () => {
+    // mark all nodes as fixed
+    nodes.forEach(node => {
+        node.fixed = true;
+    });
+});
 
 function App() {
     const [selectedLocation, setSelectedLocation] = useState<PlaceName | null>(null);
-    onClick = setSelectedLocation;
+    const [startPoint, setStartPoint] = useState<PlaceName | null>(null);
+    const [endPoint, setEndPoint] = useState<PlaceName | null>(null);
+    const [route, setRoute] = useState<Route | null>(null);
+
+    onClick = useCallback((placeName: PlaceName) => {
+        setSelectedLocation(placeName);
+        
+        // If start point is not set, set it
+        if (!startPoint) {
+            setStartPoint(placeName);
+            setRoute(null);
+            return;
+        }
+        
+        // If end point is not set and it's different from start, set it and calculate route
+        if (!endPoint && placeName !== startPoint) {
+            setEndPoint(placeName);
+            const newRoute = findShortestPath(startPoint, placeName, mapData);
+            setRoute(newRoute);
+            
+            // Highlight the route on the graph
+            if (newRoute) {
+                const routeEdges = new Set<string>();
+                for (let i = 0; i < newRoute.path.length - 1; i++) {
+                    routeEdges.add(`${newRoute.path[i]}-${newRoute.path[i + 1]}`);
+                }
+                
+                // Update edge styles based on whether they're part of the route
+                const updatedEdges = edges.map(edge => ({
+                    ...edge,
+                    lineStyle: {
+                        ...edge.lineStyle,
+                        color: routeEdges.has(`${edge.source}-${edge.target}`) || 
+                               routeEdges.has(`${edge.target}-${edge.source}`) 
+                               ? '#ff0000' 
+                               : edge.lineStyle.color,
+                        width: routeEdges.has(`${edge.source}-${edge.target}`) || 
+                               routeEdges.has(`${edge.target}-${edge.source}`)
+                               ? 4
+                               : edge.lineStyle.width
+                    }
+                }));
+                
+                chart.setOption({
+                    series: [{
+                        ...(graphOption.series as GraphSeriesOption[])[0],
+                        links: updatedEdges
+                    } as GraphSeriesOption]
+                });
+            }
+            return;
+        }
+        
+        // If both points are set, reset and start new route
+        setStartPoint(placeName);
+        setEndPoint(null);
+        setRoute(null);
+        
+        // Reset edge styles
+        chart.setOption({
+            series: [{
+                ...(graphOption.series as GraphSeriesOption[])[0],
+                links: edges
+            } as GraphSeriesOption]
+        });
+    }, [startPoint, endPoint]);
 
     return (
         <div>
+            <div className="mb-6 p-4 bg-gray-100 rounded">
+                <h3 className="text-lg font-semibold mb-2">Route Planning</h3>
+                <div className="flex gap-4 items-center">
+                    <div>
+                        <span className="font-medium">Start:</span> {startPoint || 'Select a location'}
+                    </div>
+                    <div>
+                        <span className="font-medium">End:</span> {endPoint || 'Select another location'}
+                    </div>
+                    {route && (
+                        <button
+                            onClick={() => {
+                                setStartPoint(null);
+                                setEndPoint(null);
+                                setRoute(null);
+                                chart.setOption({
+                                    series: [{
+                                        ...(graphOption.series as GraphSeriesOption[])[0],
+                                        links: edges
+                                    } as GraphSeriesOption]
+                                });
+                            }}
+                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Clear Route
+                        </button>
+                    )}
+                </div>
+                {route && (
+                    <div className="mt-4">
+                        <h4 className="font-medium mb-2">Route Instructions:</h4>
+                        <ol className="list-decimal list-inside space-y-1">
+                            {route.path.map((place, index) => (
+                                <li key={index} className="pl-2">
+                                    {place}
+                                    {index < route.path.length - 1 && (
+                                        <span className="text-gray-500">
+                                            {mapData.places[place].links.find(
+                                                l => l.place_name === route.path[index + 1]
+                                            )?.teleport ? ' (Teleport) ' : ' → '}
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ol>
+                        {route.containsTeleport && (
+                            <p className="mt-2 text-purple-600">
+                                This route includes teleportation points.
+                            </p>
+                        )}
+                    </div>
+                )}
+            </div>
+            
             {selectedLocation && (
                 <>
                     <h2 className="text-xl font-bold mb-4">{selectedLocation}</h2>
