@@ -240,6 +240,7 @@
 - Outer Forest
 - Flora Trail
 -> Inner Forest
+- Lesser Slimeyard
 [FT 1-3] Flora Trail:
 - Slimeyard
 [U2] Unnamed-2:
@@ -413,3 +414,50 @@
 - Cancyn Building B
 [YB] Cancyn Building B
 - Basin Path
+[SI] Lesser Slimeyard
+- Slimeyard
+- Kitty Pool
+[KP] Kitty Pool
+- Lesser Slimeyard
+- Hanging Baskrns
+[WE] White House
+- Hanging Baskrns
+[HB 1] Hanging Baskrns
+- White House
+- Kitty Pool
+- Pock House
+[PH 1] Pock House
+- Hanging Baskrns
+- Pock Bridge
+[PB] Pock Bridge
+- Pock House
+- Mensa Inc™ Elevator
+[MI] Mensa Inc™ Elevator
+- Pock Bridge
+- Ply Ruff
+- Spumoni House
+- Cray Casement
+[PY] Ply Ruff
+- Mensa Inc™ Elevator
+[PM 4] Spumoni House
+- Mensa Inc™ Elevator
+- Spumoni Hall
+- Larsic Bridge
+[CT] Cray Casement
+- Mensa Inc™ Elevator
+[PU 7] Spumoni Hall
+- Spumoni House
+[LC] Larsic Bridge
+- Spumoni House
+- Blasker Hills Inn
+[HI 9] Blasker Hills Inn
+- Larsic Bridge
+- Blasker Hills Certified Breakfast
+- Norman B. Alts Bridge
+[HC] Blasker Hills Certified Breakfast
+- Blasker Hills Inn
+[NB] Norman B. Alts Bridge
+- Blasker Hills Inn
+- Kuku Klok
+[KL 1] Kuku Klok
+- Norman B. Alts Bridge
