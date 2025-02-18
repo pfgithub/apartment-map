@@ -1,7 +1,6 @@
-import {createRoot} from "react-dom/client";
-import { useEffect, useMemo, useState, useRef } from "react";
-import Graph from "graphology";
-import ReactECharts, { type EChartsOption } from 'echarts-for-react';
+import * as echarts from 'echarts';
+import { useState } from "react";
+import { createRoot } from "react-dom/client";
 
 type PlaceName = string & {__is_place_name: true};
 type PlaceId = string & {__is_place_id: true};
@@ -89,7 +88,7 @@ Object.entries(mapData.places).forEach(([sourceName, place]) => {
     });
 });
 
-const graphOption: EChartsOption = {
+const graphOption: echarts.EChartsOption = {
     tooltip: {
         show: true,
         formatter: (params: any) => {
@@ -134,29 +133,27 @@ const graphOption: EChartsOption = {
     }]
 };
 
-function App() {
-    const [startPoint, setStartPoint] = useState<PlaceName | null>(null);
-    const [endPoint, setEndPoint] = useState<PlaceName | null>(null);
-    const [path, setPath] = useState<PlaceName[] | null>(null);
-    const [selectedLocation, setSelectedLocation] = useState<PlaceName | null>(null);
+const chartDom = document.getElementById("chart-here") as HTMLElement;
+const chart = echarts.init(chartDom);
+chart.setOption(graphOption);
+new ResizeObserver(() => {
+    chart.resize();
+}).observe(chartDom);
+let onClick: (placeName: PlaceName) => void;
+chart.on('click', (params: any) => {
+    if (params.dataType === 'node') {
+        onClick?.(params.data.name as PlaceName);
+    }
+});
 
-    const onChartClick = (params: any) => {
-        if (params.dataType === 'node') {
-            setSelectedLocation(params.data.name as PlaceName);
-        }
-    };
+function App() {
+    const [selectedLocation, setSelectedLocation] = useState<PlaceName | null>(null);
+    onClick = setSelectedLocation;
 
     return (
-        <div className="h-screen flex relative">
-            <ReactECharts
-                option={graphOption}
-                style={{ height: '100%', width: '75%' }}
-                onEvents={{
-                    click: onChartClick
-                }}
-            />
+        <div>
             {selectedLocation && (
-                <div className="w-1/4 bg-gray-100 p-4 overflow-y-auto">
+                <>
                     <h2 className="text-xl font-bold mb-4">{selectedLocation}</h2>
                     
                     {/* Calculate the different types of links */}
@@ -239,10 +236,10 @@ function App() {
                             </>
                         );
                     })()}
-                </div>
+                </>
             )}
         </div>
     );
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("react-root")!).render(<App />);
