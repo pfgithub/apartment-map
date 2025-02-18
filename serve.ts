@@ -19,5 +19,6 @@ const server = Bun.serve({
         return new Response("404", {status: 404});
     },
     port: 5566,
+    development: true,
 });
 console.log("listening at "+server.url);
