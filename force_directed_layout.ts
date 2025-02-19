@@ -13,6 +13,7 @@ type Link = {
     cost: number,
 };
 type Node = {
+    id: string,
     x: number,
     y: number,
 };
@@ -27,6 +28,7 @@ let i = 0;
 for(const [name, value] of Object.entries(sortedplaces_json)) {
     const angle = (i * 2 * Math.PI) / Object.keys(sortedplaces_json).length;
     graph.nodes[name] = {
+        id: value.id,
         x: 500 + 1000 * Math.cos(angle),
         y: 500 + 1000 * Math.sin(angle),
     };
@@ -45,6 +47,27 @@ for(const [name, value] of Object.entries(sortedplaces_json)) {
     }
     i += 1;
 }
+
+const fmtkey = (key: string) => graph.nodes[key].id;
+const graphviz = "digraph {\n" + Object.entries(graph.nodes).map(([key, value]) => {
+    return "    " + fmtkey(key) + " [label="+JSON.stringify(key)+"]\n";
+}).join("") + graph.links.map(link => {
+    // if(link.from === "Outside" || link.to === "Outside") return "";
+    // if(link.from === "Dynaway" || link.to === "Dynaway") return "";
+    // for the layout engine, it would be nice to:
+    // - ignore dynaway connections
+    // - ignore one-way connections
+    const unconstrained = link.from === "Dynaway" || link.to === "Dynaway" || link.from === "Outside" || link.to === "Outside";
+    const vals = Object.entries({
+        dir: link.bidirectional ? "none" : undefined,
+        color: unconstrained ? "lightgray" : !link.bidirectional ? "lightblue" : undefined,
+        constraint: unconstrained ? false : undefined,
+    }).filter(m => m[1] !== undefined);
+    const lmsg = vals.length > 0 ? ` [${vals.map(val => val[0] + "="+val[1]).join(",")}]` : ``;
+    return "    " + fmtkey(link.from) + " -> " + fmtkey(link.to) + lmsg + "\n";
+}).join("") + "}";
+await Bun.write("dist/graphviz.txt", graphviz);
+
 
 console.time("force layout");
 
