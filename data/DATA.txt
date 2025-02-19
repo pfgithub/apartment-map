@@ -109,14 +109,17 @@
 - Chocolate Bypass
 -> Slimeyard
 - Big Tree
+- Big Tree Lofts
 - Unnamed-2
 [BT 1-2] Big Tree:
--> Black Halls
 - Outer Forest
 - Neartown
 -> Upper Loft
 - Library
 - Night Hall
+[LE] Big Tree Lofts:
+-> Black Halls
+- Outer Forest
 [NE 1-3] Neartown:
 - Big Tree
 - Dynaway
