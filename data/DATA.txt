@@ -1,6 +1,7 @@
 [OS] Outside:
 - Front Entry
 - Cave Museum
+- Bamboo Forest
 - Dynaway
 - Backroom D
 - Dumpinggrounds
