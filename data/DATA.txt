@@ -467,12 +467,9 @@
 - Bytzer's Mystical Magical Elevator
 [YM] Bytzer's Mystical Magical Elevator
 - Kuku Landing
-- Gnorp Landing
-[GA] Gnorp Landing
 - Gnorp Lair
-- Bytzer's Mystical Magical Elevator
 [GN] Gnorp Lair
-- Gnorp Landing
+- Bytzer's Mystical Magical Elevator
 [MX] Myxtyp by Blasker
 - Blasker Hills Certified Breakfast
 [FZ] Freezer
