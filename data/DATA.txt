@@ -367,17 +367,15 @@
 - Cort Connector
 [KC] Cort Connector:
 - Mushroom Bush
-- Mycelium Train
-[MT] Mycelium Train:
-- Cort Connector
 - Porris Oaks
 [PR] Porris Oaks:
-- Mycelium Train
+- Cort Connector
 - Ice Rink
 - Steam Maze
 - Quiper Blick
 [IR] Ice Rink:
 - Porris Oaks
+- Ice Maze
 [QB] Quiper Blick:
 - Porris Oaks
 [SM] Steam Maze:
@@ -385,6 +383,7 @@
 - Ice Maze
 [IM] Ice Maze:
 - Steam Maze
+- Ice Rink
 [KH] Kurs Hause:
 - Svar Block
 [WO] Wittle Oaks:
