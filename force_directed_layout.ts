@@ -63,7 +63,7 @@ const fruchtermanLayout = new FruchtermanLayout({
 // Execute layout
 fruchtermanLayout.assign(antvGraph);
 fruchtermanLayout.stop();
-const res = fruchtermanLayout.tick(1000);
+const res = fruchtermanLayout.tick(6);
 for(const node of res.nodes) {
     graph.nodes[node.id].x = node.data.x;    
     graph.nodes[node.id].y = node.data.y;    

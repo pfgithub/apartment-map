@@ -456,8 +456,23 @@
 - Norman B. Alts Bridge
 [HC] Blasker Hills Certified Breakfast
 - Blasker Hills Inn
+- Myxtyp by Blasker
 [NB] Norman B. Alts Bridge
 - Blasker Hills Inn
 - Kuku Klok
 [KL 1] Kuku Klok
 - Norman B. Alts Bridge
+- Kuku Landing
+[KO] Kuku Landing
+- Kuku Klok
+- Bytzer's Mystical Magical Elevator
+[YM] Bytzer's Mystical Magical Elevator
+- Kuku Landing
+- Gnorp Landing
+[GA] Gnorp Landing
+- Gnorp Lair
+- Bytzer's Mystical Magical Elevator
+[GN] Gnorp Lair
+- Gnorp Landing
+[MX] Myxtyp by Blasker
+- Blasker Hills Certified Breakfast
