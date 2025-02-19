@@ -163,7 +163,6 @@
 [BB] Backroom B:
 - Gsbrick
 - Backroom A
-- Bynker Path
 [BA] Backroom A:
 - Backroom B
 - Backroom C
@@ -282,7 +281,6 @@
 - Bynker Path
 [BR] Bynker Path:
 - Koral Ankyir
-- Backroom B
 - Hollows Path
 [HP] Hollows Path
 - Bynker Path
