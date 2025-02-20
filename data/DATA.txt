@@ -1,9 +1,7 @@
 [OS] Outside:
 - Front Entry
 - Cave Museum
-- Bamboo Forest
-- Dynaway
-- Backroom D
+- Cherry Grove
 - Dumpinggrounds
 [FE 1-3] Front Entry:
 - Outside
@@ -36,7 +34,7 @@
 -> Inner Forest
 - Backroom A
 - Dumpinggrounds
-- Outside
+- Cherry Grove
 [IF 1] Inner Forest:
 - Morning Hall
 - Dumpinggrounds
@@ -132,7 +130,7 @@
 -> Sara Park
 - Neither Forest
 - Glowslabs
-- Outside
+- Backyard
 - Dynaland
 [NV] Never:
 - Sara Hall
@@ -183,7 +181,7 @@
 [BD] Backroom D:
 - Backroom A
 - Backroom E
-- Outside
+- Backyard
 [LA] Lobby Access:
 - Berry Walkway
 - Lobby F2
@@ -477,3 +475,50 @@
 [FZ] Freezer
 - Slimeyard
 - Neither Forest
+[SF] Soul Forest:
+- River
+-> Ocean
+- Cosmic Core
+- Redstone Lands
+- Hesate Land
+- Jup
+[RV] River:
+- Soul Forest
+[KM] Cosmic Core:
+- Soul Forest
+- Jafner
+[RL] Redstone Lands:
+- Soul Forest
+- Jafner
+[HL] Hesate Land
+- Soul Forest
+- Jup
+- Hictor Balsine Historic Cabin
+- Jornavie Flinch Historic Cabin
+- Eugene Blancer Historic Mines
+[JP] Jup
+- Hesate Land
+- Soul Forest
+[TB] Hictor Balsine Historic Cabin
+- Hesate Land
+[JF] Jornavie Flinch Historic Cabin
+- Hesate Land
+[EB] Eugene Blancer Historic Mines
+- Hesate Land
+[JA] Jafner
+- Cosmic Core
+- Redstone Lands
+- Botanic Garden
+[BG] Botanic Garden
+- Jafner
+[CG] Cherry Grove
+- Outside
+- Bamboo Forest
+- Backyard
+[YD] Backyard
+- Cherry Grove
+- Backroom D
+- Dynaway
+- Kepler Wood
+[KW] Kepler Wood
+- Backyard
