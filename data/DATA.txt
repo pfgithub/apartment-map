@@ -539,6 +539,7 @@
 - ☝■❒●◻●⬧🙵❒
 - Glorpis
 - Gleep Glop
+- The Table
 [SV] Sheath Vice
 - Soul Forest
 - River
@@ -558,3 +559,12 @@
 [GG] Gleep Glop
 - Muar Camp
 - Kepler Wood
+[TT] The Table
+- Muar Camp
+[VH] Souvlaki Hut
+- Cliffs Point
+- Merksmart
+[CP] Cliffs Point
+- Souvlaki Hut
+[MS] Merksmart
+- Souvlaki Hut
