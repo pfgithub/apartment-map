@@ -3,6 +3,7 @@
 - Cave Museum
 - Cherry Grove
 - Dumpinggrounds
+- River
 [FE 1-3] Front Entry:
 - Outside
 - Rose Hall
@@ -482,11 +483,21 @@
 - Redstone Lands
 - Hesate Land
 - Jup
+- Sheath Vice
 [RV] River:
 - Soul Forest
+- Outside
+- Cherry Grove
+- Kepler Wood
+- Sheath Vice
+- Boneyard
+- Cosmic Core
+- Muar Camp
 [KM] Cosmic Core:
 - Soul Forest
 - Jafner
+- Boneyard
+- River
 [RL] Redstone Lands:
 - Soul Forest
 - Jafner
@@ -515,10 +526,35 @@
 - Outside
 - Bamboo Forest
 - Backyard
+- River
 [YD] Backyard
 - Cherry Grove
 - Backroom D
 - Dynaway
+- Muar Camp
+[UC] Muar Camp
+- Backyard
+- River
+- Kepler Wood
+- ☝■❒●◻●⬧🙵❒
+- Glorpis
+- Gleep Glop
+[SV] Sheath Vice
+- Soul Forest
+- River
+[EY] Boneyard
+- Cosmic Core
+- River
 - Kepler Wood
 [KW] Kepler Wood
-- Backyard
+- Boneyard
+- River
+- Muar Camp
+- Gleep Glop
+[WD] ☝■❒●◻●⬧🙵❒
+- Muar Camp
+[GR] Glorpis
+- Muar Camp
+[GG] Gleep Glop
+- Muar Camp
+- Kepler Wood
