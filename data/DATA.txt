@@ -78,6 +78,7 @@
 - Pool
 - Cave Museum
 - Silver Washroom
+- Water2ays
 [GL 1] Gemstone Foyer L:
 - Waterways
 - Wave Road
@@ -232,6 +233,7 @@
 - Aquarius
 - Upper Barrier Path
 - Rose Hall
+- Water2ays
 [LY 1] Library:
 - Upper Barrier Path
 - Maple Grove
@@ -420,6 +422,7 @@
 [KP] Kitty Pool
 - Lesser Slimeyard
 - Hanging Baskrns
+- Water2ays
 [WE] White House
 - Hanging Baskrns
 [HB 1] Hanging Baskrns
@@ -568,3 +571,7 @@
 - Souvlaki Hut
 [MS] Merksmart
 - Souvlaki Hut
+[W2] Water2ays
+- Kitty Pool
+- Glass Hall
+- Waterways
