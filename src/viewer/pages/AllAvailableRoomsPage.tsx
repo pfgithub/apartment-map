@@ -5,7 +5,7 @@ import RoomCard from '../components/RoomCard';
 import type { Room } from '../types';
 
 const AllAvailableRoomsPage: React.FC = () => {
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
   useEffect(() => {
@@ -14,10 +14,6 @@ const AllAvailableRoomsPage: React.FC = () => {
       { label: 'All Available Rooms' }
     ]);
   }, [setBreadcrumbs]);
-
-  if (loading) return <p className="text-center py-10">Loading rooms...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
-  if (!data) return <p className="text-center py-10">No data available.</p>;
 
   const availableRooms = Object.values(data.rooms).filter(room => room.available);
 

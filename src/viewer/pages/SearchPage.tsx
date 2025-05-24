@@ -11,7 +11,7 @@ import PoiCard from '../components/PoiCard';
 const SearchPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q')?.toLowerCase() || '';
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
   useEffect(() => {
@@ -45,8 +45,6 @@ const SearchPage: React.FC = () => {
   }, [data, query]);
 
 
-  if (loading) return <p className="text-center py-10">Loading search results...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
   if (!data) return <p className="text-center py-10">No data available for search.</p>;
 
   const { buildings: filteredBuildings, halls: filteredHalls, rooms: filteredRooms, pois: filteredPOIs } = searchResults;

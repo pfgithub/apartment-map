@@ -45,12 +45,12 @@ const PoiActions: React.FC<{ poi: PointOfInterest }> = ({ poi }) => {
 
 const PointOfInterestPage: React.FC = () => {
   const { id } = useParams<{ id: PointOfInterestID }>();
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
-  const poi = data && id ? data.points_of_interest[id] : null;
-  const hall = poi ? data?.halls[poi.relations.hall as HallID] : null;
-  const building = hall ? data?.buildings[hall.relations.building] : null;
+  const poi = id ? data.points_of_interest[id] : null;
+  const hall = poi ? data.halls[poi.relations.hall as HallID] : null;
+  const building = hall ? data.buildings[hall.relations.building] : null;
 
 
   useEffect(() => {
@@ -80,9 +80,6 @@ const PointOfInterestPage: React.FC = () => {
     }
   }, [setBreadcrumbs, poi, hall, building]);
 
-
-  if (loading) return <p className="text-center py-10">Loading point of interest details...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
   if (!poi) return <p className="text-center py-10">Point of Interest not found.</p>;
 
   return (

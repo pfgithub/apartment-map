@@ -42,11 +42,11 @@ const HallActions: React.FC<{ hall: Hall }> = ({ hall }) => {
 
 const HallPage: React.FC = () => {
   const { id } = useParams<{ id: HallID }>();
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
-  const hall = data && id ? data.halls[id] : null;
-  const building = hall ? data?.buildings[hall.relations.building as BuildingID] : null;
+  const hall = id ? data.halls[id] : null;
+  const building = hall ? data.buildings[hall.relations.building as BuildingID] : null;
 
   useEffect(() => {
     if (hall && building) {
@@ -67,8 +67,6 @@ const HallPage: React.FC = () => {
     }
   }, [setBreadcrumbs, hall, building]);
 
-  if (loading) return <p className="text-center py-10">Loading hall details...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
   if (!hall) return <p className="text-center py-10">Hall not found.</p>;
 
   const poisInHall = data ? Object.values(data.points_of_interest).filter(poi => poi.relations.hall === id) : [];
@@ -97,7 +95,7 @@ const HallPage: React.FC = () => {
           {hall.relations.rooms.length > 0 ? (
             <ul className="space-y-3">
               {hall.relations.rooms.map(roomId => {
-                const room = data?.rooms[roomId as RoomID];
+                const room = data.rooms[roomId as RoomID];
                 return room ? (
                   <li key={roomId} className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors border border-gray-200">
                     <Link to={`/rooms/${room.id}`} className="text-sky-600 hover:underline font-medium">{room.name}</Link>
@@ -130,7 +128,7 @@ const HallPage: React.FC = () => {
         {hall.relations.connections.length > 0 ? (
           <ul className="space-y-3">
             {hall.relations.connections.map(connId => {
-              const connection = data?.connections[connId as ConnectionID];
+              const connection = data.connections[connId as ConnectionID];
               if (!connection || connection.relations.from !== id) return null;
               const toHall = data.halls[connection.relations.to as HallID];
               return toHall ? (

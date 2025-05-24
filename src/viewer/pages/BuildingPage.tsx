@@ -7,10 +7,10 @@ import type { BuildingID, HallID } from '../types';
 
 const BuildingPage: React.FC = () => {
   const { id } = useParams<{ id: BuildingID }>();
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
-  const building = data && id ? data.buildings[id] : null;
+  const building = id ? data.buildings[id] : null;
 
   useEffect(() => {
     if (building) {
@@ -27,9 +27,6 @@ const BuildingPage: React.FC = () => {
     }
   }, [setBreadcrumbs, building]);
 
-
-  if (loading) return <p className="text-center py-10">Loading building details...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
   if (!building) return <p className="text-center py-10">Building not found.</p>;
 
 
@@ -50,7 +47,7 @@ const BuildingPage: React.FC = () => {
         {building.relations.halls.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {building.relations.halls.map(hallId => {
-              const hall = data?.halls[hallId as HallID];
+              const hall = data.halls[hallId as HallID];
               return hall ? (
                 <Link 
                   key={hallId} 

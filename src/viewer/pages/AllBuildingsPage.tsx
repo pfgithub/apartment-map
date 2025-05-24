@@ -5,7 +5,7 @@ import BuildingCard from '../components/BuildingCard';
 import type { Building } from '../types';
 
 const AllBuildingsPage: React.FC = () => {
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
   useEffect(() => {
@@ -15,8 +15,6 @@ const AllBuildingsPage: React.FC = () => {
     ]);
   }, [setBreadcrumbs]);
 
-  if (loading) return <p className="text-center py-10">Loading buildings...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
   if (!data) return <p className="text-center py-10">No data available.</p>;
 
   const allBuildings = Object.values(data.buildings);

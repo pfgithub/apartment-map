@@ -48,7 +48,7 @@ function CarouselSection<T>({ title, items, renderItem, viewAllLink, viewAllText
 }
 
 const HomePage: React.FC = () => {
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
   useEffect(() => {
@@ -56,29 +56,25 @@ const HomePage: React.FC = () => {
   }, [setBreadcrumbs]);
 
   const shuffledAvailableRooms = useMemo(() => {
-    if (!data?.rooms) return [];
+    if (!data.rooms) return [];
     return shuffleArray(Object.values(data.rooms).filter(room => room.available));
   }, [data]);
 
   const shuffledHalls = useMemo(() => {
-    if (!data?.halls) return [];
+    if (!data.halls) return [];
     return shuffleArray(Object.values(data.halls));
   }, [data]);
 
   const shuffledPois = useMemo(() => {
-    if (!data?.points_of_interest) return [];
+    if (!data.points_of_interest) return [];
     return shuffleArray(Object.values(data.points_of_interest));
   }, [data]);
 
   const allBuildings = useMemo(() => {
-    if (!data?.buildings) return [];
+    if (!data.buildings) return [];
     // Sort buildings by name for consistent display, or shuffle if preferred
     return Object.values(data.buildings).sort((a, b) => a.name.localeCompare(b.name));
   }, [data]);
-
-  if (loading) return <div className="text-center py-20"><div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 mx-auto"></div><p className="text-gray-500">Loading homepage...</p></div>; // Basic spinner
-  if (error) return <p className="text-center py-10 text-red-600 bg-red-100 p-4 rounded-md">Error loading data: {error.message}. Please try refreshing the page.</p>;
-  if (!data) return <p className="text-center py-10 text-gray-600">No data available to display.</p>;
 
   return (
     <div className="space-y-10">

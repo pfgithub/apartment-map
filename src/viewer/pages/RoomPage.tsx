@@ -73,12 +73,12 @@ const RoomActions: React.FC<{ room: Room }> = ({ room }) => {
 
 const RoomPage: React.FC = () => {
   const { id } = useParams<{ id: RoomID }>();
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
-  const room = data && id ? data.rooms[id] : null;
-  const hall = room ? data?.halls[room.relations.hall as HallID] : null;
-  const building = hall ? data?.buildings[hall.relations.building] : null;
+  const room = id ? data.rooms[id] : null;
+  const hall = room ? data.halls[room.relations.hall as HallID] : null;
+  const building = hall ? data.buildings[hall.relations.building] : null;
 
   useEffect(() => {
     if (room && hall && building) {
@@ -107,9 +107,6 @@ const RoomPage: React.FC = () => {
     }
   }, [setBreadcrumbs, room, hall, building]);
 
-
-  if (loading) return <p className="text-center py-10">Loading room details...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
   if (!room) return <p className="text-center py-10">Room not found.</p>;
 
   return (

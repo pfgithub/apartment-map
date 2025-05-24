@@ -5,7 +5,7 @@ import HallCard from '../components/HallCard';
 import type { Hall } from '../types';
 
 const AllHallsPage: React.FC = () => {
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
   useEffect(() => {
@@ -14,10 +14,6 @@ const AllHallsPage: React.FC = () => {
       { label: 'All Halls' }
     ]);
   }, [setBreadcrumbs]);
-
-  if (loading) return <p className="text-center py-10">Loading halls...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
-  if (!data) return <p className="text-center py-10">No data available.</p>;
 
   const allHalls = Object.values(data.halls);
 

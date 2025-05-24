@@ -5,7 +5,7 @@ import PoiCard from '../components/PoiCard';
 import type { PointOfInterest } from '../types';
 
 const AllPoisPage: React.FC = () => {
-  const { data, loading, error } = useData();
+  const { data } = useData();
   const { setBreadcrumbs } = useRoute();
 
   useEffect(() => {
@@ -14,10 +14,6 @@ const AllPoisPage: React.FC = () => {
       { label: 'All Points of Interest' }
     ]);
   }, [setBreadcrumbs]);
-
-  if (loading) return <p className="text-center py-10">Loading points of interest...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
-  if (!data) return <p className="text-center py-10">No data available.</p>;
 
   const allPois = Object.values(data.points_of_interest);
 

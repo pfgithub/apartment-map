@@ -2,9 +2,7 @@ import React, { createContext, useContext, useState, useEffect, type ReactNode }
 import type { Root } from '../types';
 
 interface DataContextType {
-  data: Root | null;
-  loading: boolean;
-  error: Error | null;
+  data: Root;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -33,8 +31,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchData();
   }, []);
 
+  if (loading) return <p className="text-center py-10">Loading...</p>;
+  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
+  if (!data) return <p className="text-center py-10">No data available.</p>;
+
   return (
-    <DataContext.Provider value={{ data, loading, error }}>
+    <DataContext.Provider value={{ data }}>
       {children}
     </DataContext.Provider>
   );
