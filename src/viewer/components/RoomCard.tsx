@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Room, Hall } from '../types';
+import type { Room } from '../types';
 import ImageDisplay from './ImageDisplay';
 
 interface RoomCardProps {

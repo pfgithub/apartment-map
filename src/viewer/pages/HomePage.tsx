@@ -1,7 +1,7 @@
 import React from 'react';
 import { useData } from '../contexts/DataContext';
 import RoomCard from '../components/RoomCard';
-import { Room, HallID } from '../types';
+import type { Room, HallID } from '../types';
 
 const HomePage: React.FC = () => {
   const { data, loading, error } = useData();
