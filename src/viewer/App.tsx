@@ -14,7 +14,8 @@ import SearchPage from './pages/SearchPage.tsx';
 import AllAvailableRoomsPage from './pages/AllAvailableRoomsPage.tsx';
 import AllHallsPage from './pages/AllHallsPage.tsx';
 import AllPoisPage from './pages/AllPoisPage.tsx';
-import AllBuildingsPage from './pages/AllBuildingsPage.tsx'; // Import the new page
+import AllBuildingsPage from './pages/AllBuildingsPage.tsx';
+import MapPage from './pages/MapPage.tsx'; // Import the new MapPage
 
 const App: React.FC = () => {
   return (
@@ -33,7 +34,8 @@ const App: React.FC = () => {
               <Route path="all-available-rooms" element={<AllAvailableRoomsPage />} />
               <Route path="all-halls" element={<AllHallsPage />} />
               <Route path="all-pois" element={<AllPoisPage />} />
-              <Route path="all-buildings" element={<AllBuildingsPage />} /> {/* Add new route */}
+              <Route path="all-buildings" element={<AllBuildingsPage />} />
+              <Route path="map" element={<MapPage />} />
               
               <Route path="*" element={<div className="text-center py-10"><h2>404: Page Not Found</h2></div>} />
             </Route>

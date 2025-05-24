@@ -27,10 +27,11 @@ const Header: React.FC = () => {
         
         <nav className="space-x-3 sm:space-x-4 text-sm sm:text-base mt-2 sm:mt-0 order-last sm:order-none w-full sm:w-auto flex justify-center sm:justify-start flex-wrap">
           <Link to="/" className="hover:text-sky-200 transition-colors">Home</Link>
-          <Link to="/all-buildings" className="hover:text-sky-200 transition-colors">Buildings</Link> {/* Add new link */}
+          <Link to="/all-buildings" className="hover:text-sky-200 transition-colors">Buildings</Link>
           <Link to="/all-available-rooms" className="hover:text-sky-200 transition-colors">Rooms</Link>
           <Link to="/all-halls" className="hover:text-sky-200 transition-colors">Halls</Link>
           <Link to="/all-pois" className="hover:text-sky-200 transition-colors">POIs</Link>
+          <Link to="/map" className="hover:text-sky-200 transition-colors">Map</Link>
         </nav>
 
         <form onSubmit={handleSearch} className="mt-3 sm:mt-0 flex w-full sm:w-auto max-w-xs sm:max-w-sm">
