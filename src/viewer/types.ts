@@ -74,17 +74,3 @@ export type PointOfInterest = {
     }
 };
 export type Image = {url: string, alt: string, width: number, height: number};
-
-/*
-Based on the data, create a web application to browse halls and rooms. Fetch the data from /root.json. Use tailwind CSS for styling.
-
-The app should have:
-
-    A homepage where you can browse the available rooms
-
-    Individual pages for each room, hall, building, and point of interest
-
-    Search to find a room, hall, building, or point of interest
-
-    Navigation to get directions from any hall to a different hall
-*/

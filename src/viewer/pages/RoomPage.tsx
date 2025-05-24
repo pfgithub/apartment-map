@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import ImageDisplay from '../components/ImageDisplay';
-import { RoomID, HallID } from '../types';
+import type { RoomID, HallID } from '../types';
 
 const RoomPage: React.FC = () => {
   const { id } = useParams<{ id: RoomID }>();
