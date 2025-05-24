@@ -141,7 +141,7 @@
 - Dynaway
 [DY 1] Dynaland:
 - Dynaway
-[BY 2] Byth:
+[BY 1-2] Byth:
 - Dynaway
 - Sara Hall
 - Vychute
@@ -443,18 +443,18 @@
 - Cray Casement
 [PY] Ply Ruff
 - Mensa Inc™ Elevator
-[PM 4] Spumoni House
+[PM 1-4] Spumoni House
 - Mensa Inc™ Elevator
 - Spumoni Hall
 - Larsic Bridge
 [CT] Cray Casement
 - Mensa Inc™ Elevator
-[PU 7] Spumoni Hall
+[PU 1-7] Spumoni Hall
 - Spumoni House
 [LC] Larsic Bridge
 - Spumoni House
 - Blasker Hills Inn
-[HI 9] Blasker Hills Inn
+[HI 1-9] Blasker Hills Inn
 - Larsic Bridge
 - Blasker Hills Certified Breakfast
 - Norman B. Alts Bridge

@@ -5,6 +5,7 @@
 
 import data from "../data/DATA.txt" with {type: "text"};
 import type { PlannerConnection, PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
+import type { BuildingID, ConnectionID, HallID, RoomID, Root } from "./viewer/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
 type Link = {
@@ -14,6 +15,7 @@ type Link = {
 };
 type Place = {
     id: string,
+    matchnum: string,
     links: Link[],
     backlinks: string[],
 };
@@ -46,6 +48,7 @@ for(const line of lines) {
         used_tlid_set.add(tlid);
         thisplace = {
             id: tlid,
+            matchnum: matchnumsplit.slice(1).join(" "),
             links: [],
             backlinks: [],
         };
@@ -82,8 +85,8 @@ for(const [self_name, place] of places.entries()) {
     }).sort().join(",");
     places_strs.push(res);
 }
-console.log("Places ("+places_strs.length+"):");
-for(const place of places_strs.sort()) console.log(place);
+// console.log("Places ("+places_strs.length+"):");
+// for(const place of places_strs.sort()) console.log(place);
 if(one_ways.size > 0) {
     console.log("One way connections ("+one_ways.size+"):");
     for(const mb of one_ways.values()) console.log("- "+mb);
@@ -376,11 +379,14 @@ export const planner_graph: PlannerGraph = {
     places: {},
     routes: [],
 };
+const getPlaceForName = (name: string): Place => {
+    return sortedplaces.find(p => p[0] === name)![1];
+}
 const getIdForName = (name: string): PlannerPlaceShortcode => {
     return sortedplaces.find(p => p[0] === name)![1].id as PlannerPlaceShortcode;
 }
 for(const node of res_graph.nodes) {
-    planner_graph.places[getIdForName(node.id)] = {title: node.id};
+    planner_graph.places[getIdForName(node.id)] = {title: node.id, num_rooms: getPlaceForName(node.id).matchnum};
 }
 for(const conn of res_graph.links) {
     const route: PlannerConnection = {from: getIdForName(conn.source), to: getIdForName(conn.target), seconds: conn.value};
@@ -393,6 +399,106 @@ for(const conn of res_graph.links) {
     planner_graph.routes.push(route);
 }
 export const dgdata = planner_graph.routes.map(link => link.from + " " + link.to).join("\n");
+
+export const newdata: Root = {
+    buildings: {
+        ["apts" as BuildingID]: {
+            id: "apts" as BuildingID,
+            description: "Appts, Swites, Inc.",
+            image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+
+            relations: {halls: []},
+        },
+        ["outside" as BuildingID]: {
+            id: "outside" as BuildingID,
+            description: "No description.",
+            image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+
+            relations: {halls: []},
+        },
+        ["paths" as BuildingID]: {
+            id: "paths" as BuildingID,
+            description: "No description.",
+            image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+
+            relations: {halls: []},
+        },
+    },
+    halls: {},
+    connections: {},
+    rooms: {},
+    points_of_interest: {},
+};
+function addRoom(id: HallID, room_num: number) {
+    const room_id = (id + "-" + room_num) as RoomID;
+    newdata.rooms[room_id] = {
+        id: room_id,
+        name: room_id,
+        description: "No description",
+        image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+
+        price: 100,
+        available: true,
+        layout: {
+            bedrooms: 1,
+            bathrooms: 0,
+            has_balcony: false,
+            has_kitchen: false,
+            has_window: false,
+        },
+        relations: {
+            hall: id,
+        }
+    };
+    newdata.halls[id].relations.rooms.push(room_id);
+}
+for(const [id, data] of Object.entries(planner_graph.places)) {
+    newdata.halls[id as HallID] = {
+        id: id as HallID,
+        name: data.title,
+        description: "No description.",
+        image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+
+        relations: {
+            building: "apts" as BuildingID,
+            rooms: [],
+            connections: [],
+            reverse_connections: [],
+        },
+    };
+    newdata.buildings["apts" as BuildingID].relations.halls.push(id as HallID);
+    if(data.num_rooms === "") {
+        // nothing to do
+    }else if(data.num_rooms === "1") {
+        addRoom(id as HallID, 1);
+    }else{
+        const dsplit = data.num_rooms.split("-").map(q => +q);
+        if(dsplit.length === 2){
+            for(let i = dsplit[0]; i <= dsplit[1]; i++) {
+                addRoom(id as HallID, i);
+            }
+        }else{
+            console.log("failed to parse num_rooms: "+data.num_rooms);
+        }
+    }
+}
+for(const conn of planner_graph.routes) {
+    const conn_id = (conn.from + "-" + conn.to) as ConnectionID;
+    newdata.connections[conn_id] = {
+        id: conn_id,
+        name: conn_id,
+        seconds: conn.seconds,
+        relations: {
+            from: conn.from as string as HallID,
+            to: conn.to as string as HallID,
+        },
+    };
+    newdata.halls[conn.from as string as HallID].relations.connections.push(conn_id);
+    newdata.halls[conn.to as string as HallID].relations.reverse_connections.push(conn_id);
+}
+/*
+Add the ability to edit names, descriptions, and images. Images should be uploaded to bunny cdn for delivery.
+*/
 
 if(import.meta.main) {
     await Bun.write("dist/cmd", rescmd, {createPath: true});
