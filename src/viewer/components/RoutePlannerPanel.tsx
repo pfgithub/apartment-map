@@ -1,6 +1,6 @@
 // src/viewer/components/RoutePlannerPanel.tsx
-import React, { useState, useMemo } from 'react';
-import { useRoute, type RouteItem } from '../contexts/RouteContext';
+import React, { useState, useMemo, useCallback } from 'react'; // Added useCallback
+import { useRoute, type RouteItem, type PathSegmentForMap } from '../contexts/RouteContext'; // Updated import
 import { useData } from '../contexts/DataContext';
 import { findShortestPath, type PathResult } from '../utils/pathfinding';
 import type { HallID, RoomID, PointOfInterestID, Root } from '../types';
@@ -24,7 +24,13 @@ interface ItemDetail {
 }
 
 const RoutePlannerPanel: React.FC = () => {
-  const { routeItems, removeItemFromRoute, reorderItemsInRoute, clearRoute } = useRoute();
+  const { 
+    routeItems, 
+    removeItemFromRoute, 
+    reorderItemsInRoute, 
+    clearRoute, 
+    setCalculatedRouteSegmentsForMap // Get the setter from context
+  } = useRoute();
   const { data } = useData();
   const [directions, setDirections] = useState<RouteSegmentResult[] | null>(null);
   const [showPanel, setShowPanel] = useState(false);
@@ -63,6 +69,22 @@ const RoutePlannerPanel: React.FC = () => {
     return undefined;
   };
 
+  const handleClearRouteAndHighlights = useCallback(() => {
+    clearRoute(); // from context, already clears map highlights
+    setDirections(null);
+  }, [clearRoute]);
+
+  const handleItemRemovalAndHighlights = useCallback((item: RouteItem) => {
+    removeItemFromRoute(item); // from context, already clears map highlights
+    setDirections(null);
+  }, [removeItemFromRoute]);
+
+  const handleReorderAndHighlights = useCallback((newRouteItems: RouteItem[]) => {
+    reorderItemsInRoute(newRouteItems); // from context, already clears map highlights
+    setDirections(null);
+  }, [reorderItemsInRoute]);
+
+
   const handleMove = (index: number, direction: 'up' | 'down') => {
     if (direction === 'up' && index === 0) return;
     if (direction === 'down' && index === routeItems.length - 1) return;
@@ -71,13 +93,13 @@ const RoutePlannerPanel: React.FC = () => {
     const itemToMove = newRouteItems.splice(index, 1)[0];
     const newIndex = direction === 'up' ? index - 1 : index + 1;
     newRouteItems.splice(newIndex, 0, itemToMove);
-    reorderItemsInRoute(newRouteItems);
-    setDirections(null);
+    handleReorderAndHighlights(newRouteItems);
   };
 
   const handleCalculateRoute = () => {
     if (!data || routeItems.length < 2) {
       setDirections([]);
+      setCalculatedRouteSegmentsForMap(null); // Clear map highlights
       return;
     }
 
@@ -127,6 +149,16 @@ const RoutePlannerPanel: React.FC = () => {
       });
     }
     setDirections(newDirections);
+
+    // Update context for map visualization
+    if (newDirections.length > 0) {
+      const routeSegmentsForMap: PathSegmentForMap[] = newDirections
+        .map(segment => segment.pathResult ? { path: segment.pathResult.path } : null)
+        .filter((segment): segment is PathSegmentForMap => segment !== null && segment.path.length > 0);
+      setCalculatedRouteSegmentsForMap(routeSegmentsForMap.length > 0 ? routeSegmentsForMap : null);
+    } else {
+      setCalculatedRouteSegmentsForMap(null);
+    }
   };
 
   const totalRouteTime = useMemo(() => {
@@ -193,7 +225,7 @@ const RoutePlannerPanel: React.FC = () => {
                         <DownIcon />
                       </button>
                       <button
-                        onClick={() => { removeItemFromRoute(item); setDirections(null); }}
+                        onClick={() => handleItemRemovalAndHighlights(item) }
                         className="text-red-400 hover:text-red-300 p-1 hover:bg-gray-600 rounded"
                         title="Remove"
                       >
@@ -213,7 +245,7 @@ const RoutePlannerPanel: React.FC = () => {
                 Get Directions
               </button>
               <button
-                onClick={() => { clearRoute(); setDirections(null); }}
+                onClick={handleClearRouteAndHighlights}
                 className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded transition-colors"
               >
                 Clear Route
@@ -237,7 +269,7 @@ const RoutePlannerPanel: React.FC = () => {
                     <>
                       {segment.pathResult.path.length > 1 && (
                         <p className="text-xs text-gray-300 mt-1">
-                          Route: {segment.pathResult.path.map(pid => data.halls[pid]?.name || pid.substring(0, 6)).join(' → ')}
+                          Route: {segment.pathResult.path.map(pid => data.halls[pid]?.name || pid.substring(0, 6)).join(' â†’ ')}
                         </p>
                       )}
                       <p className="text-xs text-green-400 mt-0.5">Time: {segment.pathResult.totalSeconds} seconds</p>

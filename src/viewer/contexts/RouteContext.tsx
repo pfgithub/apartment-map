@@ -12,6 +12,11 @@ export interface Breadcrumb {
   link?: string;
 }
 
+// New interface for map visualization
+export interface PathSegmentForMap {
+  path: HallID[]; // Sequence of hall IDs for this segment
+}
+
 interface RouteContextType {
   routeItems: RouteItem[];
   addItemToRoute: (item: RouteItem) => void;
@@ -19,15 +24,18 @@ interface RouteContextType {
   isItemInRoute: (item: RouteItem) => boolean;
   reorderItemsInRoute: (newOrder: RouteItem[]) => void;
   clearRoute: () => void;
-  breadcrumbs: Breadcrumb[]; // Added for breadcrumbs
-  setBreadcrumbs: (breadcrumbs: Breadcrumb[]) => void; // Added for breadcrumbs
+  breadcrumbs: Breadcrumb[];
+  setBreadcrumbs: (breadcrumbs: Breadcrumb[]) => void;
+  calculatedRouteSegmentsForMap: PathSegmentForMap[] | null; // New state for map
+  setCalculatedRouteSegmentsForMap: (segments: PathSegmentForMap[] | null) => void; // New setter for map
 }
 
 const RouteContext = createContext<RouteContextType | undefined>(undefined);
 
 export const RouteProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [routeItems, setRouteItems] = useState<RouteItem[]>([]);
-  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]); // State for breadcrumbs
+  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+  const [calculatedRouteSegmentsForMap, setCalculatedRouteSegmentsForMap] = useState<PathSegmentForMap[] | null>(null); // New state
 
   const addItemToRoute = useCallback((itemToAdd: RouteItem) => {
     setRouteItems(prevItems => {
@@ -40,6 +48,7 @@ export const RouteProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const removeItemFromRoute = useCallback((itemToRemove: RouteItem) => {
     setRouteItems(prevItems => prevItems.filter(item => !(item.id === itemToRemove.id && item.type === itemToRemove.type)));
+    setCalculatedRouteSegmentsForMap(null); // Clear map highlights if route changes
   }, []);
 
   const isItemInRoute = useCallback((itemToCheck: RouteItem) => {
@@ -48,20 +57,27 @@ export const RouteProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const reorderItemsInRoute = useCallback((newOrder: RouteItem[]) => {
     setRouteItems(newOrder);
+    setCalculatedRouteSegmentsForMap(null); // Clear map highlights if route changes
   }, []);
 
   const clearRoute = useCallback(() => {
     setRouteItems([]);
+    setCalculatedRouteSegmentsForMap(null); // Clear map highlights
   }, []);
 
   const handleSetBreadcrumbs = useCallback((newBreadcrumbs: Breadcrumb[]) => {
     setBreadcrumbs(newBreadcrumbs);
   }, []);
 
+  const handleSetCalculatedRouteSegmentsForMap = useCallback((segments: PathSegmentForMap[] | null) => {
+    setCalculatedRouteSegmentsForMap(segments);
+  }, []);
+
   return (
     <RouteContext.Provider value={{ 
       routeItems, addItemToRoute, removeItemFromRoute, isItemInRoute, reorderItemsInRoute, clearRoute,
-      breadcrumbs, setBreadcrumbs: handleSetBreadcrumbs // Provide breadcrumb state and setter
+      breadcrumbs, setBreadcrumbs: handleSetBreadcrumbs,
+      calculatedRouteSegmentsForMap, setCalculatedRouteSegmentsForMap: handleSetCalculatedRouteSegmentsForMap // Provide new state and setter
     }}>
       {children}
     </RouteContext.Provider>
