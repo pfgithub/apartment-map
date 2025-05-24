@@ -1,10 +1,10 @@
-export type PlannerPlaceID = string & {__is_planner_node_id: true};
+export type PlannerPlaceShortcode = string & {__is_planner_shortcode: true};
 export type PlannerPlace = {
-    name: string,
+    title: string,
 };
 export type PlannerConnection = {
-    from: PlannerPlaceID,
-    to: PlannerPlaceID,
+    from: PlannerPlaceShortcode,
+    to: PlannerPlaceShortcode,
     seconds: number,
 };
 export type PlannerGraph = {

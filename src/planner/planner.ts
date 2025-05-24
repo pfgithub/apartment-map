@@ -251,7 +251,7 @@ function loadWaypointsFromUrl() {
 {
     // 1. Preprocess data
     Object.keys(data.places).forEach(id => {
-        nodeNames[id] = data.places[id].name;
+        nodeNames[id] = data.places[id].title;
         if (!adjacencyList[id]) adjacencyList[id] = [];
     });
     data.routes.forEach(conn => {

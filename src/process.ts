@@ -4,7 +4,7 @@
 // - everything should fit
 
 import data from "../data/DATA.txt" with {type: "text"};
-import type { PlannerGraph, PlannerPlaceID } from "./planner/types";
+import type { PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
 type Link = {
@@ -376,11 +376,11 @@ export const planner_graph: PlannerGraph = {
     places: {},
     routes: [],
 };
-const getIdForName = (name: string): PlannerPlaceID => {
-    return sortedplaces.find(p => p[0] === name)![1].id as PlannerPlaceID;
+const getIdForName = (name: string): PlannerPlaceShortcode => {
+    return sortedplaces.find(p => p[0] === name)![1].id as PlannerPlaceShortcode;
 }
 for(const node of res_graph.nodes) {
-    planner_graph.places[getIdForName(node.id)] = {name: node.id};
+    planner_graph.places[getIdForName(node.id)] = {title: node.id};
 }
 for(const conn of res_graph.links) {
     planner_graph.routes.push({from: getIdForName(conn.source), to: getIdForName(conn.target), seconds: conn.value});
