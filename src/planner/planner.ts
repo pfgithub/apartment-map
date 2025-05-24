@@ -17,23 +17,23 @@ function dijkstra(startNodeId: string, endNodeId: string): { path: string[] | nu
         prev[nodeId] = null;
         pq.add(nodeId);
     }
-    // Ensure startNodeId and endNodeId are in the graph from adjacencyList keys
-    if (!(startNodeId in adjacencyList)) { // or nodeNames to cover isolated nodes
-         // console.warn(`Start node ${startNodeId} not in graph for Dijkstra.`);
+    if (!(startNodeId in adjacencyList)) {
+        // console.warn(`Start node ${startNodeId} not in graph for Dijkstra.`);
     }
     distances[startNodeId] = 0;
 
 
     while (pq.size > 0) {
         let u: string | null = null;
+        // Find node with smallest distance in pq
         for (const nodeId of pq) {
             if (u === null || distances[nodeId] < distances[u!]) {
                 u = nodeId;
             }
         }
 
-        if (u === null || distances[u] === Infinity) break;
-        if (u === endNodeId) break;
+        if (u === null || distances[u] === Infinity) break; // All remaining nodes are inaccessible
+        if (u === endNodeId) break; // Reached destination
 
         pq.delete(u);
 
@@ -48,7 +48,7 @@ function dijkstra(startNodeId: string, endNodeId: string): { path: string[] | nu
 
     const path: string[] = [];
     let current: string | null = endNodeId;
-    if (prev[current] !== null || current === startNodeId) {
+    if (prev[current] !== null || current === startNodeId) { // Check if path exists
         while (current !== null) {
             path.unshift(current);
             current = prev[current];
@@ -68,7 +68,7 @@ const waypointsContainer = document.getElementById('waypoints-container') as HTM
 
 function populateSelect(selectElement: HTMLSelectElement) {
     selectElement.innerHTML = '<option value="">-- Select Location --</option>';
-    Object.keys(nodeNames).sort((a, b) => nodeNames[a].localeCompare(nodeNames[b])).forEach(nodeId => { // Sort names alphabetically
+    Object.keys(nodeNames).sort((a, b) => nodeNames[a].localeCompare(nodeNames[b])).forEach(nodeId => {
         const option = document.createElement('option');
         option.value = nodeId;
         option.textContent = nodeNames[nodeId];
@@ -84,11 +84,14 @@ function createWaypointElement(valueToSelect = ''): HTMLDivElement {
     select.className = 'waypoint-select mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm';
     populateSelect(select);
     if (valueToSelect) {
-        select.value = valueToSelect;
+        select.value = valueToSelect; // If valueToSelect is not a valid option, it defaults to the first one
     }
+    select.onchange = () => {
+        updateUrlWithWaypoints();
+    };
 
     const controlsDiv = document.createElement('div');
-    controlsDiv.className = 'waypoint-controls flex space-x-1 flex-shrink-0'; // flex-shrink-0 to prevent buttons from shrinking
+    controlsDiv.className = 'waypoint-controls flex space-x-1 flex-shrink-0';
 
     const moveUpBtn = document.createElement('button');
     moveUpBtn.type = "button";
@@ -99,6 +102,7 @@ function createWaypointElement(valueToSelect = ''): HTMLDivElement {
         if (waypointDiv.parentNode && waypointDiv.previousElementSibling) {
             waypointDiv.parentNode.insertBefore(waypointDiv, waypointDiv.previousElementSibling);
             updateWaypointControls();
+            updateUrlWithWaypoints();
         }
     };
 
@@ -111,6 +115,7 @@ function createWaypointElement(valueToSelect = ''): HTMLDivElement {
         if (waypointDiv.parentNode && waypointDiv.nextElementSibling) {
             waypointDiv.parentNode.insertBefore(waypointDiv.nextElementSibling, waypointDiv);
             updateWaypointControls();
+            updateUrlWithWaypoints();
         }
     };
 
@@ -122,6 +127,7 @@ function createWaypointElement(valueToSelect = ''): HTMLDivElement {
         if (waypointsContainer && waypointsContainer.children.length > 2) {
             waypointDiv.remove();
             updateWaypointControls();
+            updateUrlWithWaypoints();
         }
     };
 
@@ -139,6 +145,7 @@ function addWaypointToContainer() {
         const newWaypointElement = createWaypointElement();
         waypointsContainer.appendChild(newWaypointElement);
         updateWaypointControls();
+        updateUrlWithWaypoints();
     }
 }
 
@@ -153,12 +160,12 @@ function updateWaypointControls() {
 
         if (!select || !moveUpBtn || !moveDownBtn || !removeBtn) return;
 
-        if (select.options.length > 0) { // Ensure default option exists
+        if (select.options.length > 0 && select.options[0]) {
             if (items.length === 2) {
                 if (index === 0) select.options[0].textContent = '-- Start Location --';
                 else if (index === 1) select.options[0].textContent = '-- End Location --';
             } else {
-                select.options[0].textContent = '-- Select Location --';
+                 select.options[0].textContent = '-- Select Location --';
             }
         }
         
@@ -168,22 +175,21 @@ function updateWaypointControls() {
     });
 }
 
-
 function displayResults(pathNodeIds: string[], totalCost: number) {
     const resultsDiv = document.getElementById('results-container') as HTMLDivElement;
     const pathP = document.getElementById('route-path') as HTMLParagraphElement;
     const costP = document.getElementById('route-cost') as HTMLParagraphElement;
     const errorP = document.getElementById('error-message') as HTMLParagraphElement;
 
-    errorP.textContent = '';
+    if (errorP) errorP.textContent = '';
     if (pathNodeIds && pathNodeIds.length > 0) {
-        pathP.textContent = `Path: ${pathNodeIds.map(id => nodeNames[id] || 'Unknown').join(' → ')}`;
-        costP.textContent = `Total Cost: ${totalCost.toFixed(2)}`;
+        if (pathP) pathP.textContent = `Path: ${pathNodeIds.map(id => nodeNames[id] || 'Unknown').join(' → ')}`;
+        if (costP) costP.textContent = `Total Cost: ${totalCost.toFixed(2)}`;
     } else {
-        pathP.textContent = '';
-        costP.textContent = '';
+        if (pathP) pathP.textContent = '';
+        if (costP) costP.textContent = '';
     }
-    resultsDiv.classList.remove('hidden');
+    if (resultsDiv) resultsDiv.classList.remove('hidden');
 }
 
 function displayError(message: string) {
@@ -192,10 +198,53 @@ function displayError(message: string) {
     const costP = document.getElementById('route-cost') as HTMLParagraphElement;
     const errorP = document.getElementById('error-message') as HTMLParagraphElement;
 
-    pathP.textContent = '';
-    costP.textContent = '';
-    errorP.textContent = `Error: ${message}`;
-    resultsDiv.classList.remove('hidden');
+    if (pathP) pathP.textContent = '';
+    if (costP) costP.textContent = '';
+    if (errorP) errorP.textContent = `Error: ${message}`;
+    if (resultsDiv) resultsDiv.classList.remove('hidden');
+}
+
+// --- URL Persistence Functions ---
+function updateUrlWithWaypoints() {
+    if (!waypointsContainer) return;
+
+    const waypointSelects = Array.from(waypointsContainer.querySelectorAll('.waypoint-select')) as HTMLSelectElement[];
+    const waypointIds = waypointSelects.map(select => select.value);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('waypoints', waypointIds.join('-')); // Will create "id1,id2" or "id1," or ",id2" or ","
+
+    const newQueryString = params.toString();
+    // Only push new state if the query string actually changes
+    if (window.location.search.substring(1) !== newQueryString) {
+         history.replaceState(null, '', window.location.pathname + (newQueryString ? '?' + newQueryString : ''));
+    }
+}
+
+function loadWaypointsFromUrl() {
+    if (!waypointsContainer) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const waypointsParam = params.get('waypoints');
+    let initialWaypointIds: string[] = [];
+
+    if (waypointsParam !== null) { // Check for null, as an empty string (e.g. ?waypoints=) is valid
+        initialWaypointIds = waypointsParam.split('-');
+    }
+
+    // Ensure at least two waypoints are created
+    if (initialWaypointIds.length === 0) {
+        waypointsContainer.appendChild(createWaypointElement(''));
+        waypointsContainer.appendChild(createWaypointElement(''));
+    } else if (initialWaypointIds.length === 1) {
+        waypointsContainer.appendChild(createWaypointElement(initialWaypointIds[0]));
+        waypointsContainer.appendChild(createWaypointElement(''));
+    } else { // 2 or more waypoints from URL
+        initialWaypointIds.forEach(id => {
+            // If id is an empty string, it will correctly select the "-- Select Location --" option
+            waypointsContainer.appendChild(createWaypointElement(id));
+        });
+    }
 }
 
 // --- Main Logic ---
@@ -203,20 +252,19 @@ function displayError(message: string) {
     // 1. Preprocess data
     Object.keys(data.places).forEach(id => {
         nodeNames[id] = data.places[id].name;
-        if (!adjacencyList[id]) adjacencyList[id] = []; // Ensure all places are in adj list, even if no outgoing routes
+        if (!adjacencyList[id]) adjacencyList[id] = [];
     });
     data.routes.forEach(conn => {
         if (!adjacencyList[conn.from]) adjacencyList[conn.from] = [];
         adjacencyList[conn.from].push({ to: conn.to, cost: conn.cost });
-        if (!adjacencyList[conn.to]) adjacencyList[conn.to] = []; // Ensure 'to' nodes are also in adj list keys
+        if (!adjacencyList[conn.to]) adjacencyList[conn.to] = [];
     });
 
-
-    // 2. Populate initial waypoints
+    // 2. Initialize UI: Load waypoints from URL or set defaults
     if (waypointsContainer) {
-        waypointsContainer.appendChild(createWaypointElement());
-        waypointsContainer.appendChild(createWaypointElement());
-        updateWaypointControls();
+        loadWaypointsFromUrl(); // Creates waypoint elements based on URL
+        updateWaypointControls(); // Updates button states and select labels
+        updateUrlWithWaypoints(); // Canonicalize URL (e.g., if defaults were applied)
     } else {
         console.error("Waypoints container not found!");
     }
@@ -224,7 +272,7 @@ function displayError(message: string) {
     // 3. Event Listeners
     const addWaypointBtn = document.getElementById('add-waypoint-btn');
     if (addWaypointBtn) {
-        addWaypointBtn.addEventListener('click', addWaypointToContainer);
+        addWaypointBtn.addEventListener('click', addWaypointToContainer); // addWaypointToContainer now calls updateUrlWithWaypoints
     }
 
     const findRouteBtn = document.getElementById('find-route-btn');
@@ -235,7 +283,7 @@ function displayError(message: string) {
             const pathP = document.getElementById('route-path') as HTMLParagraphElement;
             const costP = document.getElementById('route-cost') as HTMLParagraphElement;
 
-            resultsDiv.classList.add('hidden');
+            if (resultsDiv) resultsDiv.classList.add('hidden');
             if (errorP) errorP.textContent = '';
             if (pathP) pathP.textContent = '';
             if (costP) costP.textContent = '';
@@ -258,32 +306,34 @@ function displayError(message: string) {
                 displayError("Please ensure all waypoints have a location selected.");
                 return;
             }
-
-            let fullPathNodeIds: string[] = [];
-            let totalCost = 0;
-
+            
+            // Handle case where all waypoints are the same single location
             if (waypoints.every(wp => wp === waypoints[0])) {
                 displayResults([waypoints[0]], 0);
                 return;
             }
+
+            let fullPathNodeIds: string[] = [];
+            let totalCost = 0;
 
             for (let i = 0; i < waypoints.length - 1; i++) {
                 const segmentStart = waypoints[i];
                 const segmentEnd = waypoints[i + 1];
 
                 if (segmentStart === segmentEnd) {
-                    if (fullPathNodeIds.length === 0 && i === 0) { // Only add if it's the very first node and path is empty
+                    // If it's the first segment and path is empty, add the start node.
+                    if (fullPathNodeIds.length === 0 && i === 0) {
                         fullPathNodeIds.push(segmentStart);
                     }
-                    // If segmentStart is already the last node of fullPathNodeIds, we don't need to add it again.
-                    // This is implicitly handled as we only add to fullPathNodeIds if it's empty or from segmentResult.
+                    // Otherwise, if start is same as end, this segment adds 0 cost and no new nodes to path
+                    // (unless it's already added as the end of the previous segment).
                     continue;
                 }
 
                 const segmentResult = dijkstra(segmentStart, segmentEnd);
 
                 if (!segmentResult.path || segmentResult.cost === Infinity) {
-                    displayError(`No path found from ${nodeNames[segmentStart]} to ${nodeNames[segmentEnd]}.`);
+                    displayError(`No path found from ${nodeNames[segmentStart] || 'Unknown'} to ${nodeNames[segmentEnd] || 'Unknown'}.`);
                     return;
                 }
 
@@ -291,30 +341,29 @@ function displayError(message: string) {
                 if (fullPathNodeIds.length === 0) {
                     fullPathNodeIds.push(...segmentResult.path);
                 } else {
+                    // Ensure continuity: last node of fullPath should be first node of new segmentResult.path
                     if (fullPathNodeIds[fullPathNodeIds.length - 1] === segmentResult.path[0]) {
                         fullPathNodeIds.push(...segmentResult.path.slice(1));
                     } else {
-                         // This implies a discontinuity, potentially from an unhandled skipped segment scenario or bad data
-                         // If previous segment was A->A, fullPath is [A]. Next is A->B, path is A,X,B. Slice(1) -> X,B. Correct.
-                        displayError(`Path continuity error. Expected segment to start from ${nodeNames[fullPathNodeIds[fullPathNodeIds.length - 1]]}, but it started from ${nodeNames[segmentResult.path[0]]}.`);
+                         // This case should ideally not happen if segments are A->A, B->B, B->C etc.
+                         // It implies a mismatch, e.g. fullPath ends in X, segmentResult starts with Y.
+                        displayError(`Path continuity error. Expected segment to connect from ${nodeNames[fullPathNodeIds[fullPathNodeIds.length - 1]]}, but new segment started from ${nodeNames[segmentResult.path[0]]}.`);
                         return;
                     }
                 }
             }
-
+            
             if (fullPathNodeIds.length > 0) {
                 displayResults(fullPathNodeIds, totalCost);
             } else if (waypoints.length > 0 && waypoints.every(wp => wp === waypoints[0])) {
-                // This case is already handled at the beginning of the click handler.
-                // Redundant here, but kept for logical completeness if the top check was missed.
+                // This case is handled at the top of the click handler, but as a fallback:
                 displayResults([waypoints[0]], 0);
             } else {
-                // If no error was set by a failed segment, but path is still empty.
-                // This might happen if all segments were A->A types and the logic to build fullPathNodeIds for that was insufficient.
-                // Example: [A,A,B,B]. Should be A->B. If calculation gives empty, this is a fallback.
-                // Current logic: 1st A,A => fullPath = [A]. 2nd A,B => dijkstra(A,B) ... path = [A, ...B]. So this should be fine.
-                if (errorP && !errorP.textContent) { // Check if errorP is not null before accessing textContent
-                     displayError("Could not calculate a route from the given waypoints. Ensure they form a connectable sequence.");
+                 // This state might be reached if waypoints were e.g. ["A", "A"] and loop was skipped
+                 // but the top "every" check somehow didn't catch it or if no error was set
+                 // and fullPathNodeIds remained empty.
+                if (errorP && !errorP.textContent) {
+                     displayError("Could not calculate a route. Please check your waypoints.");
                 }
             }
         });
