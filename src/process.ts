@@ -18,12 +18,17 @@ type Place = {
     matchnum: string,
     links: Link[],
     backlinks: string[],
+    group: string,
 };
 const places = new Map<string, Place>();
 const used_tlid_set = new Set();
 let thisplace: Place | null = null;
+let thisgroup: string = "";
 for(const line of lines) {
-    if(line.startsWith("- ")) {
+    if(line.startsWith("## ")) {
+        const cont = line.substring(3);
+        thisgroup = cont;
+    }else if(line.startsWith("- ")) {
         const cont = line.substring(2);
         thisplace!.links.push({
             place_name: cont,
@@ -51,6 +56,7 @@ for(const line of lines) {
             matchnum: matchnumsplit.slice(1).join(" "),
             links: [],
             backlinks: [],
+            group: thisgroup,
         };
         if(places.has(matchname)) throw new Error("duplicate name: "+matchname);
         places.set(matchname, thisplace);
@@ -386,7 +392,7 @@ const getIdForName = (name: string): PlannerPlaceShortcode => {
     return sortedplaces.find(p => p[0] === name)![1].id as PlannerPlaceShortcode;
 }
 for(const node of res_graph.nodes) {
-    planner_graph.places[getIdForName(node.id)] = {title: node.id, num_rooms: getPlaceForName(node.id).matchnum};
+    planner_graph.places[getIdForName(node.id)] = {title: node.id, num_rooms: getPlaceForName(node.id).matchnum, group: getPlaceForName(node.id).group};
 }
 for(const conn of res_graph.links) {
     const route: PlannerConnection = {from: getIdForName(conn.source), to: getIdForName(conn.target), seconds: conn.value};
@@ -460,13 +466,13 @@ for(const [id, data] of Object.entries(planner_graph.places)) {
         image: {url: "/200x150.png", alt: "", width: 200, height: 150},
 
         relations: {
-            building: "apts" as BuildingID,
+            building: data.group as BuildingID,
             rooms: [],
             connections: [],
             reverse_connections: [],
         },
     };
-    newdata.buildings["apts" as BuildingID].relations.halls.push(id as HallID);
+    newdata.buildings[data.group as BuildingID].relations.halls.push(id as HallID);
     if(data.num_rooms === "") {
         // nothing to do
     }else if(data.num_rooms === "1") {

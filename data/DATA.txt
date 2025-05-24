@@ -1,9 +1,68 @@
+## outside
 [OS] Outside:
 - Front Entry
 - Cave Museum
 - Cherry Grove
 - River
 - Waterways
+[RV] River:
+- Soul Forest
+- Outside
+- Cherry Grove
+- Kepler Wood
+- Sheath Vice
+- Boneyard
+- Cosmic Core
+- Muar Camp
+[CG] Cherry Grove
+- Outside
+- Bamboo Forest
+- Backyard
+- River
+- Dumpinggrounds
+[YD] Backyard
+- Cherry Grove
+- Backroom D
+- Dynaway
+- Muar Camp
+[UC] Muar Camp
+- Backyard
+- River
+- Kepler Wood
+- ☝■❒●◻●⬧🙵❒
+- Glorpis
+- Gleep Glop
+- The Table
+[SV] Sheath Vice
+- Soul Forest
+- River
+[EY] Boneyard
+- Cosmic Core
+- River
+- Kepler Wood
+[KW] Kepler Wood
+- Boneyard
+- River
+- Muar Camp
+- Gleep Glop
+[WD] ☝■❒●◻●⬧🙵❒
+- Muar Camp
+[GR] Glorpis
+- Muar Camp
+[GG] Gleep Glop
+- Muar Camp
+- Kepler Wood
+[TT] The Table
+- Muar Camp
+[VH] Souvlaki Hut
+- Cliffs Point
+- Merksmart
+[CP] Cliffs Point
+- Souvlaki Hut
+[MS] Merksmart
+- Souvlaki Hut
+
+## apts
 [FE 1-3] Front Entry:
 - Outside
 - Rose Hall
@@ -284,6 +343,112 @@
 [KA] Koral Ankyir:
 - Unnamed-2
 - Bynker Path
+[SI] Lesser Slimeyard
+- Slimeyard
+- Kitty Pool
+[KP] Kitty Pool
+- Lesser Slimeyard
+- Hanging Baskrns
+- Water2ays
+[WE] White House
+- Hanging Baskrns
+[HB 1] Hanging Baskrns
+- White House
+- Kitty Pool
+- Pock House
+[PH 1] Pock House
+- Hanging Baskrns
+- Pock Bridge
+[PB] Pock Bridge
+- Pock House
+- Mensa Inc™ Elevator
+[MI] Mensa Inc™ Elevator
+- Pock Bridge
+- Ply Ruff
+- Spumoni House
+- Cray Casement
+[PY] Ply Ruff
+- Mensa Inc™ Elevator
+[PM 1-4] Spumoni House
+- Mensa Inc™ Elevator
+- Spumoni Hall
+- Larsic Bridge
+[CT] Cray Casement
+- Mensa Inc™ Elevator
+[PU 1-7] Spumoni Hall
+- Spumoni House
+[LC] Larsic Bridge
+- Spumoni House
+- Blasker Hills Inn
+[HI 1-9] Blasker Hills Inn
+- Larsic Bridge
+- Blasker Hills Certified Breakfast
+- Norman B. Alts Bridge
+[HC] Blasker Hills Certified Breakfast
+- Blasker Hills Inn
+- Myxtyp by Blasker
+[NB] Norman B. Alts Bridge
+- Blasker Hills Inn
+- Kuku Klok
+[KL 1] Kuku Klok
+- Norman B. Alts Bridge
+- Kuku Landing
+[KO] Kuku Landing
+- Kuku Klok
+- Bytzer's Mystical Magical Elevator
+[YM] Bytzer's Mystical Magical Elevator
+- Kuku Landing
+- Gnorp Lair
+[GN] Gnorp Lair
+- Bytzer's Mystical Magical Elevator
+[MX] Myxtyp by Blasker
+- Blasker Hills Certified Breakfast
+[FZ] Freezer
+- Slimeyard
+- Neither Forest
+[SF] Soul Forest:
+- River
+-> Ocean
+- Cosmic Core
+- Redstone Lands
+- Hesate Land
+- Jup
+- Sheath Vice
+[KM] Cosmic Core:
+- Soul Forest
+- Jafner
+- Boneyard
+- River
+[RL] Redstone Lands:
+- Soul Forest
+- Jafner
+[HL] Hesate Land
+- Soul Forest
+- Jup
+- Hictor Balsine Historic Cabin
+- Jornavie Flinch Historic Cabin
+- Eugene Blancer Historic Mines
+[JP] Jup
+- Hesate Land
+- Soul Forest
+[TB] Hictor Balsine Historic Cabin
+- Hesate Land
+[JF] Jornavie Flinch Historic Cabin
+- Hesate Land
+[EB] Eugene Blancer Historic Mines
+- Hesate Land
+[JA] Jafner
+- Cosmic Core
+- Redstone Lands
+- Botanic Garden
+[BG] Botanic Garden
+- Jafner
+[W2] Water2ays
+- Kitty Pool
+- Glass Hall
+- Waterways
+
+## paths
 [BR] Bynker Path:
 - Koral Ankyir
 - Hollows Path
@@ -417,163 +582,3 @@
 - Cancyn Building B
 [YB] Cancyn Building B
 - Basin Path
-[SI] Lesser Slimeyard
-- Slimeyard
-- Kitty Pool
-[KP] Kitty Pool
-- Lesser Slimeyard
-- Hanging Baskrns
-- Water2ays
-[WE] White House
-- Hanging Baskrns
-[HB 1] Hanging Baskrns
-- White House
-- Kitty Pool
-- Pock House
-[PH 1] Pock House
-- Hanging Baskrns
-- Pock Bridge
-[PB] Pock Bridge
-- Pock House
-- Mensa Inc™ Elevator
-[MI] Mensa Inc™ Elevator
-- Pock Bridge
-- Ply Ruff
-- Spumoni House
-- Cray Casement
-[PY] Ply Ruff
-- Mensa Inc™ Elevator
-[PM 1-4] Spumoni House
-- Mensa Inc™ Elevator
-- Spumoni Hall
-- Larsic Bridge
-[CT] Cray Casement
-- Mensa Inc™ Elevator
-[PU 1-7] Spumoni Hall
-- Spumoni House
-[LC] Larsic Bridge
-- Spumoni House
-- Blasker Hills Inn
-[HI 1-9] Blasker Hills Inn
-- Larsic Bridge
-- Blasker Hills Certified Breakfast
-- Norman B. Alts Bridge
-[HC] Blasker Hills Certified Breakfast
-- Blasker Hills Inn
-- Myxtyp by Blasker
-[NB] Norman B. Alts Bridge
-- Blasker Hills Inn
-- Kuku Klok
-[KL 1] Kuku Klok
-- Norman B. Alts Bridge
-- Kuku Landing
-[KO] Kuku Landing
-- Kuku Klok
-- Bytzer's Mystical Magical Elevator
-[YM] Bytzer's Mystical Magical Elevator
-- Kuku Landing
-- Gnorp Lair
-[GN] Gnorp Lair
-- Bytzer's Mystical Magical Elevator
-[MX] Myxtyp by Blasker
-- Blasker Hills Certified Breakfast
-[FZ] Freezer
-- Slimeyard
-- Neither Forest
-[SF] Soul Forest:
-- River
--> Ocean
-- Cosmic Core
-- Redstone Lands
-- Hesate Land
-- Jup
-- Sheath Vice
-[RV] River:
-- Soul Forest
-- Outside
-- Cherry Grove
-- Kepler Wood
-- Sheath Vice
-- Boneyard
-- Cosmic Core
-- Muar Camp
-[KM] Cosmic Core:
-- Soul Forest
-- Jafner
-- Boneyard
-- River
-[RL] Redstone Lands:
-- Soul Forest
-- Jafner
-[HL] Hesate Land
-- Soul Forest
-- Jup
-- Hictor Balsine Historic Cabin
-- Jornavie Flinch Historic Cabin
-- Eugene Blancer Historic Mines
-[JP] Jup
-- Hesate Land
-- Soul Forest
-[TB] Hictor Balsine Historic Cabin
-- Hesate Land
-[JF] Jornavie Flinch Historic Cabin
-- Hesate Land
-[EB] Eugene Blancer Historic Mines
-- Hesate Land
-[JA] Jafner
-- Cosmic Core
-- Redstone Lands
-- Botanic Garden
-[BG] Botanic Garden
-- Jafner
-[CG] Cherry Grove
-- Outside
-- Bamboo Forest
-- Backyard
-- River
-- Dumpinggrounds
-[YD] Backyard
-- Cherry Grove
-- Backroom D
-- Dynaway
-- Muar Camp
-[UC] Muar Camp
-- Backyard
-- River
-- Kepler Wood
-- ☝■❒●◻●⬧🙵❒
-- Glorpis
-- Gleep Glop
-- The Table
-[SV] Sheath Vice
-- Soul Forest
-- River
-[EY] Boneyard
-- Cosmic Core
-- River
-- Kepler Wood
-[KW] Kepler Wood
-- Boneyard
-- River
-- Muar Camp
-- Gleep Glop
-[WD] ☝■❒●◻●⬧🙵❒
-- Muar Camp
-[GR] Glorpis
-- Muar Camp
-[GG] Gleep Glop
-- Muar Camp
-- Kepler Wood
-[TT] The Table
-- Muar Camp
-[VH] Souvlaki Hut
-- Cliffs Point
-- Merksmart
-[CP] Cliffs Point
-- Souvlaki Hut
-[MS] Merksmart
-- Souvlaki Hut
-[W2] Water2ays
-- Kitty Pool
-- Glass Hall
-- Waterways
