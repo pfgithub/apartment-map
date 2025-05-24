@@ -4,10 +4,10 @@ const data: PlannerGraph = await fetch("/planner.json").then(r => r.json());
 
 // --- Data Structures ---
 let nodeNames: { [id: string]: string } = {}; // Map ID to Name
-let adjacencyList: { [nodeId: string]: { to: string, cost: number }[] } = {}; // Graph
+let adjacencyList: { [nodeId: string]: { to: string, seconds: number }[] } = {}; // Graph
 
 // --- Dijkstra's Algorithm ---
-function dijkstra(startNodeId: string, endNodeId: string): { path: string[] | null, cost: number } {
+function dijkstra(startNodeId: string, endNodeId: string): { path: string[] | null, seconds: number } {
     const distances: { [nodeId: string]: number } = {};
     const prev: { [nodeId: string]: string | null } = {};
     const pq = new Set<string>(); // Using Set as a simple priority queue for unvisited nodes
@@ -38,7 +38,7 @@ function dijkstra(startNodeId: string, endNodeId: string): { path: string[] | nu
         pq.delete(u);
 
         (adjacencyList[u] || []).forEach(neighbor => {
-            const alt = distances[u!] + neighbor.cost;
+            const alt = distances[u!] + neighbor.seconds;
             if (alt < distances[neighbor.to]) {
                 distances[neighbor.to] = alt;
                 prev[neighbor.to] = u;
@@ -56,10 +56,10 @@ function dijkstra(startNodeId: string, endNodeId: string): { path: string[] | nu
     }
 
     if (path.length === 0 || path[0] !== startNodeId || distances[endNodeId] === Infinity) {
-        return { path: null, cost: Infinity };
+        return { path: null, seconds: Infinity };
     }
 
-    return { path: path, cost: distances[endNodeId] };
+    return { path: path, seconds: distances[endNodeId] };
 }
 
 
@@ -175,19 +175,19 @@ function updateWaypointControls() {
     });
 }
 
-function displayResults(pathNodeIds: string[], totalCost: number) {
+function displayResults(pathNodeIds: string[], totalSeconds: number) {
     const resultsDiv = document.getElementById('results-container') as HTMLDivElement;
     const pathP = document.getElementById('route-path') as HTMLParagraphElement;
-    const costP = document.getElementById('route-cost') as HTMLParagraphElement;
+    const secondsP = document.getElementById('route-seconds') as HTMLParagraphElement;
     const errorP = document.getElementById('error-message') as HTMLParagraphElement;
 
     if (errorP) errorP.textContent = '';
     if (pathNodeIds && pathNodeIds.length > 0) {
         if (pathP) pathP.textContent = `Path: ${pathNodeIds.map(id => nodeNames[id] || 'Unknown').join(' → ')}`;
-        if (costP) costP.textContent = `Total Cost: ${totalCost.toFixed(2)}`;
+        if (secondsP) secondsP.textContent = `Total Seconds: ${totalSeconds.toFixed(0)}`;
     } else {
         if (pathP) pathP.textContent = '';
-        if (costP) costP.textContent = '';
+        if (secondsP) secondsP.textContent = '';
     }
     if (resultsDiv) resultsDiv.classList.remove('hidden');
 }
@@ -195,11 +195,11 @@ function displayResults(pathNodeIds: string[], totalCost: number) {
 function displayError(message: string) {
     const resultsDiv = document.getElementById('results-container') as HTMLDivElement;
     const pathP = document.getElementById('route-path') as HTMLParagraphElement;
-    const costP = document.getElementById('route-cost') as HTMLParagraphElement;
+    const secondsP = document.getElementById('route-seconds') as HTMLParagraphElement;
     const errorP = document.getElementById('error-message') as HTMLParagraphElement;
 
     if (pathP) pathP.textContent = '';
-    if (costP) costP.textContent = '';
+    if (secondsP) secondsP.textContent = '';
     if (errorP) errorP.textContent = `Error: ${message}`;
     if (resultsDiv) resultsDiv.classList.remove('hidden');
 }
@@ -256,7 +256,7 @@ function loadWaypointsFromUrl() {
     });
     data.routes.forEach(conn => {
         if (!adjacencyList[conn.from]) adjacencyList[conn.from] = [];
-        adjacencyList[conn.from].push({ to: conn.to, cost: conn.cost });
+        adjacencyList[conn.from].push({ to: conn.to, seconds: conn.seconds });
         if (!adjacencyList[conn.to]) adjacencyList[conn.to] = [];
     });
 
@@ -281,12 +281,12 @@ function loadWaypointsFromUrl() {
             const resultsDiv = document.getElementById('results-container') as HTMLDivElement;
             const errorP = document.getElementById('error-message') as HTMLParagraphElement;
             const pathP = document.getElementById('route-path') as HTMLParagraphElement;
-            const costP = document.getElementById('route-cost') as HTMLParagraphElement;
+            const secondsP = document.getElementById('route-seconds') as HTMLParagraphElement;
 
             if (resultsDiv) resultsDiv.classList.add('hidden');
             if (errorP) errorP.textContent = '';
             if (pathP) pathP.textContent = '';
-            if (costP) costP.textContent = '';
+            if (secondsP) secondsP.textContent = '';
 
             if (!waypointsContainer) {
                 displayError("Waypoint container UI element not found.");
@@ -314,7 +314,7 @@ function loadWaypointsFromUrl() {
             }
 
             let fullPathNodeIds: string[] = [];
-            let totalCost = 0;
+            let totalSeconds = 0;
 
             for (let i = 0; i < waypoints.length - 1; i++) {
                 const segmentStart = waypoints[i];
@@ -325,19 +325,19 @@ function loadWaypointsFromUrl() {
                     if (fullPathNodeIds.length === 0 && i === 0) {
                         fullPathNodeIds.push(segmentStart);
                     }
-                    // Otherwise, if start is same as end, this segment adds 0 cost and no new nodes to path
+                    // Otherwise, if start is same as end, this segment adds 0 seconds and no new nodes to path
                     // (unless it's already added as the end of the previous segment).
                     continue;
                 }
 
                 const segmentResult = dijkstra(segmentStart, segmentEnd);
 
-                if (!segmentResult.path || segmentResult.cost === Infinity) {
+                if (!segmentResult.path || segmentResult.seconds === Infinity) {
                     displayError(`No path found from ${nodeNames[segmentStart] || 'Unknown'} to ${nodeNames[segmentEnd] || 'Unknown'}.`);
                     return;
                 }
 
-                totalCost += segmentResult.cost;
+                totalSeconds += segmentResult.seconds;
                 if (fullPathNodeIds.length === 0) {
                     fullPathNodeIds.push(...segmentResult.path);
                 } else {
@@ -354,7 +354,7 @@ function loadWaypointsFromUrl() {
             }
             
             if (fullPathNodeIds.length > 0) {
-                displayResults(fullPathNodeIds, totalCost);
+                displayResults(fullPathNodeIds, totalSeconds);
             } else if (waypoints.length > 0 && waypoints.every(wp => wp === waypoints[0])) {
                 // This case is handled at the top of the click handler, but as a fallback:
                 displayResults([waypoints[0]], 0);

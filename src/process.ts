@@ -383,7 +383,7 @@ for(const node of res_graph.nodes) {
     planner_graph.places[getIdForName(node.id)] = {name: node.id};
 }
 for(const conn of res_graph.links) {
-    planner_graph.routes.push({from: getIdForName(conn.source), to: getIdForName(conn.target), cost: conn.value});
+    planner_graph.routes.push({from: getIdForName(conn.source), to: getIdForName(conn.target), seconds: conn.value});
 }
 export const dgdata = planner_graph.routes.map(link => link.from + " " + link.to).join("\n");
 
