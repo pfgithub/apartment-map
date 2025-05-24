@@ -57,7 +57,7 @@ const PointOfInterestPage: React.FC = () => {
     if (poi && hall && building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: `/all-buildings`}, // Assuming
+        { label: 'Buildings', link: `/all-buildings`}, // Updated link
         { label: building.name, link: `/buildings/${building.id}` },
         { label: hall.name, link: `/halls/${hall.id}` },
         { label: poi.name }
@@ -65,7 +65,7 @@ const PointOfInterestPage: React.FC = () => {
     } else if (poi && hall) {
        setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Halls', link: `/all-halls`}, // Assuming
+        { label: 'Halls', link: `/all-halls`}, 
         { label: hall.name, link: `/halls/${hall.id}` },
         { label: poi.name }
       ]);

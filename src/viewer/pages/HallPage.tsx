@@ -52,7 +52,7 @@ const HallPage: React.FC = () => {
     if (hall && building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: '/all-buildings'}, // Or relevant link
+        { label: 'Buildings', link: '/all-buildings'}, // Updated link
         { label: building.name, link: `/buildings/${building.id}` },
         { label: hall.name }
       ]);

@@ -16,11 +16,14 @@ const BuildingPage: React.FC = () => {
     if (building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: '/all-buildings' }, // Assuming an /all-buildings page might exist or link to home
+        { label: 'Buildings', link: '/all-buildings' }, // Updated link
         { label: building.name }
       ]);
     } else {
-       setBreadcrumbs([{ label: 'Home', link: '/' }]);
+       setBreadcrumbs([
+         { label: 'Home', link: '/' },
+         { label: 'Buildings', link: '/all-buildings' } // Fallback if building not found
+        ]);
     }
   }, [setBreadcrumbs, building]);
 
