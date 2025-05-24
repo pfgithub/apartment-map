@@ -10,7 +10,7 @@ const Layout: React.FC = () => {
         <Outlet />
       </main>
       <footer className="bg-gray-700 text-white text-center p-4">
-        © {new Date().getFullYear()} Campus Explorer
+        Footer
       </footer>
     </div>
   );
