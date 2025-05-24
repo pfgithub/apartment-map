@@ -15,7 +15,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, hallName }) => {
   const inRoute = isItemInRoute(routeItem);
 
   const handleToggleRoute = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation if card is a Link
+    e.preventDefault(); 
     e.stopPropagation();
     if (inRoute) {
       removeItemFromRoute(routeItem);
@@ -25,19 +25,21 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, hallName }) => {
   };
 
   return (
-    <div className="relative bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div className="relative group bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <Link to={`/rooms/${room.id}`} className="block">
-        <ImageDisplay image={room.image} className="w-full h-48" />
+        <div className="overflow-hidden">
+          <ImageDisplay image={room.image} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+        </div>
         <div className="p-4">
-          <h3 className="text-xl font-semibold mb-1">{room.name}</h3>
-          {hallName && <p className="text-sm text-gray-600 mb-1">In: {hallName}</p>}
-          <p className="text-gray-700 text-sm mb-2 truncate h-10">{room.description}</p>
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-bold text-blue-600">${room.price}/night</span>
+          <h3 className="text-xl font-semibold mb-1 text-blue-700 group-hover:text-blue-800">{room.name}</h3>
+          {hallName && <p className="text-xs text-gray-500 mb-1">In: {hallName}</p>}
+          <p className="text-gray-600 text-sm mb-2 truncate h-10">{room.description}</p>
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-lg font-bold text-sky-600">${room.price}<span className="text-xs font-normal text-gray-500">/night</span></span>
             {room.available ? (
-              <span className="px-2 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full">Available</span>
+              <span className="px-2 py-0.5 text-xs font-semibold text-green-700 bg-green-100 rounded-full">Available</span>
             ) : (
-              <span className="px-2 py-1 text-xs font-semibold text-red-700 bg-red-200 rounded-full">Unavailable</span>
+              <span className="px-2 py-0.5 text-xs font-semibold text-red-700 bg-red-100 rounded-full">Unavailable</span>
             )}
           </div>
         </div>
@@ -45,14 +47,14 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, hallName }) => {
       <button
         onClick={handleToggleRoute}
         title={inRoute ? 'Remove from route' : 'Add to route'}
-        className={`absolute top-2 right-2 p-1.5 rounded-full text-white transition-colors
+        className={`absolute top-2 right-2 p-1.5 rounded-full text-white transition-colors z-10
                     ${inRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
           {inRoute ? (
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> // Minus circle
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           ) : (
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> // Plus circle
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           )}
         </svg>
       </button>

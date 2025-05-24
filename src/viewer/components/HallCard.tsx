@@ -2,20 +2,56 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Hall } from '../types';
 import ImageDisplay from './ImageDisplay';
+import { useRoute } from '../contexts/RouteContext'; // For add/remove button
 
 interface HallCardProps {
   hall: Hall;
+  showAddToRouteButton?: boolean; // Optional: To control visibility of add/remove button
 }
 
-const HallCard: React.FC<HallCardProps> = ({ hall }) => {
+const HallCard: React.FC<HallCardProps> = ({ hall, showAddToRouteButton = false }) => {
+  const { addItemToRoute, removeItemFromRoute, isItemInRoute } = useRoute();
+  const routeItem = { id: hall.id, type: 'hall' as const };
+  const inRoute = isItemInRoute(routeItem);
+
+  const handleToggleRoute = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (inRoute) {
+      removeItemFromRoute(routeItem);
+    } else {
+      addItemToRoute(routeItem);
+    }
+  };
+
   return (
-    <Link to={`/halls/${hall.id}`} className="block bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <ImageDisplay image={hall.image} className="w-full h-48 object-cover" />
-      <div className="p-4">
-        <h3 className="text-xl font-semibold mb-1">{hall.name}</h3>
-        <p className="text-gray-700 text-sm mb-2 truncate h-10">{hall.description}</p>
-      </div>
-    </Link>
+    <div className="relative group bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      <Link to={`/halls/${hall.id}`} className="block">
+        <div className="overflow-hidden">
+          <ImageDisplay image={hall.image} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+        </div>
+        <div className="p-4">
+          <h3 className="text-xl font-semibold mb-1 text-blue-700 group-hover:text-blue-800">{hall.name}</h3>
+          <p className="text-gray-600 text-sm mb-2 truncate h-10">{hall.description}</p>
+        </div>
+      </Link>
+      {showAddToRouteButton && (
+        <button
+          onClick={handleToggleRoute}
+          title={inRoute ? 'Remove from route' : 'Add to route'}
+          className={`absolute top-2 right-2 p-1.5 rounded-full text-white transition-colors
+                      ${inRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+            {inRoute ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            )}
+          </svg>
+        </button>
+      )}
+    </div>
   );
 };
 

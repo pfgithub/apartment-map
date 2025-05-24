@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
+import { useRoute } from '../contexts/RouteContext';
 import RoomCard from '../components/RoomCard';
 import HallCard from '../components/HallCard';
 import PoiCard from '../components/PoiCard';
@@ -8,46 +9,51 @@ import BuildingCard from '../components/BuildingCard';
 import { shuffleArray } from '../utils/shuffle';
 import type { Room, Hall, PointOfInterest, Building } from '../types';
 
-const CAROUSEL_ITEM_LIMIT = 10;
+const CAROUSEL_ITEM_LIMIT = 6; // Reduced for better visibility on typical screens
 
 interface CarouselSectionProps<T> {
   title: string;
   items: T[];
-  renderItem: (item: T) => React.ReactNode;
+  renderItem: (item: T, index: number) => React.ReactNode; // Added index for key
   viewAllLink: string;
   viewAllText: string;
-  itemWidthClass?: string; // e.g. "w-64", "w-72", "w-80"
+  itemWidthClass?: string;
+  emptyMessage?: string;
 }
 
-function CarouselSection<T>({ title, items, renderItem, viewAllLink, viewAllText, itemWidthClass = "w-72" }: CarouselSectionProps<T>) {
-  if (items.length === 0) {
-    return null; // Or some placeholder like <p>No {title.toLowerCase()} to display.</p>
-  }
-
+function CarouselSection<T>({ title, items, renderItem, viewAllLink, viewAllText, itemWidthClass = "w-72", emptyMessage }: CarouselSectionProps<T>) {
   return (
     <section className="mb-12">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-700">{title}</h2>
-        {items.length > 0 && (
-           <Link to={viewAllLink} className="text-blue-600 hover:text-blue-800 transition-colors">
+        {items.length > 0 && ( // Show "View All" only if there are items
+           <Link to={viewAllLink} className="text-sky-600 hover:text-sky-800 transition-colors font-medium">
             {viewAllText} →
           </Link>
         )}
       </div>
-      <div className="flex overflow-x-auto space-x-4 pb-4 -mb-4"> {/* pb-4 and -mb-4 to hide scrollbar track if possible or give space */}
-        {items.map((item, index) => (
-          <div key={index} className={`flex-shrink-0 ${itemWidthClass}`}>
-            {renderItem(item)}
-          </div>
-        ))}
-      </div>
+      {items.length === 0 && emptyMessage ? (
+        <p className="text-gray-500 italic">{emptyMessage}</p>
+      ) : items.length === 0 ? null : (
+        <div className="flex overflow-x-auto space-x-4 pb-4 -mb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          {items.map((item, index) => (
+            <div key={index} className={`flex-shrink-0 ${itemWidthClass}`}>
+              {renderItem(item, index)}
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
 
-
 const HomePage: React.FC = () => {
   const { data, loading, error } = useData();
+  const { setBreadcrumbs } = useRoute();
+
+  useEffect(() => {
+    setBreadcrumbs([{ label: 'Home' }]);
+  }, [setBreadcrumbs]);
 
   const shuffledAvailableRooms = useMemo(() => {
     if (!data?.rooms) return [];
@@ -66,18 +72,21 @@ const HomePage: React.FC = () => {
 
   const allBuildings = useMemo(() => {
     if (!data?.buildings) return [];
-    return Object.values(data.buildings); // No shuffle needed for a list display
+    // Sort buildings by name for consistent display, or shuffle if preferred
+    return Object.values(data.buildings).sort((a, b) => a.name.localeCompare(b.name));
   }, [data]);
 
-  if (loading) return <p className="text-center py-10">Loading homepage data...</p>;
-  if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
-  if (!data) return <p className="text-center py-10">No data available.</p>;
+  if (loading) return <div className="text-center py-20"><div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 mx-auto"></div><p className="text-gray-500">Loading homepage...</p></div>; // Basic spinner
+  if (error) return <p className="text-center py-10 text-red-600 bg-red-100 p-4 rounded-md">Error loading data: {error.message}. Please try refreshing the page.</p>;
+  if (!data) return <p className="text-center py-10 text-gray-600">No data available to display.</p>;
 
   return (
     <div className="space-y-10">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center">Welcome to Our Viewer</h1>
+      <header className="text-center py-8 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-lg shadow-lg text-white">
+        <h1 className="text-4xl sm:text-5xl font-extrabold mb-3">Welcome to Campus Explorer</h1>
+        <p className="text-lg sm:text-xl text-sky-100">Your ultimate guide to navigating and discovering our campus.</p>
+      </header>
 
-      {/* Available Rooms Carousel */}
       <CarouselSection
         title="Featured Available Rooms"
         items={shuffledAvailableRooms.slice(0, CAROUSEL_ITEM_LIMIT)}
@@ -88,25 +97,15 @@ const HomePage: React.FC = () => {
           />
         )}
         viewAllLink="/all-available-rooms"
-        viewAllText="View All Available Rooms"
-        itemWidthClass="w-80" // RoomCard might be wider
-      />
-
-      {/* Halls Carousel */}
-      <CarouselSection
-        title="Explore Halls"
-        items={shuffledHalls.slice(0, CAROUSEL_ITEM_LIMIT)}
-        renderItem={(hall: Hall) => <HallCard hall={hall} />}
-        viewAllLink="/all-halls"
-        viewAllText="View All Halls"
-        itemWidthClass="w-72"
+        viewAllText="View All Rooms"
+        itemWidthClass="w-80"
+        emptyMessage="No rooms currently featured or available."
       />
       
-      {/* Buildings List */}
-      <section className="mb-12">
+      <section className="mb-12 p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">Our Buildings</h2>
         {allBuildings.length === 0 ? (
-          <p>No buildings to display.</p>
+          <p className="text-gray-500 italic">No buildings to display at the moment.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {allBuildings.map((building: Building) => (
@@ -116,7 +115,16 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
-      {/* Points of Interest Carousel */}
+      <CarouselSection
+        title="Explore Halls"
+        items={shuffledHalls.slice(0, CAROUSEL_ITEM_LIMIT)}
+        renderItem={(hall: Hall) => <HallCard hall={hall} showAddToRouteButton={true} />}
+        viewAllLink="/all-halls"
+        viewAllText="View All Halls"
+        itemWidthClass="w-72"
+        emptyMessage="No halls are currently listed."
+      />
+
       <CarouselSection
         title="Discover Points of Interest"
         items={shuffledPois.slice(0, CAROUSEL_ITEM_LIMIT)}
@@ -124,6 +132,7 @@ const HomePage: React.FC = () => {
         viewAllLink="/all-pois"
         viewAllText="View All POIs"
         itemWidthClass="w-72"
+        emptyMessage="No points of interest to show right now."
       />
     </div>
   );

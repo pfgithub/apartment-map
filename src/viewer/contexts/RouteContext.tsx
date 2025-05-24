@@ -7,6 +7,11 @@ export interface RouteItem {
   type: 'hall' | 'room' | 'poi';
 }
 
+export interface Breadcrumb {
+  label: string;
+  link?: string;
+}
+
 interface RouteContextType {
   routeItems: RouteItem[];
   addItemToRoute: (item: RouteItem) => void;
@@ -14,12 +19,15 @@ interface RouteContextType {
   isItemInRoute: (item: RouteItem) => boolean;
   reorderItemsInRoute: (newOrder: RouteItem[]) => void;
   clearRoute: () => void;
+  breadcrumbs: Breadcrumb[]; // Added for breadcrumbs
+  setBreadcrumbs: (breadcrumbs: Breadcrumb[]) => void; // Added for breadcrumbs
 }
 
 const RouteContext = createContext<RouteContextType | undefined>(undefined);
 
 export const RouteProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [routeItems, setRouteItems] = useState<RouteItem[]>([]);
+  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]); // State for breadcrumbs
 
   const addItemToRoute = useCallback((itemToAdd: RouteItem) => {
     setRouteItems(prevItems => {
@@ -46,8 +54,15 @@ export const RouteProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setRouteItems([]);
   }, []);
 
+  const handleSetBreadcrumbs = useCallback((newBreadcrumbs: Breadcrumb[]) => {
+    setBreadcrumbs(newBreadcrumbs);
+  }, []);
+
   return (
-    <RouteContext.Provider value={{ routeItems, addItemToRoute, removeItemFromRoute, isItemInRoute, reorderItemsInRoute, clearRoute }}>
+    <RouteContext.Provider value={{ 
+      routeItems, addItemToRoute, removeItemFromRoute, isItemInRoute, reorderItemsInRoute, clearRoute,
+      breadcrumbs, setBreadcrumbs: handleSetBreadcrumbs // Provide breadcrumb state and setter
+    }}>
       {children}
     </RouteContext.Provider>
   );

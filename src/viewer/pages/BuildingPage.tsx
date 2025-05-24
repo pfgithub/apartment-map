@@ -1,46 +1,66 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
+import { useRoute } from '../contexts/RouteContext';
 import ImageDisplay from '../components/ImageDisplay';
 import type { BuildingID, HallID } from '../types';
 
 const BuildingPage: React.FC = () => {
   const { id } = useParams<{ id: BuildingID }>();
   const { data, loading, error } = useData();
+  const { setBreadcrumbs } = useRoute();
+
+  const building = data && id ? data.buildings[id] : null;
+
+  useEffect(() => {
+    if (building) {
+      setBreadcrumbs([
+        { label: 'Home', link: '/' },
+        { label: 'Buildings', link: '/all-buildings' }, // Assuming an /all-buildings page might exist or link to home
+        { label: building.name }
+      ]);
+    } else {
+       setBreadcrumbs([{ label: 'Home', link: '/' }]);
+    }
+  }, [setBreadcrumbs, building]);
+
 
   if (loading) return <p className="text-center py-10">Loading building details...</p>;
   if (error) return <p className="text-center py-10 text-red-500">Error loading data: {error.message}</p>;
-  if (!data || !id || !data.buildings[id]) return <p className="text-center py-10">Building not found.</p>;
+  if (!building) return <p className="text-center py-10">Building not found.</p>;
 
-  const building = data.buildings[id];
 
   return (
     <div className="bg-white shadow-xl rounded-lg p-6 md:p-8">
       <div className="md:flex md:space-x-8">
-        <div className="md:w-1/3">
-          <ImageDisplay image={building.image} className="w-full h-auto rounded-lg mb-4 md:mb-0" />
+        <div className="md:w-1/3 mb-6 md:mb-0">
+          <ImageDisplay image={building.image} className="w-full h-auto rounded-lg shadow-md" />
         </div>
         <div className="md:w-2/3">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-blue-700">{building.name}</h1>
-          <p className="text-gray-600 text-lg mb-6">{building.description}</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-sky-700">{building.name}</h1>
+          <p className="text-gray-700 text-lg leading-relaxed mb-6">{building.description}</p>
         </div>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-3 text-gray-700">Halls in this Building</h2>
+      <div className="mt-8 pt-6 border-t border-gray-200">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Halls in this Building</h2>
         {building.relations.halls.length > 0 ? (
-          <ul className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {building.relations.halls.map(hallId => {
-              const hall = data.halls[hallId as HallID];
+              const hall = data?.halls[hallId as HallID];
               return hall ? (
-                <li key={hallId} className="p-3 bg-gray-50 rounded hover:bg-gray-100">
-                  <Link to={`/halls/${hall.id}`} className="text-blue-600 hover:underline font-medium">{hall.name}</Link>
-                  <p className="text-sm text-gray-500 mt-1">{hall.description.length > 100 ? `${hall.description.substring(0, 100)}...` : hall.description}</p>
-                </li>
+                <Link 
+                  key={hallId} 
+                  to={`/halls/${hall.id}`} 
+                  className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 hover:shadow-sm"
+                >
+                  <h3 className="text-lg font-medium text-sky-600 hover:underline">{hall.name}</h3>
+                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{hall.description}</p>
+                </Link>
               ) : null;
             })}
-          </ul>
-        ) : <p className="text-gray-500">No halls listed for this building.</p>}
+          </div>
+        ) : <p className="text-gray-500 italic">No halls listed for this building.</p>}
       </div>
     </div>
   );
