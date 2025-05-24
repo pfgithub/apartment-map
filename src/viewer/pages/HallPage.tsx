@@ -52,14 +52,14 @@ const HallPage: React.FC = () => {
     if (hall && building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: '/all-buildings'}, // Updated link
+        { label: 'Buildings', link: '/buildings'}, // Updated link
         { label: building.name, link: `/buildings/${building.id}` },
         { label: hall.name }
       ]);
     } else if (hall) {
        setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Halls', link: '/all-halls' },
+        { label: 'Halls', link: '/halls' },
         { label: hall.name }
       ]);
     } else {

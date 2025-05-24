@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
             hallName={data.halls[room.relations.hall]?.name}
           />
         )}
-        viewAllLink="/all-rooms" // Path changed
+        viewAllLink="/rooms" // Path changed
         viewAllText="View All Rooms"
         itemWidthClass="w-80"
         emptyMessage="No rooms currently featured or available."
@@ -79,7 +79,7 @@ const HomePage: React.FC = () => {
         title="Explore Halls"
         items={shuffledHalls.slice(0, CAROUSEL_ITEM_LIMIT)}
         renderItem={(hall: Hall) => <HallCard hall={hall} showAddToRouteButton={true} />}
-        viewAllLink="/all-halls"
+        viewAllLink="/halls"
         viewAllText="View All Halls"
         itemWidthClass="w-72"
         emptyMessage="No halls are currently listed."
@@ -89,7 +89,7 @@ const HomePage: React.FC = () => {
         title="Discover Points of Interest"
         items={shuffledPois.slice(0, CAROUSEL_ITEM_LIMIT)}
         renderItem={(poi: PointOfInterest) => <PoiCard poi={poi} />}
-        viewAllLink="/all-pois"
+        viewAllLink="/pois"
         viewAllText="View All POIs"
         itemWidthClass="w-72"
         emptyMessage="No points of interest to show right now."

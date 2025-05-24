@@ -20,7 +20,7 @@ const AllRoomsPage: React.FC = () => {
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', link: '/' },
-      { label: 'All Rooms' }
+      { label: 'Rooms' }
     ]);
   }, [setBreadcrumbs]);
 

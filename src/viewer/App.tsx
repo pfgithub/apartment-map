@@ -30,10 +30,10 @@ const App: React.FC = () => {
               <Route path="pois/:id" element={<PointOfInterestPage />} />
               <Route path="search" element={<SearchPage />} />
 
-              <Route path="all-rooms" element={<AllRoomsPage />} />
-              <Route path="all-halls" element={<AllHallsPage />} />
-              <Route path="all-pois" element={<AllPoisPage />} />
-              <Route path="all-buildings" element={<AllBuildingsPage />} />
+              <Route path="rooms" element={<AllRoomsPage />} />
+              <Route path="halls" element={<AllHallsPage />} />
+              <Route path="pois" element={<AllPoisPage />} />
+              <Route path="buildings" element={<AllBuildingsPage />} />
               <Route path="map" element={<MapPage />} />
               
               <Route path="*" element={<div className="text-center py-10"><h2>404: Page Not Found</h2></div>} />

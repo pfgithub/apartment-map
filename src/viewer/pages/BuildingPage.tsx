@@ -23,13 +23,13 @@ const BuildingPage: React.FC = () => {
     if (building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: '/all-buildings' },
+        { label: 'Buildings', link: '/buildings' },
         { label: building.name }
       ]);
     } else {
        setBreadcrumbs([
          { label: 'Home', link: '/' },
-         { label: 'Buildings', link: '/all-buildings' }
+         { label: 'Buildings', link: '/buildings' }
         ]);
     }
   }, [setBreadcrumbs, building]);
@@ -100,7 +100,7 @@ const BuildingPage: React.FC = () => {
             hallName={data.halls[room.relations.hall]?.name}
           />
         )}
-        viewAllLink="/all-rooms" // Path changed
+        viewAllLink="/rooms" // Path changed
         viewAllText="View All Rooms"
         itemWidthClass="w-80" // Same as HomePage for RoomCard
         emptyMessage="No rooms found in this building."
@@ -110,7 +110,7 @@ const BuildingPage: React.FC = () => {
         title="Points of Interest in this Building"
         items={poisInBuilding.slice(0, CAROUSEL_ITEM_LIMIT)}
         renderItem={(poi: PointOfInterest) => <PoiCard poi={poi} />}
-        viewAllLink="/all-pois" // General link
+        viewAllLink="/pois" // General link
         viewAllText="View All POIs"
         itemWidthClass="w-72" // Same as HomePage for PoiCard
         emptyMessage="No points of interest found in this building."
