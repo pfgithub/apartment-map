@@ -1,13 +1,13 @@
-export type PlannerNodeID = string & {__is_planner_node_id: true};
-export type PlannerNode = {
+export type PlannerPlaceID = string & {__is_planner_node_id: true};
+export type PlannerPlace = {
     name: string,
 };
 export type PlannerConnection = {
-    from: PlannerNodeID,
-    to: PlannerNodeID,
+    from: PlannerPlaceID,
+    to: PlannerPlaceID,
     seconds: number,
 };
 export type PlannerGraph = {
-    places: Record<string, PlannerNode>,
+    places: Record<string, PlannerPlace>,
     routes: PlannerConnection[],
 };
