@@ -1,43 +1,53 @@
 // src/viewer/contexts/RouteContext.tsx
 import React, { createContext, useContext, useState, type ReactNode, useCallback } from 'react';
-import type { HallID } from '../types';
+import type { HallID, RoomID, PointOfInterestID } from '../types';
+
+export interface RouteItem {
+  id: HallID | RoomID | PointOfInterestID;
+  type: 'hall' | 'room' | 'poi';
+}
 
 interface RouteContextType {
-  routeHalls: HallID[];
-  addHallToRoute: (hallId: HallID) => void;
-  removeHallFromRoute: (hallId: HallID) => void;
-  reorderHallsInRoute: (newOrder: HallID[]) => void;
+  routeItems: RouteItem[];
+  addItemToRoute: (item: RouteItem) => void;
+  removeItemFromRoute: (item: RouteItem) => void;
+  isItemInRoute: (item: RouteItem) => boolean;
+  reorderItemsInRoute: (newOrder: RouteItem[]) => void;
   clearRoute: () => void;
 }
 
 const RouteContext = createContext<RouteContextType | undefined>(undefined);
 
 export const RouteProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [routeHalls, setRouteHalls] = useState<HallID[]>([]);
+  const [routeItems, setRouteItems] = useState<RouteItem[]>([]);
 
-  const addHallToRoute = useCallback((hallId: HallID) => {
-    setRouteHalls(prevHalls => {
-      if (!prevHalls.includes(hallId)) {
-        return [...prevHalls, hallId];
+  const addItemToRoute = useCallback((itemToAdd: RouteItem) => {
+    setRouteItems(prevItems => {
+      if (!prevItems.some(item => item.id === itemToAdd.id && item.type === itemToAdd.type)) {
+        return [...prevItems, itemToAdd];
       }
-      return prevHalls;
+      return prevItems;
     });
   }, []);
 
-  const removeHallFromRoute = useCallback((hallId: HallID) => {
-    setRouteHalls(prevHalls => prevHalls.filter(id => id !== hallId));
+  const removeItemFromRoute = useCallback((itemToRemove: RouteItem) => {
+    setRouteItems(prevItems => prevItems.filter(item => !(item.id === itemToRemove.id && item.type === itemToRemove.type)));
   }, []);
 
-  const reorderHallsInRoute = useCallback((newOrder: HallID[]) => {
-    setRouteHalls(newOrder);
+  const isItemInRoute = useCallback((itemToCheck: RouteItem) => {
+    return routeItems.some(item => item.id === itemToCheck.id && item.type === itemToCheck.type);
+  }, [routeItems]);
+
+  const reorderItemsInRoute = useCallback((newOrder: RouteItem[]) => {
+    setRouteItems(newOrder);
   }, []);
 
   const clearRoute = useCallback(() => {
-    setRouteHalls([]);
+    setRouteItems([]);
   }, []);
 
   return (
-    <RouteContext.Provider value={{ routeHalls, addHallToRoute, removeHallFromRoute, reorderHallsInRoute, clearRoute }}>
+    <RouteContext.Provider value={{ routeItems, addItemToRoute, removeItemFromRoute, isItemInRoute, reorderItemsInRoute, clearRoute }}>
       {children}
     </RouteContext.Provider>
   );

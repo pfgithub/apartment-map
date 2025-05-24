@@ -2,19 +2,20 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import ImageDisplay from '../components/ImageDisplay';
-import { useRoute } from '../contexts/RouteContext';
+import { useRoute, type RouteItem } from '../contexts/RouteContext'; // Added RouteItem
 import type { HallID, BuildingID, RoomID, ConnectionID } from '../types';
 
 // Helper component for actions related to the hall on this page
 const HallActions: React.FC<{ hallId: HallID }> = ({ hallId }) => {
-  const { routeHalls, addHallToRoute, removeHallFromRoute } = useRoute();
-  const isHallInRoute = routeHalls.includes(hallId);
+  const { addItemToRoute, removeItemFromRoute, isItemInRoute } = useRoute(); // Updated
+  const routeItem: RouteItem = { id: hallId, type: 'hall' }; // Create RouteItem
+  const itemInRoute = isItemInRoute(routeItem); // Use isItemInRoute
 
   const handleToggleRoute = () => {
-    if (isHallInRoute) {
-      removeHallFromRoute(hallId);
+    if (itemInRoute) {
+      removeItemFromRoute(routeItem);
     } else {
-      addHallToRoute(hallId);
+      addItemToRoute(routeItem);
     }
   };
 
@@ -23,10 +24,10 @@ const HallActions: React.FC<{ hallId: HallID }> = ({ hallId }) => {
       <button
         onClick={handleToggleRoute}
         className={`px-4 py-2 rounded font-semibold text-white
-                    ${isHallInRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}
+                    ${itemInRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}
                     transition-colors`}
       >
-        {isHallInRoute ? 'Remove from Route' : '+ Add to Route'}
+        {itemInRoute ? 'Remove from Route' : '+ Add to Route'}
       </button>
     </div>
   );
@@ -54,7 +55,7 @@ const HallPage: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold mb-1 text-blue-700">{hall.name}</h1>
           {building && (
             <p className="text-md text-gray-500 mb-3">
-              Part of <Link to={`/buildings/${building.id}`} className="text-blue-500 hover:underline">{building.description.split('.')[0]}</Link>
+              Part of <Link to={`/buildings/${building.id}`} className="text-blue-500 hover:underline">{building.name}</Link> {/* Changed to building.name */}
             </p>
           )}
           <p className="text-gray-600 text-lg mb-6">{hall.description}</p>
