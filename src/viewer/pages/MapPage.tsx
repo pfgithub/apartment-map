@@ -125,75 +125,9 @@ const MapPage: React.FC = () => {
     <div>
       <header className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Campus Map</h1>
-        <p className="text-gray-600 mt-1">Visual representation of halls and their connections. Click on a hall to see details.</p>
       </header>
       <div className="w-full overflow-x-auto bg-white shadow-lg rounded-lg p-2 sm:p-4">
-        <svg viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`} className={`min-w-[${SVG_WIDTH}px] min-h-[${SVG_HEIGHT}px]`}>
-          <defs>
-            <marker
-              id={ARROW_MARKER_ID}
-              markerWidth="10" // The width of the marker viewport
-              markerHeight="7" // The height of the marker viewport
-              refX="10"         // The x-coordinate of the reference point (tip of the arrow)
-              refY="3.5"       // The y-coordinate of the reference point (middle of the arrow height)
-              orient="auto"
-              fill={CONNECTION_ARROW_COLOR}>
-              <polygon points="0 0, 10 3.5, 0 7" /> {/* Defines the arrow shape (points from left to right) */}
-            </marker>
-          </defs>
-
-          <g className="connections">
-            {connectionsWithPositions.map(conn => (
-              <line
-                key={conn.id}
-                x1={conn.x1}
-                y1={conn.y1}
-                x2={conn.x2}
-                y2={conn.y2}
-                stroke={CONNECTION_LINE_COLOR}
-                strokeWidth={CONNECTION_STROKE_WIDTH}
-                markerEnd={`url(#${ARROW_MARKER_ID})`}
-              />
-            ))}
-          </g>
-
-          <g className="halls">
-            {hallsToDisplay.map((hall: Hall) => {
-              const pos = hallPositions[hall.id];
-              if (!pos) return null;
-              const isHovered = hall.id === hoveredHall;
-              return (
-                <g
-                  key={hall.id}
-                  transform={`translate(${pos.x}, ${pos.y})`}
-                  onClick={() => navigate(`/halls/${hall.id}`)}
-                  onMouseEnter={() => setHoveredHall(hall.id)}
-                  onMouseLeave={() => setHoveredHall(null)}
-                  className="cursor-pointer group"
-                  aria-label={`Hall: ${hall.name}`}
-                >
-                  <circle
-                    r={HALL_RADIUS}
-                    fill={isHovered ? HALL_HOVER_FILL_COLOR : HALL_FILL_COLOR}
-                    stroke={HALL_STROKE_COLOR}
-                    strokeWidth="2"
-                    className="transition-colors duration-150"
-                  />
-                  <text
-                    textAnchor="middle"
-                    y={HALL_RADIUS + 14} 
-                    fontSize="10px"
-                    fill={HALL_TEXT_COLOR}
-                    className="font-medium select-none transition-all group-hover:font-bold"
-                  >
-                    {hall.name}
-                  </text>
-                  <title>{hall.name} - Click to view details</title>
-                </g>
-              );
-            })}
-          </g>
-        </svg>
+        Coming Soon!
       </div>
       <p className="text-xs text-gray-500 mt-4 text-center">Note: Map layout is auto-generated and may not represent actual geographical locations or precise distances.</p>
     </div>
