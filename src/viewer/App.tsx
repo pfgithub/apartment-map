@@ -10,12 +10,11 @@ import RoomPage from './pages/RoomPage';
 import PointOfInterestPage from './pages/PointOfInterestPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
 
-// Import new pages
-import AllAvailableRoomsPage from './pages/AllAvailableRoomsPage.tsx';
+import AllRoomsPage from './pages/AllRoomsPage.tsx';
 import AllHallsPage from './pages/AllHallsPage.tsx';
 import AllPoisPage from './pages/AllPoisPage.tsx';
 import AllBuildingsPage from './pages/AllBuildingsPage.tsx';
-import MapPage from './pages/MapPage.tsx'; // Import the new MapPage
+import MapPage from './pages/MapPage.tsx';
 
 const App: React.FC = () => {
   return (
@@ -31,7 +30,7 @@ const App: React.FC = () => {
               <Route path="pois/:id" element={<PointOfInterestPage />} />
               <Route path="search" element={<SearchPage />} />
 
-              <Route path="all-available-rooms" element={<AllAvailableRoomsPage />} />
+              <Route path="all-rooms" element={<AllRoomsPage />} />
               <Route path="all-halls" element={<AllHallsPage />} />
               <Route path="all-pois" element={<AllPoisPage />} />
               <Route path="all-buildings" element={<AllBuildingsPage />} />

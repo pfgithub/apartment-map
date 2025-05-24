@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useRoute } from '../contexts/RouteContext';
 import RoomCard from '../components/RoomCard';
@@ -57,7 +56,7 @@ const HomePage: React.FC = () => {
             hallName={data.halls[room.relations.hall]?.name}
           />
         )}
-        viewAllLink="/all-available-rooms"
+        viewAllLink="/all-rooms" // Path changed
         viewAllText="View All Rooms"
         itemWidthClass="w-80"
         emptyMessage="No rooms currently featured or available."

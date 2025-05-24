@@ -100,8 +100,8 @@ const BuildingPage: React.FC = () => {
             hallName={data.halls[room.relations.hall]?.name}
           />
         )}
-        viewAllLink="/all-available-rooms" // General link, as specific filtering isn't implemented
-        viewAllText="View All Available Rooms"
+        viewAllLink="/all-rooms" // Path changed
+        viewAllText="View All Rooms"
         itemWidthClass="w-80" // Same as HomePage for RoomCard
         emptyMessage="No rooms found in this building."
       />

@@ -84,7 +84,7 @@ const RoomPage: React.FC = () => {
     if (room && hall && building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: `/all-buildings` }, // Updated link
+        { label: 'Buildings', link: `/all-buildings` }, 
         { label: building.name, link: `/buildings/${building.id}` },
         { label: hall.name, link: `/halls/${hall.id}` },
         { label: room.name }
@@ -99,7 +99,7 @@ const RoomPage: React.FC = () => {
     } else if (room) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Rooms', link: '/all-available-rooms' },
+        { label: 'Rooms', link: '/all-rooms' }, // Path changed
         { label: room.name }
       ]);
     } else {
