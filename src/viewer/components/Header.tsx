@@ -18,7 +18,6 @@ const Header: React.FC = () => {
         <Link to="/" className="text-2xl font-bold hover:text-blue-200">Campus Explorer</Link>
         <nav className="space-x-4 mt-2 sm:mt-0">
           <Link to="/" className="hover:text-blue-200">Home</Link>
-          <Link to="/navigate" className="hover:text-blue-200">Directions</Link>
         </nav>
         <form onSubmit={handleSearch} className="mt-2 sm:mt-0 flex">
           <input

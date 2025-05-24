@@ -2,7 +2,35 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import ImageDisplay from '../components/ImageDisplay';
+import { useRoute } from '../contexts/RouteContext';
 import type { HallID, BuildingID, RoomID, ConnectionID } from '../types';
+
+// Helper component for actions related to the hall on this page
+const HallActions: React.FC<{ hallId: HallID }> = ({ hallId }) => {
+  const { routeHalls, addHallToRoute, removeHallFromRoute } = useRoute();
+  const isHallInRoute = routeHalls.includes(hallId);
+
+  const handleToggleRoute = () => {
+    if (isHallInRoute) {
+      removeHallFromRoute(hallId);
+    } else {
+      addHallToRoute(hallId);
+    }
+  };
+
+  return (
+    <div className="mb-4">
+      <button
+        onClick={handleToggleRoute}
+        className={`px-4 py-2 rounded font-semibold text-white
+                    ${isHallInRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}
+                    transition-colors`}
+      >
+        {isHallInRoute ? 'Remove from Route' : '+ Add to Route'}
+      </button>
+    </div>
+  );
+};
 
 const HallPage: React.FC = () => {
   const { id } = useParams<{ id: HallID }>();
@@ -17,6 +45,7 @@ const HallPage: React.FC = () => {
 
   return (
     <div className="bg-white shadow-xl rounded-lg p-6 md:p-8">
+      <HallActions hallId={hall.id} />
       <div className="md:flex md:space-x-8">
         <div className="md:w-1/3">
           <ImageDisplay image={hall.image} className="w-full h-auto rounded-lg mb-4 md:mb-0" />

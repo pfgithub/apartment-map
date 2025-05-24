@@ -55,9 +55,10 @@ export type Room = {
     layout: {
         bedrooms: number,
         bathrooms: number,
-        has_kitchen: boolean,
-        has_balcony: boolean,
-        has_window: boolean,
+        has_kitchen?: boolean,
+        has_balcony?: boolean,
+        has_window?: boolean,
+        has_storage?: boolean,
     },
 
     relations: {
