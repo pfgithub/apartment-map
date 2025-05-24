@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Planner</title>
+    <link rel="stylesheet" href="../app.css">
+    <style>
+      .stop-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .stop-item select {
+            flex-grow: 1;
+        }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans p-8">
+    <div class="container mx-auto max-w-2xl bg-white p-6 rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">Route Planner</h1>
+      <div class="space-y-4">
+        <!-- Start Location -->
+        <div>
+          <label for="start-location" class="block text-sm font-medium text-gray-700 mb-1">Start Location:</label>
+          <select id="start-location" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+            <!-- Options will be populated by JS -->
+          </select>
+        </div>
+        <!-- Intermediate Stops -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Intermediate Stops (in order):</label>
+          <div id="intermediate-stops-container" class="space-y-2">
+            <!-- Intermediate stops will be added here -->
+          </div>
+          <button id="add-stop-btn" class="mt-2 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            Add Intermediate Stop
+          </button>
+        </div>
+        <!-- End Location -->
+        <div>
+          <label for="end-location" class="block text-sm font-medium text-gray-700 mb-1">End Location:</label>
+          <select id="end-location" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+            <!-- Options will be populated by JS -->
+          </select>
+        </div>
+        <!-- Find Route Button -->
+        <button id="find-route-btn" class="w-full mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Find Route
+        </button>
+      </div>
+      <!-- Results -->
+      <div id="results-container" class="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 hidden">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Optimal Route:</h2>
+        <p id="route-path" class="text-gray-700"></p>
+        <p id="route-cost" class="text-gray-700 font-medium mt-1"></p>
+        <p id="error-message" class="text-red-600 font-medium mt-1"></p>
+      </div>
+    </div>
+    <script src="./planner.ts"></script>
+  </body>
+</html>

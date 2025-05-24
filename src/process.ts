@@ -4,6 +4,7 @@
 // - everything should fit
 
 import data from "../data/DATA.txt" with {type: "text"};
+import type { PlannerGraph, PlannerNodeID } from "./planner/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
 type Link = {
@@ -370,6 +371,21 @@ export const graph_json = res_graph;
 export const cmd_mc = rescmd;
 export const sortedplaces_json = Object.fromEntries(sortedplaces);
 export const pathfinding_results_json = Object.fromEntries(pathfinding_results);
+
+export const planner_graph: PlannerGraph = {
+    places: {},
+    routes: [],
+};
+const getIdForName = (name: string): PlannerNodeID => {
+    return sortedplaces.find(p => p[0] === name)![1].id as PlannerNodeID;
+}
+for(const node of res_graph.nodes) {
+    planner_graph.places[getIdForName(node.id)] = {name: node.id};
+}
+for(const conn of res_graph.links) {
+    planner_graph.routes.push({from: getIdForName(conn.source), to: getIdForName(conn.target), cost: conn.value});
+}
+export const dgdata = planner_graph.routes.map(link => link.from + " " + link.to).join("\n");
 
 if(import.meta.main) {
     await Bun.write("dist/cmd", rescmd, {createPath: true});

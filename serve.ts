@@ -2,8 +2,10 @@ import app from "./src/app.html";
 import graph from "./src/graph2.html";
 import d3graph from "./src/graph.html";
 import forcegraph from "./src/forcegraph.html";
-import {graph_json, cmd_mc, sortedplaces_json, pathfinding_results_json} from "./src/process";
+import {graph_json, planner_graph, dgdata, cmd_mc, sortedplaces_json, pathfinding_results_json} from "./src/process";
 import { force_directed_graph } from "./force_directed_layout";
+import planner from "./src/planner/planner.html";
+import vivagraph from "./src/vivagraph/vivagraph.html";
 
 const server = Bun.serve({
     static: {
@@ -11,7 +13,11 @@ const server = Bun.serve({
         "/forcegraph": forcegraph,
         "/graph": graph,
         "/d3graph": d3graph,
+        "/planner": planner,
+        "/vivagraph": vivagraph,
         "/graph.json": new Response(JSON.stringify(graph_json), {headers: {'content-type': "application/json"}}),
+        "/planner.json": new Response(JSON.stringify(planner_graph), {headers: {'content-type': "application/json"}}),
+        "/dgdata.txt": new Response(dgdata, {headers: {'content-type': "text/plain"}}),
         "/cmd": new Response(cmd_mc, {headers: {'content-type': "text/plain"}}),
         "/places.json": new Response(JSON.stringify({
             places: sortedplaces_json,
