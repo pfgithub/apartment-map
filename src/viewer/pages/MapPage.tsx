@@ -1,20 +1,22 @@
 // src/viewer/pages/MapPage.tsx
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+// useNavigate removed
 import { useData } from '../contexts/DataContext';
-import { useRoute } from '../contexts/RouteContext';
+import { useRoute, type RouteItem } from '../contexts/RouteContext'; // Added RouteItem
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import CytoscapeComponent from 'react-cytoscapejs';
 import type { ElementDefinition } from 'cytoscape';
+import type { HallID } from '../types'; // Added HallID type
 
 // Register layout algorithm
 cytoscape.use(fcose);
 
 const MapPage: React.FC = () => {
   const { data } = useData();
-  const { setBreadcrumbs, calculatedRouteSegmentsForMap } = useRoute();
-  const navigate = useNavigate();
+  // Added addItemToRoute
+  const { setBreadcrumbs, calculatedRouteSegmentsForMap, addItemToRoute } = useRoute();
+  // navigate removed: const navigate = useNavigate();
   const cyRef = useRef<cytoscape.Core | null>(null);
 
   useEffect(() => {
@@ -118,7 +120,7 @@ const MapPage: React.FC = () => {
         'width': (ele: cytoscape.NodeSingular) => Math.max(40, (ele.data('name')?.length || 5) * 6 + 20), // Dynamic width based on label
         'height': 30,
         'label': 'data(label)',
-        'font-size': '15px',
+        'font-size': '10px',
         'color': 'rgb(17 24 39)', // Tailwind gray-900
         'z-index': 10, // Halls on top of building shape but under their labels
       }
@@ -140,12 +142,6 @@ const MapPage: React.FC = () => {
         'target-arrow-shape': 'triangle',
         'curve-style': 'bezier',
         'arrow-scale': 1.2,
-        // 'label': 'data(label)', // Optional: show time on edge
-        // 'font-size': '8px',
-        // 'color': 'rgb(75 85 99)', // Tailwind gray-600
-        // 'text-background-opacity': 1,
-        // 'text-background-color': 'white',
-        // 'text-background-padding': '2px',
       }
     },
     {
@@ -155,7 +151,7 @@ const MapPage: React.FC = () => {
         'border-color': 'rgb(245 158 11)', // Tailwind yellow-600
         'border-width': 3,
         'z-compound-depth': 'top',
-        'z-index': 999, // Ensure highlighted nodes are very prominent
+        'z-index': 999, 
         'text-outline-color': 'rgb(250 204 21)',
       }
     },
@@ -166,7 +162,19 @@ const MapPage: React.FC = () => {
         'target-arrow-color': 'rgb(234 88 12)',
         'width': 3.5,
         'z-compound-depth': 'top',
-        'z-index': 998, // Edges below nodes but above normal elements
+        'z-index': 998,
+      }
+    },
+    { // Style for the flash effect when a hall is added to the route
+      selector: '.flash-added',
+      style: {
+        'overlay-color': 'rgb(34 197 94)', // Tailwind green-500
+        'overlay-opacity': 0.6,
+        'overlay-padding': '8px',
+        'transition-property': 'overlay-opacity, overlay-padding',
+        'transition-duration': '0.15s', // Duration of the flash visual effect itself
+        'transition-timing-function': 'ease-out',
+        'z-index': 9999, // Ensure flash is on top
       }
     }
   ];
@@ -175,17 +183,26 @@ const MapPage: React.FC = () => {
     const cy = cyRef.current;
     if (cy) {
       // Click listener for halls
-      cy.on('tap', 'node.hall', (event) => {
-        const hallId = event.target.id();
-        navigate(`/halls/${hallId}`);
-      });
+      const hallTapHandler = (event: cytoscape.EventObject) => {
+        const hallNode = event.target;
+        const hallId = hallNode.id() as HallID;
+        
+        // Create route item and add to route
+        const routeItem: RouteItem = { id: hallId, type: 'hall' };
+        addItemToRoute(routeItem);
+
+        // Provide visual feedback
+        hallNode.flashClass('flash-added', 300); // Flash for 300ms
+      };
+      
+      cy.on('tap', 'node.hall', hallTapHandler);
 
       // Cleanup listeners on component unmount
       return () => {
-        cy.removeListener('tap', 'node.hall');
+        cy.off('tap', 'node.hall', hallTapHandler);
       };
     }
-  }, [navigate]); // cyRef.current is not a dependency here as we want to set it up once cy is available
+  }, [addItemToRoute]); // Dependency updated to addItemToRoute
 
   useEffect(() => {
     const cy = cyRef.current;
@@ -213,7 +230,7 @@ const MapPage: React.FC = () => {
         }
       }
     });
-  }, [calculatedRouteSegmentsForMap]); // cyRef.current is also not needed here if it's stable
+  }, [calculatedRouteSegmentsForMap]);
 
   if (!data) {
     return <p className="text-center py-10">Loading map data...</p>;
@@ -221,13 +238,13 @@ const MapPage: React.FC = () => {
 
   return (
     <div>
-      <header className="mb-4"> {/* Reduced margin for map page */}
+      <header className="mb-4">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Campus Map</h1>
       </header>
       <div className="w-full bg-gray-50 shadow-lg rounded-lg p-1 sm:p-2 border border-gray-200">
         <CytoscapeComponent
           elements={elements}
-          style={{ width: '100%', height: '75vh' }} // Adjusted height
+          style={{ width: '100%', height: '75vh' }}
           layout={layout}
           stylesheet={stylesheet}
           cy={(cy) => { cyRef.current = cy; }}
@@ -237,7 +254,7 @@ const MapPage: React.FC = () => {
         />
       </div>
       <p className="text-xs text-gray-500 mt-2 text-center">
-        Note: Map layout is auto-generated and may not represent actual geographical locations or precise distances. Click on a hall to navigate.
+        Note: Map layout is auto-generated. Click on a hall to add it to your route.
       </p>
     </div>
   );
