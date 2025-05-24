@@ -2,6 +2,21 @@ import type { PlannerGraph } from "./types";
 
 const data: PlannerGraph = await fetch("/planner.json").then(r => r.json());
 
+// --- Helper Functions ---
+/**
+ * Escapes HTML special characters in a string.
+ * @param unsafe The string to escape.
+ * @returns The escaped string.
+ */
+function escapeHtml(unsafe: string): string {
+    return unsafe
+         .replace(/&/g, "&")
+         .replace(/</g, "<")
+         .replace(/>/g, ">")
+         .replace(/"/g, "\"")
+         .replace(/'/g, "'");
+}
+
 // --- Data Structures ---
 let nodeNames: { [id: string]: string } = {}; // Map ID to Name
 let adjacencyList: { [nodeId: string]: { to: string, seconds: number }[] } = {}; // Graph
@@ -84,7 +99,7 @@ function createWaypointElement(valueToSelect = ''): HTMLDivElement {
     select.className = 'waypoint-select mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm';
     populateSelect(select);
     if (valueToSelect) {
-        select.value = valueToSelect; // If valueToSelect is not a valid option, it defaults to the first one
+        select.value = valueToSelect;
     }
     select.onchange = () => {
         updateUrlWithWaypoints();
@@ -175,18 +190,33 @@ function updateWaypointControls() {
     });
 }
 
-function displayResults(pathNodeIds: string[], totalSeconds: number) {
+function displayResults(pathNodeIds: string[], totalSeconds: number, originalWaypoints: string[]) {
     const resultsDiv = document.getElementById('results-container') as HTMLDivElement;
     const pathP = document.getElementById('route-path') as HTMLParagraphElement;
     const secondsP = document.getElementById('route-seconds') as HTMLParagraphElement;
     const errorP = document.getElementById('error-message') as HTMLParagraphElement;
 
-    if (errorP) errorP.textContent = '';
+    if (errorP) errorP.textContent = ''; // Clear previous errors
+
     if (pathNodeIds && pathNodeIds.length > 0) {
-        if (pathP) pathP.textContent = `Path: ${pathNodeIds.map(id => nodeNames[id] || 'Unknown').join(' → ')}`;
-        if (secondsP) secondsP.textContent = `Total Seconds: ${totalSeconds.toFixed(0)}`;
+        if (pathP) {
+            const pathString = pathNodeIds.map(id => {
+                const name = nodeNames[id] || 'Unknown';
+                const escapedName = escapeHtml(name); // Escape the name for security/display correctness
+
+                // Highlight if the node is one of the user-selected waypoints
+                if (originalWaypoints.includes(id)) {
+                    return `<span class="font-semibold text-indigo-600">${escapedName}</span>`;
+                }
+                return escapedName;
+            }).join(' <span class="text-gray-500 mx-1">→</span> '); // Styled arrow separator
+            
+            pathP.innerHTML = pathString; // Use innerHTML as we're injecting span tags
+        }
+        if (secondsP) secondsP.textContent = `Total Time: ${totalSeconds.toFixed(0)} seconds`; // Changed label
     } else {
-        if (pathP) pathP.textContent = '';
+        // Clear content if no path
+        if (pathP) pathP.innerHTML = ''; // Use innerHTML for consistency
         if (secondsP) secondsP.textContent = '';
     }
     if (resultsDiv) resultsDiv.classList.remove('hidden');
@@ -198,7 +228,7 @@ function displayError(message: string) {
     const secondsP = document.getElementById('route-seconds') as HTMLParagraphElement;
     const errorP = document.getElementById('error-message') as HTMLParagraphElement;
 
-    if (pathP) pathP.textContent = '';
+    if (pathP) pathP.innerHTML = ''; // Use innerHTML for consistency if clearing
     if (secondsP) secondsP.textContent = '';
     if (errorP) errorP.textContent = `Error: ${message}`;
     if (resultsDiv) resultsDiv.classList.remove('hidden');
@@ -212,10 +242,9 @@ function updateUrlWithWaypoints() {
     const waypointIds = waypointSelects.map(select => select.value);
 
     const params = new URLSearchParams(window.location.search);
-    params.set('waypoints', waypointIds.join('-')); // Will create "id1,id2" or "id1," or ",id2" or ","
+    params.set('waypoints', waypointIds.join('-')); 
 
     const newQueryString = params.toString();
-    // Only push new state if the query string actually changes
     if (window.location.search.substring(1) !== newQueryString) {
          history.replaceState(null, '', window.location.pathname + (newQueryString ? '?' + newQueryString : ''));
     }
@@ -228,20 +257,18 @@ function loadWaypointsFromUrl() {
     const waypointsParam = params.get('waypoints');
     let initialWaypointIds: string[] = [];
 
-    if (waypointsParam !== null) { // Check for null, as an empty string (e.g. ?waypoints=) is valid
+    if (waypointsParam !== null) {
         initialWaypointIds = waypointsParam.split('-');
     }
 
-    // Ensure at least two waypoints are created
     if (initialWaypointIds.length === 0) {
         waypointsContainer.appendChild(createWaypointElement(''));
         waypointsContainer.appendChild(createWaypointElement(''));
     } else if (initialWaypointIds.length === 1) {
         waypointsContainer.appendChild(createWaypointElement(initialWaypointIds[0]));
         waypointsContainer.appendChild(createWaypointElement(''));
-    } else { // 2 or more waypoints from URL
+    } else { 
         initialWaypointIds.forEach(id => {
-            // If id is an empty string, it will correctly select the "-- Select Location --" option
             waypointsContainer.appendChild(createWaypointElement(id));
         });
     }
@@ -260,11 +287,11 @@ function loadWaypointsFromUrl() {
         if (!adjacencyList[conn.to]) adjacencyList[conn.to] = [];
     });
 
-    // 2. Initialize UI: Load waypoints from URL or set defaults
+    // 2. Initialize UI
     if (waypointsContainer) {
-        loadWaypointsFromUrl(); // Creates waypoint elements based on URL
-        updateWaypointControls(); // Updates button states and select labels
-        updateUrlWithWaypoints(); // Canonicalize URL (e.g., if defaults were applied)
+        loadWaypointsFromUrl(); 
+        updateWaypointControls(); 
+        updateUrlWithWaypoints(); 
     } else {
         console.error("Waypoints container not found!");
     }
@@ -272,7 +299,7 @@ function loadWaypointsFromUrl() {
     // 3. Event Listeners
     const addWaypointBtn = document.getElementById('add-waypoint-btn');
     if (addWaypointBtn) {
-        addWaypointBtn.addEventListener('click', addWaypointToContainer); // addWaypointToContainer now calls updateUrlWithWaypoints
+        addWaypointBtn.addEventListener('click', addWaypointToContainer);
     }
 
     const findRouteBtn = document.getElementById('find-route-btn');
@@ -285,7 +312,7 @@ function loadWaypointsFromUrl() {
 
             if (resultsDiv) resultsDiv.classList.add('hidden');
             if (errorP) errorP.textContent = '';
-            if (pathP) pathP.textContent = '';
+            if (pathP) pathP.innerHTML = ''; // Use innerHTML for consistency
             if (secondsP) secondsP.textContent = '';
 
             if (!waypointsContainer) {
@@ -307,9 +334,9 @@ function loadWaypointsFromUrl() {
                 return;
             }
             
-            // Handle case where all waypoints are the same single location
             if (waypoints.every(wp => wp === waypoints[0])) {
-                displayResults([waypoints[0]], 0);
+                // Pass the 'waypoints' array as the original waypoints for highlighting
+                displayResults([waypoints[0]], 0, waypoints); 
                 return;
             }
 
@@ -321,12 +348,9 @@ function loadWaypointsFromUrl() {
                 const segmentEnd = waypoints[i + 1];
 
                 if (segmentStart === segmentEnd) {
-                    // If it's the first segment and path is empty, add the start node.
                     if (fullPathNodeIds.length === 0 && i === 0) {
                         fullPathNodeIds.push(segmentStart);
                     }
-                    // Otherwise, if start is same as end, this segment adds 0 seconds and no new nodes to path
-                    // (unless it's already added as the end of the previous segment).
                     continue;
                 }
 
@@ -341,12 +365,9 @@ function loadWaypointsFromUrl() {
                 if (fullPathNodeIds.length === 0) {
                     fullPathNodeIds.push(...segmentResult.path);
                 } else {
-                    // Ensure continuity: last node of fullPath should be first node of new segmentResult.path
                     if (fullPathNodeIds[fullPathNodeIds.length - 1] === segmentResult.path[0]) {
                         fullPathNodeIds.push(...segmentResult.path.slice(1));
                     } else {
-                         // This case should ideally not happen if segments are A->A, B->B, B->C etc.
-                         // It implies a mismatch, e.g. fullPath ends in X, segmentResult starts with Y.
                         displayError(`Path continuity error. Expected segment to connect from ${nodeNames[fullPathNodeIds[fullPathNodeIds.length - 1]]}, but new segment started from ${nodeNames[segmentResult.path[0]]}.`);
                         return;
                     }
@@ -354,14 +375,12 @@ function loadWaypointsFromUrl() {
             }
             
             if (fullPathNodeIds.length > 0) {
-                displayResults(fullPathNodeIds, totalSeconds);
+                // Pass the 'waypoints' array as the original waypoints for highlighting
+                displayResults(fullPathNodeIds, totalSeconds, waypoints);
             } else if (waypoints.length > 0 && waypoints.every(wp => wp === waypoints[0])) {
-                // This case is handled at the top of the click handler, but as a fallback:
-                displayResults([waypoints[0]], 0);
+                // This case is covered above, but as a fallback, ensure correct parameters
+                displayResults([waypoints[0]], 0, waypoints);
             } else {
-                 // This state might be reached if waypoints were e.g. ["A", "A"] and loop was skipped
-                 // but the top "every" check somehow didn't catch it or if no error was set
-                 // and fullPathNodeIds remained empty.
                 if (errorP && !errorP.textContent) {
                      displayError("Could not calculate a route. Please check your waypoints.");
                 }

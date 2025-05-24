@@ -1,17 +1,36 @@
-export type HallGroup = {
-    label: string, // "outside" | "apts" | "paths"
+export type Building = {
+    id: string;
+    label: string;
+    relations: {
+        halls: Hall[],
+    }
 };
 export type Hall = {
-    group: HallGroup,
-    shortcode: string,
+    id: string,
     name: string,
+    image: Image,
     description: string,
-    image: {url: string, width: number, height: number},
-    units: number,
 
-    connections: Connection[],
+    relations: {
+        rooms: Room[],
+        connections: Connection[],
+        building: Building,
+    },
 };
 export type Connection = {
-    to: Hall,
     seconds: number,
+    relations: {
+        from: Hall,
+        to: Hall,
+    }
 };
+export type Room = {
+    id: string,
+    name: string,
+    image: Image,
+
+    relations: {
+        hall: Hall,
+    },
+};
+export type Image = {url: string, width: number, height: number};

@@ -2,8 +2,8 @@
 - Front Entry
 - Cave Museum
 - Cherry Grove
-- Dumpinggrounds
 - River
+- Waterways
 [FE 1-3] Front Entry:
 - Outside
 - Rose Hall
@@ -79,6 +79,7 @@
 - Cave Museum
 - Silver Washroom
 - Water2ays
+- Outside
 [GL 1] Gemstone Foyer L:
 - Waterways
 - Wave Road
@@ -210,7 +211,7 @@
 [CH 1-5] Crown Hall:
 - Front Entry
 [DU] Dumpinggrounds:
-- Outside
+- Cherry Grove
 - Bamboo Forest
 - Inner Forest
 [AH 1-2] Art Hall:
@@ -530,6 +531,7 @@
 - Bamboo Forest
 - Backyard
 - River
+- Dumpinggrounds
 [YD] Backyard
 - Cherry Grove
 - Backroom D

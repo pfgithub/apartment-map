@@ -4,7 +4,7 @@
 // - everything should fit
 
 import data from "../data/DATA.txt" with {type: "text"};
-import type { PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
+import type { PlannerConnection, PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
 type Link = {
@@ -383,7 +383,14 @@ for(const node of res_graph.nodes) {
     planner_graph.places[getIdForName(node.id)] = {title: node.id};
 }
 for(const conn of res_graph.links) {
-    planner_graph.routes.push({from: getIdForName(conn.source), to: getIdForName(conn.target), seconds: conn.value});
+    const route: PlannerConnection = {from: getIdForName(conn.source), to: getIdForName(conn.target), seconds: conn.value};
+    if(route.to === "WW" || route.to === "W2") {
+        route.seconds *= 100; // no one likes getting wet
+    }
+    if(route.from === "FE" && route.to === "OS" || route.from === "CM" && route.to === "OS") {
+        route.seconds *= 20; // don't go outside unless you really have to
+    }
+    planner_graph.routes.push(route);
 }
 export const dgdata = planner_graph.routes.map(link => link.from + " " + link.to).join("\n");
 
