@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "^1.2.2",
+    "@types/bun": "^1.2.14",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4"
   },
@@ -13,7 +13,7 @@
   "dependencies": {
     "@antv/layout": "^1.2.14-beta.8",
     "bun-plugin-tailwind": "^0.0.14",
-    "bun-types": "^1.2.2",
+    "bun-types": "^1.2.14",
     "d3": "^7.9.0",
     "echarts": "^5.6.0",
     "graphology": "^0.26.0",

@@ -21,7 +21,7 @@ const BuildingPage: React.FC = () => {
           <ImageDisplay image={building.image} className="w-full h-auto rounded-lg mb-4 md:mb-0" />
         </div>
         <div className="md:w-2/3">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-blue-700">{building.description.split('.')[0]}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-blue-700">{building.name}</h1>
           <p className="text-gray-600 text-lg mb-6">{building.description}</p>
         </div>
       </div>

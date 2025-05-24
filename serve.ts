@@ -7,9 +7,10 @@ import { force_directed_graph } from "./force_directed_layout";
 import planner from "./src/planner/planner.html";
 import vivagraph from "./src/vivagraph/vivagraph.html";
 import viewer from "./src/viewer/viewer.html";
+import { genViewerPrompt } from "./src/viewerprompt";
 
 const server = Bun.serve({
-    static: {
+    routes: {
         "/": app,
         "/forcegraph": forcegraph,
         "/graph": graph,
@@ -22,6 +23,7 @@ const server = Bun.serve({
         "/planner.json": new Response(JSON.stringify(planner_graph), {headers: {'content-type': "application/json"}}),
         "/root.json": new Response(JSON.stringify(newdata), {headers: {'content-type': "application/json"}}),
         "/dgdata.txt": new Response(dgdata, {headers: {'content-type': "text/plain"}}),
+        "/viewerprompt.txt": () => new Response(genViewerPrompt(), {headers: {'content-type': "text/plain"}}),
         "/cmd": new Response(cmd_mc, {headers: {'content-type': "text/plain"}}),
         "/places.json": new Response(JSON.stringify({
             places: sortedplaces_json,

@@ -10,6 +10,11 @@ import PointOfInterestPage from './pages/PointOfInterestPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
 import NavigationPage from './pages/NavigationPage.tsx';
 
+// Import new pages
+import AllAvailableRoomsPage from './pages/AllAvailableRoomsPage.tsx';
+import AllHallsPage from './pages/AllHallsPage.tsx';
+import AllPoisPage from './pages/AllPoisPage.tsx';
+
 const App: React.FC = () => {
   return (
     <DataProvider>
@@ -23,6 +28,12 @@ const App: React.FC = () => {
             <Route path="pois/:id" element={<PointOfInterestPage />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="navigate" element={<NavigationPage />} />
+
+            {/* Add new routes for "All" pages */}
+            <Route path="all-available-rooms" element={<AllAvailableRoomsPage />} />
+            <Route path="all-halls" element={<AllHallsPage />} />
+            <Route path="all-pois" element={<AllPoisPage />} />
+            
             <Route path="*" element={<div className="text-center py-10"><h2>404: Page Not Found</h2></div>} />
           </Route>
         </Routes>

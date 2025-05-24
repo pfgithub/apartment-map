@@ -12,6 +12,7 @@ export type Root = {
 };
 export type Building = {
     id: BuildingID,
+    name: string,
     description: string,
     image: Image,
 

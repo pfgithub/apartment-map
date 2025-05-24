@@ -410,20 +410,23 @@ export const newdata: Root = {
     buildings: {
         ["apts" as BuildingID]: {
             id: "apts" as BuildingID,
-            description: "Appts, Swites, Inc.",
+            name: "Appts, Swites, Inc.",
+            description: "No description.",
             image: {url: "/200x150.png", alt: "", width: 200, height: 150},
 
             relations: {halls: []},
         },
         ["outside" as BuildingID]: {
             id: "outside" as BuildingID,
-            description: "No description.",
+            name: "Outside",
+            description: "The great outdoors",
             image: {url: "/200x150.png", alt: "", width: 200, height: 150},
 
             relations: {halls: []},
         },
         ["paths" as BuildingID]: {
             id: "paths" as BuildingID,
+            name: "Paths",
             description: "No description.",
             image: {url: "/200x150.png", alt: "", width: 200, height: 150},
 
