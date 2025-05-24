@@ -1,22 +1,23 @@
 // src/viewer/pages/MapPage.tsx
-import React, { useEffect, useMemo, useRef } from 'react';
-// useNavigate removed
+import React, { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useData } from '../contexts/DataContext';
-import { useRoute, type RouteItem } from '../contexts/RouteContext'; // Added RouteItem
+import { useRoute, type RouteItem } from '../contexts/RouteContext';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import CytoscapeComponent from 'react-cytoscapejs';
 import type { ElementDefinition } from 'cytoscape';
-import type { HallID } from '../types'; // Added HallID type
+import type { HallID } from '../types';
 
-// Register layout algorithm
 cytoscape.use(fcose);
+
+/*
+When updating this file, remember that CytoscapeComponent must never rerender! It must be initialized once and
+then only updated afterwards.
+*/
 
 const MapPage: React.FC = () => {
   const { data } = useData();
-  // Added addItemToRoute
-  const { setBreadcrumbs, calculatedRouteSegmentsForMap, addItemToRoute } = useRoute();
-  // navigate removed: const navigate = useNavigate();
+  const { setBreadcrumbs, calculatedRouteSegmentsForMap, addItemToRoute, removeItemFromRoute, isItemInRoute } = useRoute();
   const cyRef = useRef<cytoscape.Core | null>(null);
 
   useEffect(() => {
@@ -42,10 +43,10 @@ const MapPage: React.FC = () => {
     // Add hall nodes (children of buildings)
     Object.values(data.halls).forEach(hall => {
       eles.push({
-        data: { 
-          id: hall.id, 
-          label: hall.name, 
-          parent: hall.relations.building, 
+        data: {
+          id: hall.id,
+          label: hall.name,
+          parent: hall.relations.building,
           type: 'hall',
           name: hall.name // For dynamic sizing based on name length
         },
@@ -70,7 +71,8 @@ const MapPage: React.FC = () => {
     return eles;
   }, [data]);
 
-  const layout = {
+  // Memoize the layout configuration
+  const layout = useMemo(() => ({
     name: 'fcose',
     quality: 'default',
     animate: true,
@@ -81,13 +83,14 @@ const MapPage: React.FC = () => {
     nodeSeparation: 85, // Increased for better separation
     idealEdgeLength: (_edge: any) => 120, // Increased for better spread
     nestingFactor: 1.5, // Increased for more space around compounds
-    gravity: 0.1, 
+    gravity: 0.1,
     numIter: 2500, // Default is 2500
     tile: true,
     packComponents: true,
-  };
+  }), []); // Empty dependency array means this object is created once
 
-  const stylesheet: cytoscape.StylesheetStyle[] = [
+  // Memoize the stylesheet
+  const stylesheet = useMemo<cytoscape.StylesheetStyle[]>(() => [
     {
       selector: 'node', // General node style (fallback)
       style: {
@@ -151,7 +154,7 @@ const MapPage: React.FC = () => {
         'border-color': 'rgb(245 158 11)', // Tailwind yellow-600
         'border-width': 3,
         'z-compound-depth': 'top',
-        'z-index': 999, 
+        'z-index': 999,
         'text-outline-color': 'rgb(250 204 21)',
       }
     },
@@ -177,36 +180,44 @@ const MapPage: React.FC = () => {
         'z-index': 9999, // Ensure flash is on top
       }
     }
-  ];
+  ], []); // Empty dependency array means this array is created once
+
+  // Memoize the cy initialization callback
+  const initCy = useCallback((cyInstance: cytoscape.Core) => {
+    cyRef.current = cyInstance;
+  }, []); // cyRef itself is stable, so empty dependency array
 
   useEffect(() => {
     const cy = cyRef.current;
     if (cy) {
-      // Click listener for halls
       const hallTapHandler = (event: cytoscape.EventObject) => {
         const hallNode = event.target;
         const hallId = hallNode.id() as HallID;
-        
-        // Create route item and add to route
-        const routeItem: RouteItem = { id: hallId, type: 'hall' };
-        addItemToRoute(routeItem);
 
-        // Provide visual feedback
+        const routeItem: RouteItem = { id: hallId, type: 'hall' };
+        if (isItemInRoute(routeItem)) {
+          removeItemFromRoute(routeItem);
+        } else {
+          addItemToRoute(routeItem);
+        }
+
         hallNode.flashClass('flash-added', 300); // Flash for 300ms
       };
-      
+
       cy.on('tap', 'node.hall', hallTapHandler);
 
-      // Cleanup listeners on component unmount
       return () => {
-        cy.off('tap', 'node.hall', hallTapHandler);
+        // Ensure cy instance is valid and not destroyed before calling off
+        if (cy && !cy.destroyed()) {
+          cy.off('tap', 'node.hall', hallTapHandler);
+        }
       };
     }
-  }, [addItemToRoute]); // Dependency updated to addItemToRoute
+  }, [addItemToRoute, removeItemFromRoute, isItemInRoute]); // All of these are stable.
 
   useEffect(() => {
     const cy = cyRef.current;
-    if (!cy) return;
+    if (!cy || cy.destroyed()) return; // Ensure cy instance is valid
 
     // Clear previous highlights
     cy.elements().removeClass('highlighted-route-node').removeClass('highlighted-route-edge');
@@ -225,8 +236,17 @@ const MapPage: React.FC = () => {
         // Highlight edges in the segment
         for (let i = 0; i < segment.path.length - 1; i++) {
           const sourceHallId = segment.path[i];
-          const targetHallId = segment.path[i+1];
-          cy.edges(`[source = "${sourceHallId}"][target = "${targetHallId}"]`).addClass('highlighted-route-edge');
+          const targetHallId = segment.path[i + 1];
+          // Ensure elements exist before trying to add class
+          const edge = cy.edges(`[source = "${sourceHallId}"][target = "${targetHallId}"]`);
+          if (edge.length > 0) { // Check if edge exists
+            edge.addClass('highlighted-route-edge');
+          }
+          // Also handle reverse direction if connections are bidirectional but modeled as one-way in data
+          const reverseEdge = cy.edges(`[source = "${targetHallId}"][target = "${sourceHallId}"]`);
+          if (reverseEdge.length > 0) {
+            reverseEdge.addClass('highlighted-route-edge');
+          }
         }
       }
     });
@@ -245,9 +265,9 @@ const MapPage: React.FC = () => {
         <CytoscapeComponent
           elements={elements}
           style={{ width: '100%', height: '75vh' }}
-          layout={layout}
-          stylesheet={stylesheet}
-          cy={(cy) => { cyRef.current = cy; }}
+          layout={layout} // Now uses memoized layout
+          stylesheet={stylesheet} // Now uses memoized stylesheet
+          cy={initCy} // Now uses memoized callback
           minZoom={0.2}
           maxZoom={2.5}
           autoungrabify={true}
