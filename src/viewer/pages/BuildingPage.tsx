@@ -1,9 +1,16 @@
-import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useRoute } from '../contexts/RouteContext';
 import ImageDisplay from '../components/ImageDisplay';
-import type { BuildingID, HallID } from '../types';
+import HallCard from '../components/HallCard';
+import RoomCard from '../components/RoomCard';
+import PoiCard from '../components/PoiCard';
+import CarouselSection from '../components/CarouselSection';
+import { shuffleArray } from '../utils/shuffle';
+import type { BuildingID, HallID, RoomID, Hall, Room, PointOfInterest } from '../types';
+
+const CAROUSEL_ITEM_LIMIT = 5; // Define how many items to show in carousels
 
 const BuildingPage: React.FC = () => {
   const { id } = useParams<{ id: BuildingID }>();
@@ -16,52 +23,109 @@ const BuildingPage: React.FC = () => {
     if (building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: '/all-buildings' }, // Updated link
+        { label: 'Buildings', link: '/all-buildings' },
         { label: building.name }
       ]);
     } else {
        setBreadcrumbs([
          { label: 'Home', link: '/' },
-         { label: 'Buildings', link: '/all-buildings' } // Fallback if building not found
+         { label: 'Buildings', link: '/all-buildings' }
         ]);
     }
   }, [setBreadcrumbs, building]);
+
+  const hallsInBuilding = useMemo(() => {
+    if (!building || !data) return [];
+    return building.relations.halls
+      .map(hallId => data.halls[hallId as HallID])
+      .filter(hall => hall !== undefined) as Hall[];
+  }, [building, data]);
+
+  const roomsInBuilding = useMemo(() => {
+    if (!building || !data || !hallsInBuilding) return [];
+    const allRooms: Room[] = [];
+    const hallIdsInBuilding = new Set(hallsInBuilding.map(h => h.id));
+
+    hallIdsInBuilding.forEach(hallId => {
+      const hall = data.halls[hallId as HallID];
+      if (hall) {
+        hall.relations.rooms.forEach(roomId => {
+          const room = data.rooms[roomId as RoomID];
+          if (room) {
+            allRooms.push(room);
+          }
+        });
+      }
+    });
+    return shuffleArray(allRooms);
+  }, [building, data, hallsInBuilding]);
+
+  const poisInBuilding = useMemo(() => {
+    if (!building || !data || !hallsInBuilding) return [];
+    const allPois: PointOfInterest[] = [];
+    const hallIdsInBuilding = new Set(hallsInBuilding.map(h => h.id));
+
+    Object.values(data.points_of_interest).forEach(poi => {
+      if (hallIdsInBuilding.has(poi.relations.hall as HallID)) {
+        allPois.push(poi);
+      }
+    });
+    return shuffleArray(allPois);
+  }, [building, data, hallsInBuilding]);
+
 
   if (!building) return <p className="text-center py-10">Building not found.</p>;
 
 
   return (
-    <div className="bg-white shadow-xl rounded-lg p-6 md:p-8">
-      <div className="md:flex md:space-x-8">
-        <div className="md:w-1/3 mb-6 md:mb-0">
-          <ImageDisplay image={building.image} className="w-full h-auto rounded-lg shadow-md" />
-        </div>
-        <div className="md:w-2/3">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-sky-700">{building.name}</h1>
-          <p className="text-gray-700 text-lg leading-relaxed mb-6">{building.description}</p>
-        </div>
-      </div>
-
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Halls in this Building</h2>
-        {building.relations.halls.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {building.relations.halls.map(hallId => {
-              const hall = data.halls[hallId as HallID];
-              return hall ? (
-                <Link 
-                  key={hallId} 
-                  to={`/halls/${hall.id}`} 
-                  className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 hover:shadow-sm"
-                >
-                  <h3 className="text-lg font-medium text-sky-600 hover:underline">{hall.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{hall.description}</p>
-                </Link>
-              ) : null;
-            })}
+    <div className="space-y-10">
+      <section className="bg-white shadow-xl rounded-lg p-6 md:p-8">
+        <div className="md:flex md:space-x-8">
+          <div className="md:w-1/3 mb-6 md:mb-0">
+            <ImageDisplay image={building.image} className="w-full h-auto rounded-lg shadow-md" />
           </div>
-        ) : <p className="text-gray-500 italic">No halls listed for this building.</p>}
-      </div>
+          <div className="md:w-2/3">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-sky-700">{building.name}</h1>
+            <p className="text-gray-700 text-lg leading-relaxed mb-6">{building.description}</p>
+          </div>
+        </div>
+      </section>
+      
+      <CarouselSection
+        title="Rooms in this Building"
+        items={roomsInBuilding.slice(0, CAROUSEL_ITEM_LIMIT)}
+        renderItem={(room: Room) => (
+          <RoomCard
+            room={room}
+            hallName={data.halls[room.relations.hall]?.name}
+          />
+        )}
+        viewAllLink="/all-available-rooms" // General link, as specific filtering isn't implemented
+        viewAllText="View All Available Rooms"
+        itemWidthClass="w-80" // Same as HomePage for RoomCard
+        emptyMessage="No rooms found in this building."
+      />
+
+      <CarouselSection
+        title="Points of Interest in this Building"
+        items={poisInBuilding.slice(0, CAROUSEL_ITEM_LIMIT)}
+        renderItem={(poi: PointOfInterest) => <PoiCard poi={poi} />}
+        viewAllLink="/all-pois" // General link
+        viewAllText="View All POIs"
+        itemWidthClass="w-72" // Same as HomePage for PoiCard
+        emptyMessage="No points of interest found in this building."
+      />
+
+      <section>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Halls in this Building</h2>
+        {hallsInBuilding.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {hallsInBuilding.map(hall => (
+              <HallCard key={hall.id} hall={hall} showAddToRouteButton={true} />
+            ))}
+          </div>
+        ) : <p className="text-gray-500 italic p-4 bg-white shadow rounded-lg">No halls listed for this building.</p>}
+      </section>
     </div>
   );
 };
