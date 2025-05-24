@@ -3,6 +3,7 @@ import { useData } from '../contexts/DataContext';
 import { useRoute } from '../contexts/RouteContext';
 import PoiCard from '../components/PoiCard';
 import type { PointOfInterest } from '../types';
+import PoiIcon from '../icons/PoiIcon';
 
 const AllPoisPage: React.FC = () => {
   const { data } = useData();
@@ -23,12 +24,9 @@ const AllPoisPage: React.FC = () => {
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">All Points of Interest</h1>
         <p className="text-gray-600 mt-1">Discover various points of interest around the campus.</p>
       </header>
-      {allPois.length === 0 ? (
+      {allPois.length === 0 || true ? (
          <div className="text-center py-10 bg-white shadow rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-gray-400 mx-auto mb-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-          </svg>
+          <PoiIcon />
           <p className="text-xl text-gray-700">No Points of Interest found.</p>
           <p className="text-gray-500 mt-1">There are no POIs listed at the moment.</p>
         </div>

@@ -4,6 +4,11 @@ import { useRoute, type RouteItem } from '../contexts/RouteContext';
 import { useData } from '../contexts/DataContext';
 import { findShortestPath, type PathResult } from '../utils/pathfinding';
 import type { HallID, RoomID, PointOfInterestID, Root } from '../types';
+import RoutePlannerIcon from '../icons/RoutePlannerIcon';
+import CloseIcon from '../icons/CloseIcon';
+import UpIcon from '../icons/UpIcon';
+import DownIcon from '../icons/DownIcon';
+import TrashIcon from '../icons/TrashIcon';
 
 interface RouteSegmentResult {
   fromItemName: string;
@@ -136,9 +141,7 @@ const RoutePlannerPanel: React.FC = () => {
         className="fixed bottom-4 right-4 bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 z-50 transition-transform hover:scale-105"
         aria-label="Toggle Route Planner"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m0 0v2.25m0-2.25h1.5M12 9m0 0H9m3 0h.008M12 12.75m0 0H9m3 0h.008m0 0H12m3 0h.008M12 15.75m0 0H9m3 0h.008m0 0h.75m3-12h.008v.008H18V3.75m-3 .008H18V6.75m0 0H18M15 6.75H9m6 0V3.75M3 12h18M3 12c0-1.657 1.343-3 3-3h1.372c.863 0 1.609-.304 2.228-.834L10.5 7.5M3 12c0 1.657 1.343 3 3 3h1.372c.863 0 1.609.304 2.228.834L10.5 16.5m5.25-9v9" />
-        </svg>
+        <RoutePlannerIcon />
         {routeItems.length > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
             {routeItems.length}
@@ -156,9 +159,7 @@ const RoutePlannerPanel: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 id="route-planner-title" className="text-xl font-bold text-purple-300">Route Planner</h2>
           <button onClick={() => setShowPanel(false)} className="text-gray-400 hover:text-white" aria-label="Close Route Planner">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <CloseIcon />
           </button>
         </div>
 
@@ -181,9 +182,7 @@ const RoutePlannerPanel: React.FC = () => {
                         className="p-1 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed rounded"
                         title="Move Up"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                        </svg>
+                        <UpIcon />
                       </button>
                       <button
                         onClick={() => handleMove(index, 'down')}
@@ -191,18 +190,14 @@ const RoutePlannerPanel: React.FC = () => {
                         className="p-1 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed rounded"
                         title="Move Down"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
+                        <DownIcon />
                       </button>
                       <button
                         onClick={() => { removeItemFromRoute(item); setDirections(null); }}
                         className="text-red-400 hover:text-red-300 p-1 hover:bg-gray-600 rounded"
                         title="Remove"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c1.153 0 2.243.096 3.222.261m3.222.261L12 5.291M8.25 5.291L12 5.291m0 0L15.75 5.291M3.375 5.291L12 1.35m0 0L20.625 5.291" />
-                        </svg>
+                        <TrashIcon />
                       </button>
                     </div>
                   </li>

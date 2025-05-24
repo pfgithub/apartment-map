@@ -18,7 +18,7 @@ const Layout: React.FC = () => {
       <footer className="bg-gray-800 text-gray-300 text-center p-6">
         <div className="container mx-auto">
           <p>Brought to you by NovaWays™</p>
-          <p className="text-sm mt-1">Find Your Way.</p>
+          <p className="text-sm mt-1">Find Your Way™</p>
         </div>
       </footer>
     </div>

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import type { Hall } from '../types';
 import ImageDisplay from './ImageDisplay';
 import { useRoute } from '../contexts/RouteContext'; // For add/remove button
+import AddIcon from '../icons/AddIcon';
+import RemoveIcon from '../icons/RemoveIcon';
 
 interface HallCardProps {
   hall: Hall;
@@ -42,13 +44,7 @@ const HallCard: React.FC<HallCardProps> = ({ hall, showAddToRouteButton = false 
           className={`absolute top-2 right-2 p-1.5 rounded-full text-white transition-colors
                       ${inRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            {inRoute ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            )}
-          </svg>
+          {inRoute ? <RemoveIcon /> : <AddIcon />}
         </button>
       )}
     </div>

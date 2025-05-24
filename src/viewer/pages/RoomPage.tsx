@@ -4,34 +4,14 @@ import { useData } from '../contexts/DataContext';
 import { useRoute, type RouteItem } from '../contexts/RouteContext';
 import ImageDisplay from '../components/ImageDisplay';
 import type { RoomID, HallID, Room } from '../types';
-
-// Icons for room layout
-const BedIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-5 h-5 ${className}`}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10.5 18.75a.75.75 0 001.5 0v-3a.75.75 0 00-1.5 0v3zM12 18.75h.008v.008H12v-.008zm0-3h.008v.008H12v-.008zm0-3h.008v.008H12v-.008zm0-3h.008v.008H12V9zm-4.5 6.75a.75.75 0 001.5 0v-3a.75.75 0 00-1.5 0v3zm0-3a.75.75 0 001.5 0v-3a.75.75 0 00-1.5 0v3z" />
-  </svg>
-);
-const BathIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-5 h-5 ${className}`}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75H5.625v1.875a3.375 3.375 0 003.375 3.375h4.125a3.375 3.375 0 003.375-3.375V15.75h3.375V12.375M2.25 12.375V9C2.25 7.484 3.484 6.25 5 6.25H19c1.516 0 2.75 1.234 2.75 2.75v3.375m-19.5 0a3.375 3.375 0 003.375 3.375h12.75a3.375 3.375 0 003.375-3.375m0 0V9M5 9l.75-3.375M19 9l-.75-3.375" />
-  </svg>
-);
-const KitchenIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-5 h-5 ${className}`}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 4.5c-1.847 0-3.556.444-5.015 1.229M18.303 7.381a3.757 3.757 0 01-3.642 0M5.697 7.381a3.757 3.757 0 003.642 0" />
- </svg>
-);
-const BalconyIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-5 h-5 ${className}`}>
-     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21H3.75m9 0L3.75 3M20.25 3.75H15M16.5 21l3.75-18" />
-  </svg>
-);
-const WindowIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-5 h-5 ${className}`}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h12A2.25 2.25 0 0020.25 14.25V3M3.75 12H20.25m-16.5 0V6.75c0-1.24 1.01-2.25 2.25-2.25h12c1.24 0 2.25 1.01 2.25 2.25v5.25m0 0V21M12 3v18" />
-  </svg>
-);
+import AddIcon from '../icons/AddIcon';
+import RemoveIcon from '../icons/RemoveIcon';
+import { KitchenIcon } from '../icons/KitchenIcon';
+import { BalconyIcon } from '../icons/BalconyIcon';
+import { WindowIcon } from '../icons/WindowIcon';
+import { BathIcon } from '../icons/BathIcon';
+import { BedIcon } from '../icons/BedIcon';
+import { StorageIcon } from '../icons/StorageIcon';
 
 // Actions Component for Room Page
 const RoomActions: React.FC<{ room: Room }> = ({ room }) => {
@@ -57,13 +37,7 @@ const RoomActions: React.FC<{ room: Room }> = ({ room }) => {
                     ${itemInRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}
                     transition-colors shadow hover:shadow-md`}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2">
-          {itemInRoute ? (
-             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          ) : (
-             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          )}
-        </svg>
+        {itemInRoute ? <RemoveIcon /> : <AddIcon />}
         {itemInRoute ? 'Remove from Route' : 'Add to Route'}
       </button>
     </div>
@@ -137,7 +111,7 @@ const RoomPage: React.FC = () => {
               {room.layout.has_kitchen && <li className="flex items-center"><KitchenIcon className="mr-2 text-sky-600" /> Kitchen Included</li>}
               {room.layout.has_balcony && <li className="flex items-center"><BalconyIcon className="mr-2 text-sky-600" /> Balcony Access</li>}
               {room.layout.has_window && <li className="flex items-center"><WindowIcon className="mr-2 text-sky-600" /> Has Window(s)</li>}
-              {room.layout.has_storage && <li className="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2 text-sky-600"><path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10.5 18.75v.008M13.5 18.75v.008m-6.75-3.75h13.5" /></svg> Storage Space</li>}
+              {room.layout.has_storage && <li className="flex items-center"><StorageIcon className="w-5 h-5 mr-2 text-sky-600" />Storage Space</li>}
             </ul>
           </div>
 

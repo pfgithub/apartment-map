@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SearchIcon from '../icons/SearchIcon';
+import AppIcon from '../icons/AppIcon';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -18,9 +20,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
         <Link to="/" className="text-3xl font-bold hover:text-sky-200 transition-colors mb-2 sm:mb-0">
           <span className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mr-2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
-            </svg>
+            <AppIcon />
             Campus Explorer
           </span>
         </Link>
@@ -43,9 +43,7 @@ const Header: React.FC = () => {
             className="px-3 py-1.5 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-sky-400 flex-grow"
           />
           <button type="submit" className="bg-sky-600 hover:bg-sky-500 px-4 py-1.5 rounded-r-md transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
+            <SearchIcon />
           </button>
         </form>
       </div>

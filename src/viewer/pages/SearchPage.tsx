@@ -7,6 +7,8 @@ import RoomCard from '../components/RoomCard';
 import HallCard from '../components/HallCard';
 import BuildingCard from '../components/BuildingCard';
 import PoiCard from '../components/PoiCard';
+import WarningIcon from '../icons/WarningIcon';
+import NoSearchIcon from '../icons/NoSearchIcon';
 
 const SearchPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -61,9 +63,7 @@ const SearchPage: React.FC = () => {
 
       {!query && (
         <div className="text-center py-10 bg-white shadow rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-gray-400 mx-auto mb-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM13.5 10.5h-6" />
-          </svg>
+          <NoSearchIcon />
           <p className="text-xl text-gray-700">Please enter a search term.</p>
           <p className="text-gray-500 mt-1">Use the search bar in the header to find what you're looking for.</p>
         </div>
@@ -71,9 +71,7 @@ const SearchPage: React.FC = () => {
       
       {query && totalResults === 0 && (
         <div className="text-center py-10 bg-white shadow rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-gray-400 mx-auto mb-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-          </svg>
+          <WarningIcon />
           <p className="text-xl text-gray-700">No results found for "{query}".</p>
           <p className="text-gray-500 mt-1">Try a different search term or check your spelling.</p>
         </div>

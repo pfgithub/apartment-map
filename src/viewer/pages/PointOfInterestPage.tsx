@@ -4,6 +4,8 @@ import { useData } from '../contexts/DataContext';
 import { useRoute, type RouteItem } from '../contexts/RouteContext';
 import ImageDisplay from '../components/ImageDisplay';
 import type { PointOfInterestID, HallID, PointOfInterest } from '../types';
+import AddIcon from '../icons/AddIcon';
+import RemoveIcon from '../icons/RemoveIcon';
 
 // Actions Component for POI Page
 const PoiActions: React.FC<{ poi: PointOfInterest }> = ({ poi }) => {
@@ -29,13 +31,7 @@ const PoiActions: React.FC<{ poi: PointOfInterest }> = ({ poi }) => {
                     ${itemInRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}
                     transition-colors shadow hover:shadow-md`}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2">
-          {itemInRoute ? (
-             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          ) : (
-             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          )}
-        </svg>
+        {itemInRoute ? <RemoveIcon /> : <AddIcon />}
         {itemInRoute ? 'Remove from Route' : 'Add to Route'}
       </button>
     </div>
