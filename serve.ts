@@ -11,15 +11,15 @@ import { genViewerPrompt } from "./src/viewerprompt";
 
 const server = Bun.serve({
     routes: {
-        "/": Response.redirect("/viewer"),
+        "/": Response.redirect("/apartment-map"),
         "/app": app,
         "/forcegraph": forcegraph,
         "/graph": graph,
         "/d3graph": d3graph,
         "/planner": planner,
         "/vivagraph": vivagraph,
-        "/viewer": viewer,
-        "/viewer/*": viewer,
+        "/apartment-map": viewer,
+        "/apartment-map/*": viewer,
         "/graph.json": new Response(JSON.stringify(graph_json), {headers: {'content-type': "application/json; charset=utf-8"}}),
         "/planner.json": new Response(JSON.stringify(planner_graph), {headers: {'content-type': "application/json; charset=utf-8"}}),
         "/root.json": new Response(JSON.stringify(newdata), {headers: {'content-type': "application/json; charset=utf-8"}}),

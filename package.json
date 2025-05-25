@@ -31,6 +31,7 @@
     "react-router-dom": "^7.6.0",
     "sharp": "^0.34.2",
     "sigma": "^3.0.1",
+    "tailwindcss": "^4.1.7",
     "thumbhash": "^0.1.1",
     "vivagraphjs": "^0.12.0"
   }

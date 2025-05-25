@@ -203,10 +203,9 @@ const RoutePlannerPanel: React.FC = () => {
               {routeItems.map((item, index) => {
                 const detail = itemDetailsMap[item.id as string];
                 const itemName = detail?.name || `Item ID: ${(item.id as string).substring(0, 6)}...`;
-                const itemTypeDisplay = detail?.type ? ` (${detail.type})` : '';
                 return (
                   <li key={`${item.id}-${item.type}-${index}`} className="p-2 bg-gray-700 rounded flex justify-between items-center group">
-                    <span className="truncate text-sm" title={`${itemName}${itemTypeDisplay}`}>{index + 1}. {itemName}{itemTypeDisplay}</span>
+                    <span className="truncate text-sm" title={`${itemName}`}>{index + 1}. {itemName}</span>
                     <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleMove(index, 'up')}

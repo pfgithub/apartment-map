@@ -1,15 +1,3 @@
-# apartment-map
+https://pfg.pw/apartment-map
 
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.1.7. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+`bun install && bun --hot serve` / `bun run build`

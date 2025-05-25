@@ -20,7 +20,7 @@ const App: React.FC = () => {
   return (
     <DataProvider>
       <RouteProvider>
-        <BrowserRouter basename='/viewer'>
+        <BrowserRouter basename='/apartment-map'>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
