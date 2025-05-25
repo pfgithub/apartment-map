@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useRoute, type RouteItem } from '../contexts/RouteContext';
 import ImageDisplay from '../components/ImageDisplay';
-import type { HallID, BuildingID, RoomID, ConnectionID, PointOfInterestID, Hall, Room, PointOfInterest } from '../types';
+import type { HallID, BuildingID, RoomID, ConnectionID, PointOfInterestID, Hall, Room, PointOfInterest, Connection } from '../types';
 import AddIcon from '../icons/AddIcon';
 import RemoveIcon from '../icons/RemoveIcon';
-import RoomCard from '../components/RoomCard'; // Added import
-import PoiCard from '../components/PoiCard';   // Added import
+import RoomCard from '../components/RoomCard';
+import PoiCard from '../components/PoiCard';
+import ArrowsRightLeftIcon from '../icons/ArrowsRightLeftIcon';
+import ArrowLongRightIcon from '../icons/ArrowLongRightIcon';
+import ArrowLongLeftIcon from '../icons/ArrowLongLeftIcon';
 
 const HallActions: React.FC<{ hall: Hall }> = ({ hall }) => {
   const { addItemToRoute, removeItemFromRoute, isItemInRoute } = useRoute();
@@ -65,15 +68,70 @@ const HallPage: React.FC = () => {
     }
   }, [setBreadcrumbs, hall, building]);
 
+  const { twoWayRoutes, oneWayOutRoutes, oneWayInRoutes } = useMemo(() => {
+    if (!hall || !data) {
+      return { twoWayRoutes: [], oneWayOutRoutes: [], oneWayInRoutes: [] };
+    }
+
+    const currentHallId = hall.id;
+    const categorizedTwoWayRoutes: Array<{ hall: Hall, connectionTo: Connection }> = [];
+    const categorizedOneWayOutRoutes: Array<{ hall: Hall, connectionTo: Connection }> = [];
+    const categorizedOneWayInRoutes: Array<{ hall: Hall, connectionFrom: Connection }> = [];
+    const handledTwoWayTargets = new Set<HallID>();
+
+    // Process outgoing connections from the current hall
+    for (const connId of hall.relations.connections) {
+      const outgoingConn = data.connections[connId];
+      if (!outgoingConn || outgoingConn.relations.from !== currentHallId) continue;
+
+      const targetHall = data.halls[outgoingConn.relations.to];
+      if (!targetHall) continue;
+
+      // Check if there's a connection from targetHall back to currentHallId
+      const isReverseConnectionPresent = targetHall.relations.connections.some(targetConnId => {
+        const c = data.connections[targetConnId];
+        return c && c.relations.from === targetHall.id && c.relations.to === currentHallId;
+      });
+
+      if (isReverseConnectionPresent) {
+        if (!handledTwoWayTargets.has(targetHall.id)) {
+          categorizedTwoWayRoutes.push({ hall: targetHall, connectionTo: outgoingConn });
+          handledTwoWayTargets.add(targetHall.id);
+        }
+      } else {
+        categorizedOneWayOutRoutes.push({ hall: targetHall, connectionTo: outgoingConn });
+      }
+    }
+
+    // Process incoming connections to the current hall
+    for (const connId of hall.relations.reverse_connections) {
+      const incomingConn = data.connections[connId];
+      if (!incomingConn || incomingConn.relations.to !== currentHallId) continue;
+
+      const sourceHall = data.halls[incomingConn.relations.from];
+      if (!sourceHall) continue;
+
+      if (!handledTwoWayTargets.has(sourceHall.id)) {
+        categorizedOneWayInRoutes.push({ hall: sourceHall, connectionFrom: incomingConn });
+      }
+    }
+    return { 
+      twoWayRoutes: categorizedTwoWayRoutes, 
+      oneWayOutRoutes: categorizedOneWayOutRoutes, 
+      oneWayInRoutes: categorizedOneWayInRoutes 
+    };
+  }, [hall, data]);
+
+
   if (!hall) return <p className="text-center py-10">Hall not found.</p>;
 
-  const roomsInHall: Room[] = hall ? hall.relations.rooms
+  const roomsInHall: Room[] = hall.relations.rooms
     .map(roomId => data.rooms[roomId as RoomID])
-    .filter((room): room is Room => !!room) : [];
+    .filter((room): room is Room => !!room);
   
-  const poisInHall: PointOfInterest[] = hall ? Object.values(data.points_of_interest)
+  const poisInHall: PointOfInterest[] = Object.values(data.points_of_interest)
     .filter(poi => poi.relations.hall === id)
-    .filter((poi): poi is PointOfInterest => !!poi) : [];
+    .filter((poi): poi is PointOfInterest => !!poi);
 
   return (
     <div className="bg-white shadow-xl rounded-lg p-6 md:p-8">
@@ -93,24 +151,78 @@ const HallPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Connections Section - Moved Up */}
+      {/* Connections Section - Updated */}
       <div className="mb-8 pt-6 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Connections from this Hall</h2>
-        {hall.relations.connections.length > 0 ? (
-          <ul className="space-y-3">
-            {hall.relations.connections.map(connId => {
-              const connection = data.connections[connId as ConnectionID];
-              if (!connection || connection.relations.from !== id) return null;
-              const toHall = data.halls[connection.relations.to as HallID];
-              return toHall ? (
-                <li key={connId} className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors border border-gray-200">
-                  Leads to <Link to={`/halls/${toHall.id}`} className="text-sky-600 hover:underline font-medium">{toHall.name}</Link>
-                  <span className="text-sm text-gray-500"> ({connection.seconds}s)</span> - <span className="italic text-sm text-gray-600">{connection.name}</span>
-                </li>
-              ) : null;
-            })}
-          </ul>
-        ) : <p className="text-gray-500 italic">No outgoing connections listed for this hall.</p>}
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Connections from this Hall</h2>
+        {(twoWayRoutes.length + oneWayOutRoutes.length + oneWayInRoutes.length) === 0 ? (
+          <p className="text-gray-500 italic">No connections listed for this hall.</p>
+        ) : (
+          <div className="space-y-8">
+            {twoWayRoutes.length > 0 && (
+              <div>
+                <h3 className="text-xl font-medium mb-3 text-gray-700 flex items-center">
+                  <ArrowsRightLeftIcon className="w-5 h-5 mr-2 text-green-600 flex-shrink-0" />
+                  Two-Way Routes
+                </h3>
+                <ul className="space-y-3">
+                  {twoWayRoutes.map(({ hall: connectedHall, connectionTo }) => (
+                    <li key={`tw-${connectionTo.id}`} className="p-4 bg-green-50 border border-green-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150">
+                      <Link to={`/halls/${connectedHall.id}`} className="font-semibold text-green-700 hover:text-green-800 hover:underline">
+                        {connectedHall.name}
+                      </Link>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {connectionTo.name} <span className="text-gray-500">({connectionTo.seconds}s travel)</span>
+                      </p>
+                       <p className="text-xs text-green-600 mt-1 italic">You can travel to and from this hall.</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {oneWayOutRoutes.length > 0 && (
+              <div>
+                <h3 className="text-xl font-medium mb-3 text-gray-700 flex items-center">
+                  <ArrowLongRightIcon className="w-5 h-5 mr-2 text-blue-600 flex-shrink-0" />
+                  One-Way Routes (Leaving this Hall)
+                </h3>
+                <ul className="space-y-3">
+                  {oneWayOutRoutes.map(({ hall: connectedHall, connectionTo }) => (
+                    <li key={`owo-${connectionTo.id}`} className="p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150">
+                      <Link to={`/halls/${connectedHall.id}`} className="font-semibold text-blue-700 hover:text-blue-800 hover:underline">
+                        {connectedHall.name}
+                      </Link>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {connectionTo.name} <span className="text-gray-500">({connectionTo.seconds}s travel)</span>
+                      </p>
+                      <p className="text-xs text-blue-600 mt-1 italic">You can use this route to leave.</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {oneWayInRoutes.length > 0 && (
+              <div>
+                <h3 className="text-xl font-medium mb-3 text-gray-700 flex items-center">
+                  <ArrowLongLeftIcon className="w-5 h-5 mr-2 text-orange-600 flex-shrink-0" />
+                  One-Way Routes (Into this Hall)
+                </h3>
+                <ul className="space-y-3">
+                  {oneWayInRoutes.map(({ hall: connectedHall, connectionFrom }) => (
+                    <li key={`owi-${connectionFrom.id}`} className="p-4 bg-orange-50 border border-orange-200 rounded-lg shadow-sm">
+                      <span className="font-semibold text-orange-700">{connectedHall.name}</span>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Via: {connectionFrom.name} <span className="text-gray-500">({connectionFrom.seconds}s travel from {connectedHall.name})</span>
+                      </p>
+                      <p className="text-xs text-orange-600 mt-1 italic">This route leads into this hall; you cannot use it to leave via this specific path.</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mb-8 pt-6 border-t border-gray-200">
