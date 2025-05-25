@@ -15,6 +15,13 @@
             "has_balcony": true,
             "has_window": true,
             "has_storage": true
+        },
+        "AQ-2": {
+            "has_balcony": true,
+            "has_window": true
+        },
+        "AT-6": {
+            "has_window": true
         }
     }
 }
