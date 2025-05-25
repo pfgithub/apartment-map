@@ -269,7 +269,7 @@ const RoutePlannerPanel: React.FC = () => {
                     <>
                       {segment.pathResult.path.length > 1 && (
                         <p className="text-xs text-gray-300 mt-1">
-                          Route: {segment.pathResult.path.map(pid => data.halls[pid]?.name || pid.substring(0, 6)).join(' â†’ ')}
+                          Route: {segment.pathResult.path.map(pid => data.halls[pid]?.name || pid.substring(0, 6)).join(' → ')}
                         </p>
                       )}
                       <p className="text-xs text-green-400 mt-0.5">Time: {segment.pathResult.totalSeconds} seconds</p>
