@@ -3,9 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useRoute, type RouteItem } from '../contexts/RouteContext';
 import ImageDisplay from '../components/ImageDisplay';
-import type { HallID, BuildingID, RoomID, ConnectionID, PointOfInterestID, Hall } from '../types';
+import type { HallID, BuildingID, RoomID, ConnectionID, PointOfInterestID, Hall, Room, PointOfInterest } from '../types';
 import AddIcon from '../icons/AddIcon';
 import RemoveIcon from '../icons/RemoveIcon';
+import RoomCard from '../components/RoomCard'; // Added import
+import PoiCard from '../components/PoiCard';   // Added import
 
 const HallActions: React.FC<{ hall: Hall }> = ({ hall }) => {
   const { addItemToRoute, removeItemFromRoute, isItemInRoute } = useRoute();
@@ -30,7 +32,7 @@ const HallActions: React.FC<{ hall: Hall }> = ({ hall }) => {
                     transition-colors shadow hover:shadow-md`}
       >
         {itemInRoute ? <RemoveIcon /> : <AddIcon />}
-        {itemInRoute ? 'Remove from Route' : 'Add to Route'}
+        <span className="ml-2">{itemInRoute ? 'Remove from Route' : 'Add to Route'}</span>
       </button>
     </div>
   );
@@ -48,7 +50,7 @@ const HallPage: React.FC = () => {
     if (hall && building) {
       setBreadcrumbs([
         { label: 'Home', link: '/' },
-        { label: 'Buildings', link: '/buildings'}, // Updated link
+        { label: 'Buildings', link: '/buildings'},
         { label: building.name, link: `/buildings/${building.id}` },
         { label: hall.name }
       ]);
@@ -65,12 +67,18 @@ const HallPage: React.FC = () => {
 
   if (!hall) return <p className="text-center py-10">Hall not found.</p>;
 
-  const poisInHall = data ? Object.values(data.points_of_interest).filter(poi => poi.relations.hall === id) : [];
+  const roomsInHall: Room[] = hall ? hall.relations.rooms
+    .map(roomId => data.rooms[roomId as RoomID])
+    .filter((room): room is Room => !!room) : [];
+  
+  const poisInHall: PointOfInterest[] = hall ? Object.values(data.points_of_interest)
+    .filter(poi => poi.relations.hall === id)
+    .filter((poi): poi is PointOfInterest => !!poi) : [];
 
   return (
     <div className="bg-white shadow-xl rounded-lg p-6 md:p-8">
       <HallActions hall={hall} />
-      <div className="md:flex md:space-x-8">
+      <div className="md:flex md:space-x-8 mb-8">
         <div className="md:w-1/3 mb-6 md:mb-0">
           <ImageDisplay image={hall.image} className="w-full aspect-16/9 rounded-lg shadow-md" />
         </div>
@@ -85,41 +93,8 @@ const HallPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h2 className="text-2xl font-semibold mb-4 text-gray-700">Rooms in this Hall</h2>
-          {hall.relations.rooms.length > 0 ? (
-            <ul className="space-y-3">
-              {hall.relations.rooms.map(roomId => {
-                const room = data.rooms[roomId as RoomID];
-                return room ? (
-                  <li key={roomId} className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors border border-gray-200">
-                    <Link to={`/rooms/${room.id}`} className="text-sky-600 hover:underline font-medium">{room.name}</Link>
-                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${room.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {room.available ? 'Available' : 'Unavailable'}
-                    </span>
-                  </li>
-                ) : null;
-              })}
-            </ul>
-          ) : <p className="text-gray-500 italic">No rooms listed for this hall.</p>}
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-4 text-gray-700">Points of Interest</h2>
-          {poisInHall.length > 0 ? (
-             <ul className="space-y-3">
-              {poisInHall.map(poi => (
-                  <li key={poi.id} className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors border border-gray-200">
-                    <Link to={`/pois/${poi.id}`} className="text-sky-600 hover:underline font-medium">{poi.name}</Link>
-                  </li>
-                ))}
-            </ul>
-          ) : <p className="text-gray-500 italic">No points of interest in this hall.</p>}
-        </div>
-      </div>
-
-      <div className="mt-8 pt-6 border-t border-gray-200">
+      {/* Connections Section - Moved Up */}
+      <div className="mb-8 pt-6 border-t border-gray-200">
         <h2 className="text-2xl font-semibold mb-4 text-gray-700">Connections from this Hall</h2>
         {hall.relations.connections.length > 0 ? (
           <ul className="space-y-3">
@@ -136,6 +111,28 @@ const HallPage: React.FC = () => {
             })}
           </ul>
         ) : <p className="text-gray-500 italic">No outgoing connections listed for this hall.</p>}
+      </div>
+
+      <div className="mb-8 pt-6 border-t border-gray-200">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Rooms in this Hall</h2>
+        {roomsInHall.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {roomsInHall.map(room => (
+              <RoomCard key={room.id} room={room} />
+            ))}
+          </div>
+        ) : <p className="text-gray-500 italic">No rooms listed for this hall.</p>}
+      </div>
+
+      <div className="pt-6 border-t border-gray-200">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Points of Interest in this Hall</h2>
+        {poisInHall.length > 0 ? (
+           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {poisInHall.map(poi => (
+                <PoiCard key={poi.id} poi={poi} />
+              ))}
+          </div>
+        ) : <p className="text-gray-500 italic">No points of interest in this hall.</p>}
       </div>
     </div>
   );
