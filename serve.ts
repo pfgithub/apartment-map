@@ -11,7 +11,8 @@ import { genViewerPrompt } from "./src/viewerprompt";
 
 const server = Bun.serve({
     routes: {
-        "/": app,
+        "/": Response.redirect("/viewer"),
+        "/app": app,
         "/forcegraph": forcegraph,
         "/graph": graph,
         "/d3graph": d3graph,
