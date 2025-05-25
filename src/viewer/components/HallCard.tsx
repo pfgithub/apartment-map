@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Hall } from '../types';
 import ImageDisplay from './ImageDisplay';
-import { useRoute } from '../contexts/RouteContext'; // For add/remove button
+import { useRoute } from '../contexts/RouteContext';
 import AddIcon from '../icons/AddIcon';
 import RemoveIcon from '../icons/RemoveIcon';
 
 interface HallCardProps {
   hall: Hall;
-  showAddToRouteButton?: boolean; // Optional: To control visibility of add/remove button
+  showAddToRouteButton?: boolean;
 }
 
 const HallCard: React.FC<HallCardProps> = ({ hall, showAddToRouteButton = false }) => {
@@ -26,22 +26,41 @@ const HallCard: React.FC<HallCardProps> = ({ hall, showAddToRouteButton = false 
     }
   };
 
+  // The specified style string: "p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors border border-gray-200"
+  // This will be applied to the Link component, which acts as the card body.
+  // The outer div is for relative positioning of the add/remove button and for the group hover effect.
   return (
-    <div className="relative group bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <Link to={`/halls/${hall.id}`} className="block">
-        <div className="overflow-hidden">
-          <ImageDisplay image={hall.image} className="w-full aspect-16/9 object-cover transition-transform duration-300" />
+    <div className="relative group">
+      <Link
+        to={`/halls/${hall.id}`}
+        className="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors border border-gray-200"
+      >
+        {/* Image on the left */}
+        <div className="flex-shrink-0 w-20 h-20 mr-4">
+          <ImageDisplay
+            image={hall.image}
+            className="w-full h-full object-cover rounded-md" // Image fills container, covers, and is rounded
+            alt={hall.name} // Pass alt text for accessibility
+          />
         </div>
-        <div className="p-4">
-          <h3 className="text-xl font-semibold mb-1 text-blue-700 group-hover:text-blue-800">{hall.name}</h3>
-          <p className="text-gray-600 text-sm mb-2 truncate h-10">{hall.description}</p>
+
+        {/* Text content on the right: Name and Description vertically stacked */}
+        <div className="flex-grow min-w-0"> {/* min-w-0 for better flex truncation handling */}
+          <h3 className="font-semibold text-lg text-blue-700 group-hover:text-blue-800 truncate">
+            {hall.name}
+          </h3>
+          <p className="text-gray-600 text-sm mt-0.5 line-clamp-2"> {/* line-clamp-2 limits description to 2 lines */}
+            {hall.description}
+          </p>
         </div>
       </Link>
+
+      {/* Add/Remove button, positioned absolutely relative to the outer div */}
       {showAddToRouteButton && (
         <button
           onClick={handleToggleRoute}
           title={inRoute ? 'Remove from route' : 'Add to route'}
-          className={`absolute top-2 right-2 p-1.5 rounded-full text-white transition-colors
+          className={`absolute top-2 right-2 p-1.5 rounded-full text-white transition-colors z-10
                       ${inRoute ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
         >
           {inRoute ? <RemoveIcon /> : <AddIcon />}
