@@ -13,6 +13,7 @@ import { BalconyIcon } from '../icons/BalconyIcon';
 import { WindowIcon } from '../icons/WindowIcon';
 import { StorageIcon } from '../icons/StorageIcon';
 import { useData } from '../contexts/DataContext';
+import AreaIcon from '../icons/AreaIcon';
 
 interface RoomCardProps {
   room: Room;
@@ -73,6 +74,11 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, hallName, distanceToSelectedH
                 <span className="flex items-center">
                   <BathIcon className="w-4 h-4 mr-1.5 text-sky-600 flex-shrink-0" /> {room.layout.bathrooms} bath{room.layout.bathrooms !== 1 ? 's' : ''}
                 </span>
+                {room.layout.square_meters && (
+                  <span className="flex items-center">
+                    <AreaIcon className="w-4 h-4 mr-1.5 text-sky-600 flex-shrink-0" /> {room.layout.square_meters} m²
+                  </span>
+                )}
                 {room.layout.has_kitchen && (
                   <span className="flex items-center">
                     <KitchenIcon className="w-4 h-4 mr-1.5 text-sky-600 flex-shrink-0" /> Kitchen

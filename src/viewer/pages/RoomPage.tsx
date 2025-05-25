@@ -12,6 +12,7 @@ import { WindowIcon } from '../icons/WindowIcon';
 import { BathIcon } from '../icons/BathIcon';
 import { BedIcon } from '../icons/BedIcon';
 import { StorageIcon } from '../icons/StorageIcon';
+import AreaIcon from '../icons/AreaIcon';
 
 // Actions Component for Room Page
 const RoomActions: React.FC<{ room: Room }> = ({ room }) => {
@@ -108,6 +109,7 @@ const RoomPage: React.FC = () => {
             <ul className="space-y-2 text-gray-700">
               <li className="flex items-center"><BedIcon className="mr-2 text-sky-600" /> Bedrooms: {room.layout.bedrooms}</li>
               <li className="flex items-center"><BathIcon className="mr-2 text-sky-600" /> Bathrooms: {room.layout.bathrooms}</li>
+              {room.layout.square_meters && <li className="flex items-center"><AreaIcon className="mr-2 text-sky-600" /> Square Meters: {room.layout.square_meters} m²</li>}
               {room.layout.has_kitchen && <li className="flex items-center"><KitchenIcon className="mr-2 text-sky-600" /> Kitchen Included</li>}
               {room.layout.has_balcony && <li className="flex items-center"><BalconyIcon className="mr-2 text-sky-600" /> Balcony Access</li>}
               {room.layout.has_window && <li className="flex items-center"><WindowIcon className="mr-2 text-sky-600" /> Has Window(s)</li>}
