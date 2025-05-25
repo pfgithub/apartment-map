@@ -1,0 +1,20 @@
+{
+    "rooms": {
+        "DY-1": {
+            "bedrooms": 2,
+            "bathrooms": 1,
+            "has_kitchen": true,
+            "has_balcony": true,
+            "has_window": true,
+            "has_storage": true
+        },
+        "SP-1": {
+            "bedrooms": 1,
+            "bathrooms": 1,
+            "has_kitchen": true,
+            "has_balcony": true,
+            "has_window": true,
+            "has_storage": true
+        }
+    }
+}

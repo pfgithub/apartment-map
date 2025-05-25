@@ -5,6 +5,7 @@
 
 import data from "../data/DATA.txt" with {type: "text"};
 import imgdata from "../data/images.json";
+import overrides from "../data/overrides.json";
 import type { PlannerConnection, PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
 import type { BuildingID, ConnectionID, HallID, RoomID, Root } from "./viewer/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
@@ -441,6 +442,7 @@ export const newdata: Root = {
 };
 function addRoom(id: HallID, room_num: number) {
     const room_id = (id + "-" + room_num) as RoomID;
+    const override = (overrides as any).rooms[room_id];
     newdata.rooms[room_id] = {
         id: room_id,
         name: room_id,
@@ -450,11 +452,12 @@ function addRoom(id: HallID, room_num: number) {
         price: 100,
         available: true,
         layout: {
-            bedrooms: 1,
-            bathrooms: 0,
-            has_balcony: false,
-            has_kitchen: false,
-            has_window: false,
+            bedrooms: override?.bedrooms ?? 0,
+            bathrooms: override?.bathrooms ?? 0,
+            has_balcony: override?.has_balcony ?? false,
+            has_kitchen: override?.has_kitchen ?? false,
+            has_window: override?.has_window ?? false,
+            has_storage: override?.has_storage ?? false,
         },
         relations: {
             hall: id,
