@@ -76,7 +76,7 @@ export type PointOfInterest = {
     }
 };
 export type Image = {
-    url: string,
+    uuid: string,
     alt: string,
     width: number,
     height: number,

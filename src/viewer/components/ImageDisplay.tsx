@@ -114,8 +114,8 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ image, className = '' }) =>
 
       {/* Actual Image: Always in the DOM. Opacity controls its visibility. */}
       <img
-        key={image.url} // Ensures onLoad triggers correctly if the image URL changes
-        src={image.url}
+        key={image.uuid} // Ensures onLoad triggers correctly if the image URL changes
+        src={"https://lfs.pfg.pw/source/"+image.uuid+".png"}
         alt={image.alt}
         className={`absolute top-0 left-0 w-full h-full ${objectFitClass} transition-opacity duration-300 ease-in-out ${isActualImageLoaded ? 'opacity-100' : 'opacity-0'}`}
         style={{ willChange: 'opacity' }} // Performance hint for opacity transitions

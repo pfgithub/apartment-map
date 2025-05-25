@@ -469,7 +469,7 @@ for(const [id, data] of Object.entries(planner_graph.places)) {
         name: data.title,
         description: "No description.",
         image: img
-            ? {url: "https://lfs.pfg.pw/source/"+img.uuid+".png", thumbhash: img.thumbhash, width: img.width, height: img.height, alt: ""}
+            ? {uuid: img.uuid, thumbhash: img.thumbhash, width: img.width, height: img.height, alt: ""}
             : undefined,
 
         relations: {
