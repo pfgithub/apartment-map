@@ -413,7 +413,7 @@ export const newdata: Root = {
             id: "apts" as BuildingID,
             name: "Appts, Swites, Inc.",
             description: "No description.",
-            image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+            image: undefined,
 
             relations: {halls: []},
         },
@@ -421,7 +421,7 @@ export const newdata: Root = {
             id: "outside" as BuildingID,
             name: "Outside",
             description: "The great outdoors",
-            image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+            image: undefined,
 
             relations: {halls: []},
         },
@@ -429,7 +429,7 @@ export const newdata: Root = {
             id: "paths" as BuildingID,
             name: "Paths",
             description: "No description.",
-            image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+            image: undefined,
 
             relations: {halls: []},
         },

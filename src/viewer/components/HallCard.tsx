@@ -30,7 +30,7 @@ const HallCard: React.FC<HallCardProps> = ({ hall, showAddToRouteButton = false 
     <div className="relative group bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <Link to={`/halls/${hall.id}`} className="block">
         <div className="overflow-hidden">
-          <ImageDisplay image={hall.image} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+          <ImageDisplay image={hall.image} className="w-full aspect-16/9 object-cover transition-transform duration-300" />
         </div>
         <div className="p-4">
           <h3 className="text-xl font-semibold mb-1 text-blue-700 group-hover:text-blue-800">{hall.name}</h3>

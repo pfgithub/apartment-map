@@ -88,7 +88,7 @@ const RoomPage: React.FC = () => {
       <RoomActions room={room} />
       <div className="md:flex md:space-x-8">
         <div className="md:w-1/2 mb-6 md:mb-0">
-          <ImageDisplay image={room.image} className="w-full h-auto rounded-lg shadow-md" />
+          <ImageDisplay image={room.image} className="w-full aspect-16/9 rounded-lg shadow-md" />
         </div>
         <div className="md:w-1/2">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-sky-700">{room.name}</h1>
