@@ -59,6 +59,7 @@ export type Room = {
         has_balcony?: boolean,
         has_window?: boolean,
         has_storage?: boolean,
+        square_meters?: number,
     },
 
     relations: {
