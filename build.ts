@@ -4,7 +4,9 @@ import { genViewerPrompt } from "./src/viewerprompt";
 import tailwind from "bun-plugin-tailwind";
 import {relative} from "path";
 
-await rmdirSync(import.meta.dirname + "/dist", {recursive: true});
+try {
+  await rmdirSync(import.meta.dirname + "/dist", {recursive: true});
+}catch(e) {}
 const result = await Bun.build({
     entrypoints: ["./src/viewer/viewer.html"],
     outdir: import.meta.dirname + "/dist",
