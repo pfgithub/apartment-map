@@ -1,12 +1,17 @@
 import React from 'react';
-import { Image } from '../types';
+import type { Image } from '../types';
 
 interface ImageDisplayProps {
-  image: Image;
+  image?: Image;
   className?: string;
 }
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ image, className }) => {
+  if(image == null) return (
+    <div
+      className={className}
+    />
+  )
   return (
     <img
       src={image.url}

@@ -445,7 +445,7 @@ function addRoom(id: HallID, room_num: number) {
         id: room_id,
         name: room_id,
         description: "No description",
-        image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+        image: undefined,
 
         price: 100,
         available: true,
@@ -470,7 +470,7 @@ for(const [id, data] of Object.entries(planner_graph.places)) {
         description: "No description.",
         image: img
             ? {url: "https://lfs.pfg.pw/source/"+img.uuid+".png", thumbhash: img.thumbhash, width: img.width, height: img.height, alt: ""}
-            : {url: "/200x150.png", alt: "", width: 200, height: 150, thumbhash: ""},
+            : undefined,
 
         relations: {
             building: data.group as BuildingID,

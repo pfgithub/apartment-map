@@ -14,7 +14,7 @@ export type Building = {
     id: BuildingID,
     name: string,
     description: string,
-    image: Image,
+    image?: Image,
 
     relations: {
         halls: HallID[],
@@ -23,7 +23,7 @@ export type Building = {
 export type Hall = {
     id: HallID,
     name: string,
-    image: Image,
+    image?: Image,
     description: string,
 
     relations: {
@@ -48,7 +48,7 @@ export type Room = {
     id: RoomID,
     name: string,
     description: string,
-    image: Image,
+    image?: Image,
 
     price: number,
     available: boolean,
@@ -69,10 +69,16 @@ export type PointOfInterest = {
     id: PointOfInterestID,
     name: string,
     description: string,
-    image: Image,
+    image?: Image,
 
     relations: {
         hall: HallID,
     }
 };
-export type Image = {url: string, alt: string, width: number, height: number, thumbhash: string};
+export type Image = {
+    url: string,
+    alt: string,
+    width: number,
+    height: number,
+    thumbhash: string,
+};
