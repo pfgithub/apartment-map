@@ -1,6 +1,7 @@
 // src/viewer/components/RoomFilterSidebar.tsx
 import React from 'react';
 import type { RoomFilters } from '../pages/AllRoomsPage'; // Import type from AllRoomsPage
+import type { HallID } from '../types';
 
 interface RoomFilterSidebarProps {
   filters: RoomFilters;
@@ -11,6 +12,7 @@ interface RoomFilterSidebarProps {
     maxPrice: number;
     bedroomOptions: string[];
     bathroomOptions: string[];
+    hallOptions: Array<{ value: HallID | 'any', label: string }>;
   };
 }
 
@@ -34,10 +36,18 @@ const RoomFilterSidebar: React.FC<RoomFilterSidebarProps> = ({
         }
       }));
     } else {
-      setFilters(prev => ({
-        ...prev,
-        [name]: value,
-      }));
+      if (name === 'nearestHall' && value === 'any') {
+        setFilters(prev => ({
+          ...prev,
+          nearestHall: 'any',
+          maxDistanceSeconds: '', // Clear distance when hall is set to 'any'
+        }));
+      } else {
+        setFilters(prev => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
   
@@ -136,6 +146,39 @@ const RoomFilterSidebar: React.FC<RoomFilterSidebarProps> = ({
           </select>
         </div>
 
+        {/* Nearest Hall */}
+        <div className={fieldsetBottomMargin}>
+          <label htmlFor="nearestHall" className={labelClass}>Proximity to Hall</label>
+          <select
+            id="nearestHall"
+            name="nearestHall"
+            value={filters.nearestHall}
+            onChange={handleInputChange}
+            className={selectClass}
+            disabled={filterOptions.hallOptions.length <= 1}
+          >
+            {filterOptions.hallOptions.map(opt => (
+              <option key={`hall-${opt.value}`} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Max Distance from Hall */}
+        <div className={fieldsetBottomMargin}>
+          <label htmlFor="maxDistanceSeconds" className={labelClass}>Max Walk (seconds)</label>
+          <input
+            type="number"
+            id="maxDistanceSeconds"
+            name="maxDistanceSeconds"
+            placeholder="e.g., 300"
+            value={filters.maxDistanceSeconds}
+            onChange={handleInputChange}
+            className={inputClass}
+            min="0"
+            disabled={filters.nearestHall === 'any' || filterOptions.hallOptions.length <= 1}
+          />
+        </div>
+
         {/* Features */}
         <div className={fieldsetBottomMargin}>
           <label className={labelClass}>Features</label>
@@ -151,7 +194,7 @@ const RoomFilterSidebar: React.FC<RoomFilterSidebarProps> = ({
                   className={checkboxClass}
                 />
                 <label htmlFor={`feature-${featureKey}`} className="ml-2 text-sm text-gray-700 capitalize">
-                  {featureKey.replace(/_/g, ' ')}
+                  {featureKey.replace(/_/g, ' ').replace('has ', '')}
                 </label>
               </div>
             ))}

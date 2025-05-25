@@ -1,4 +1,4 @@
-import { Root, HallID, ConnectionID } from '../types';
+import type { Root, HallID, ConnectionID } from '../types';
 
 export interface PathResult {
   path: HallID[];

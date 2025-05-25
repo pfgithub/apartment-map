@@ -4,8 +4,9 @@ import RoomCard from '../components/RoomCard';
 import { useData } from '../contexts/DataContext';
 import { useRoute } from '../contexts/RouteContext';
 import WarningIcon from '../icons/WarningIcon';
-import type { Room } from '../types';
-import RoomFilterSidebar from '../components/RoomFilterSidebar';
+import type { Room, HallID } from '../types';
+import RoomFilterSidebar from '../components/RoomFilterSidebar.tsx';
+import { findShortestPath } from '../utils/pathfinding';
 
 export interface RoomFilters {
   availability: 'any' | 'available' | 'unavailable';
@@ -19,6 +20,8 @@ export interface RoomFilters {
     window: boolean;
     storage: boolean;
   };
+  nearestHall: HallID | 'any';
+  maxDistanceSeconds: string;
 }
 
 const AllRoomsPage: React.FC = () => {
@@ -37,6 +40,8 @@ const AllRoomsPage: React.FC = () => {
       window: false,
       storage: false,
     },
+    nearestHall: 'any',
+    maxDistanceSeconds: '',
   });
 
   useEffect(() => {
@@ -48,12 +53,15 @@ const AllRoomsPage: React.FC = () => {
 
   const filterOptions = useMemo(() => {
     const allRoomsList = Object.values(data.rooms);
-    if (allRoomsList.length === 0) {
+    const allHallsList = Object.values(data.halls);
+
+    if (allRoomsList.length === 0 && allHallsList.length === 0) {
       return {
         minPrice: 0,
         maxPrice: 1000,
         bedroomOptions: ['any'],
         bathroomOptions: ['any'],
+        hallOptions: [{ value: 'any' as const, label: 'Any Hall' }],
       };
     }
     const prices = allRoomsList.map(r => r.price).filter(p => typeof p === 'number');
@@ -62,14 +70,22 @@ const AllRoomsPage: React.FC = () => {
 
     const sortedBedrooms = Array.from(bedroomCounts).sort((a, b) => a - b).map(String);
     const sortedBathrooms = Array.from(bathroomCounts).sort((a, b) => a - b).map(String);
+    
+    const hallOptions = [
+      { value: 'any' as const, label: 'Any Hall' },
+      ...allHallsList
+        .map(hall => ({ value: hall.id, label: hall.name }))
+        .sort((a, b) => a.label.localeCompare(b.label))
+    ];
 
     return {
       minPrice: prices.length > 0 ? Math.min(...prices) : 0,
       maxPrice: prices.length > 0 ? Math.max(...prices) : 10000,
       bedroomOptions: ['any', ...sortedBedrooms],
       bathroomOptions: ['any', ...sortedBathrooms],
+      hallOptions: hallOptions,
     };
-  }, [data.rooms]);
+  }, [data.rooms, data.halls]);
 
   const displayedRooms = useMemo(() => {
     let roomsToDisplay = Object.values(data.rooms);
@@ -105,8 +121,36 @@ const AllRoomsPage: React.FC = () => {
     if (filters.features.window) roomsToDisplay = roomsToDisplay.filter(room => room.layout.has_window);
     if (filters.features.storage) roomsToDisplay = roomsToDisplay.filter(room => room.layout.has_storage);
 
+    // Nearest Hall and Max Distance filter
+    const selectedHallId = filters.nearestHall;
+    const maxSeconds = parseFloat(filters.maxDistanceSeconds);
+
+    if (selectedHallId !== 'any' && !isNaN(maxSeconds) && maxSeconds >= 0 && filters.maxDistanceSeconds !== '') {
+      if (!data.halls[selectedHallId]) { // Selected hall doesn't exist (edge case)
+         // roomsToDisplay remains as is, or could be set to []
+      } else {
+        roomsToDisplay = roomsToDisplay.filter(room => {
+          const roomHallId = room.relations.hall;
+          if (!roomHallId || !data.halls[roomHallId]) return false; // Room must be in a valid hall
+  
+          // If the room is in the selected hall itself, distance is 0
+          if (roomHallId === selectedHallId) {
+            return 0 <= maxSeconds;
+          }
+  
+          // Calculate path from selectedHallId to roomHallId
+          const pathResult = findShortestPath(data, selectedHallId, roomHallId);
+          
+          if (pathResult) {
+            return pathResult.totalSeconds <= maxSeconds;
+          }
+          return false; // No path found, so it doesn't meet criteria
+        });
+      }
+    }
+
     return roomsToDisplay;
-  }, [data.rooms, filters]);
+  }, [data, filters]); // data includes data.rooms, data.halls, data.connections
 
   const resetFilters = () => {
     setFilters({
@@ -121,6 +165,8 @@ const AllRoomsPage: React.FC = () => {
         window: false,
         storage: false,
       },
+      nearestHall: 'any',
+      maxDistanceSeconds: '',
     });
   };
 
