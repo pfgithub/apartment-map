@@ -4,6 +4,7 @@
 // - everything should fit
 
 import data from "../data/DATA.txt" with {type: "text"};
+import imgdata from "../data/images.json";
 import type { PlannerConnection, PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
 import type { BuildingID, ConnectionID, HallID, RoomID, Root } from "./viewer/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
@@ -462,11 +463,14 @@ function addRoom(id: HallID, room_num: number) {
     newdata.halls[id].relations.rooms.push(room_id);
 }
 for(const [id, data] of Object.entries(planner_graph.places)) {
+    const img = (imgdata as any)[data.title];
     newdata.halls[id as HallID] = {
         id: id as HallID,
         name: data.title,
         description: "No description.",
-        image: {url: "/200x150.png", alt: "", width: 200, height: 150},
+        image: img
+            ? {url: "https://lfs.pfg.pw/source/"+img.uuid+".png", thumbhash: img.thumbhash, width: img.width, height: img.height, alt: ""}
+            : {url: "/200x150.png", alt: "", width: 200, height: 150, thumbhash: ""},
 
         relations: {
             building: data.group as BuildingID,

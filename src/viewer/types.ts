@@ -75,4 +75,4 @@ export type PointOfInterest = {
         hall: HallID,
     }
 };
-export type Image = {url: string, alt: string, width: number, height: number};
+export type Image = {url: string, alt: string, width: number, height: number, thumbhash: string};

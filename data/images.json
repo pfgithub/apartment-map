@@ -1,0 +1,240 @@
+{
+    "Spumoni Hall": {
+        "uuid": "5cf00b1b-1d21-4d6f-8b24-4a6730cba863",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "jFkGDwIEtGp+dIiFeIeYaJiIN/BHA38E"
+    },
+    "Outside": {
+        "uuid": "ce6d0be3-13b4-416c-aaa5-f07d568ed3bc",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "3BgGFwJ0Z4k/ZmanmNqJloh5+USEjg4K"
+    },
+    "Front Entry": {
+        "uuid": "4bdc5d44-094b-4016-a305-567beae961e3",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "EWoKHwKge3iEhneWZ5iHh3d4B1pnoFQI"
+    },
+    "Berry Walkway": {
+        "uuid": "6ddbd6f9-1c05-4a5e-8581-ccf1e177b38e",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "1YoGDwJSr400unfUWnWnaHiIBzQyMDMC"
+    },
+    "Pool": {
+        "uuid": "76b4a6d1-48b0-4ee1-b92d-85f9c8842e85",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "18YFHwYHVXRzindzp2qohoeEx9/G/G0M"
+    },
+    "Cave Museum": {
+        "uuid": "8f13bad7-ac6f-4c02-80f3-c797ba4c6cac",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "FWoGDwI3H62DN4dCUjmalpicYhIHClME"
+    },
+    "Big Tree": {
+        "uuid": "19efd940-9d5c-4884-8869-d556f53e4011",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "CzkGDwKlJadQqIdopalWRqmIpghnyoAI"
+    },
+    "Lunar Surface": {
+        "uuid": "da60284c-19cf-4763-89f6-4a6b5051d134",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "TwgGBwD6ZIiDeXd3lnh4eHd3d74MBnsJ"
+    },
+    "Space Station": {
+        "uuid": "a3342ee4-770f-49b7-a9da-e5d8813d4899",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "HggGDwLSZkwpYGi6dhZneamFhyCHCXMG"
+    },
+    "Backroom M": {
+        "uuid": "6d20aefa-d265-4403-903e-76ab25ce30eb",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "SkkGFwSAlZaKeIeGeIh3d4iHB6hogIoG"
+    },
+    "Backroom D": {
+        "uuid": "99768bdf-17c6-48a9-8441-4ad92029fd2a",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "0xgKFwKICUkkh6WWhymLVnmH1gaXbnAJ"
+    },
+    "Backroom A": {
+        "uuid": "7e581827-fdd4-4616-bfda-323dd5305373",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "S0kGDwIJGsanhliluYlXeJl4h4BaCLgF"
+    },
+    "Lower Trash Chute": {
+        "uuid": "a9b59b7a-3bed-49a8-92e7-1e20f59c5b08",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "zkkGHwSfinR2iJh1eId3d4eH+GdX73UG"
+    },
+    "Bamboo Forest": {
+        "uuid": "b284f43a-fcfb-4f83-9a3f-9f5cfd1e9e4a",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "yegBDwBHlndwmXe0hpeHaHeIZskJZHAI"
+    },
+    "Water Temple": {
+        "uuid": "c599f208-7272-41be-980f-aa5f2d26ae7c",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "m2YFDwTlBXlkfHaCiHd3eHh3mGDnCokN"
+    },
+    "Upper Loft": {
+        "uuid": "dfb73aab-f929-429e-9917-6e4ccbc23ce6",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "S0kGDwQZNrmfhnaLeLd3mIh6iPHJZL8L"
+    },
+    "Inner Forest": {
+        "uuid": "75ee66cf-72bd-4f7c-ba18-ce324e69b766",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "yBgCDwL7lKWHi4mwpopliWeph29H/JsG"
+    },
+    "Breakfast": {
+        "uuid": "e4a45295-b474-431f-b0b8-caacb912a861",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "zmkGFwKAZ3lNeoaUh2iIWJiIB8lEgEsE"
+    },
+    "Ununhallium": {
+        "uuid": "001409e0-e3aa-4c08-9a67-90f48b79ea32",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "UnoKHwQGeXeHeIiGaGd3eIh4ZnB5BpgI"
+    },
+    "Lobby Access": {
+        "uuid": "d0913ea1-7571-4c44-8e0c-da71ae471c0b",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "D2oGFwQFDWZ8iHZ1eHl3Z4iHZ8BXBnsF"
+    },
+    "Lobby F2": {
+        "uuid": "1acb3ab3-955e-4a41-90d4-63cd564d1e68",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "TUkKFwJAeWprl3d3l2h4d3iHCPFUMT8B"
+    },
+    "Lobby F1": {
+        "uuid": "f92f324d-72fe-4108-baa7-0aade3829afc",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "1WkGDwKGZWeIf3R3hrhoeIh4B96KwKwG"
+    },
+    "Sleeper Car": {
+        "uuid": "8a587d80-14f5-43d1-acba-bdeba73cb987",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "BegFDwJgiHhoiHiIhmeIiIiIBzd2/6UC"
+    },
+    "Dining Car": {
+        "uuid": "b7a8388d-cfd3-40d9-bd6f-89b992006b81",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "h+cBDwAGRJeBqHV7XKQ5eZinlQc5+YsA"
+    },
+    "Observation Car": {
+        "uuid": "144c79e3-b512-4151-97ab-fc6fbc2726cd",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "wvcBBwBxZ1hwd3eylVdpqIZ4+IblT2cN"
+    },
+    "Hanging Baskrns": {
+        "uuid": "91db9222-7e68-46ea-bd4b-94ce09c0ed02",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "CjkGFwRfRKchnFk1dal4eIh59hVkb2MF"
+    },
+    "White House": {
+        "uuid": "426442a4-0470-4f68-b6a5-c140a0863c3b",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "yygGDwKI0pqQc2SRhYeXd6Z5lQcYaIAB"
+    },
+    "Pock House": {
+        "uuid": "ea8adfdc-a3ae-4b63-b814-de4c99d458ba",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "TFkGFwQQbHh4eYdoljiZdniHCKF3IHoG"
+    },
+    "Pock Bridge": {
+        "uuid": "f9ec55ce-90a6-4db8-85f0-f841264da8ee",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "higGFwQHiYaGaoZ1eHd3eYh4d0BXB3MG"
+    },
+    "Mensa Inc™ Elevator": {
+        "uuid": "18be94ab-22a1-4f53-a6aa-e87828c5eee6",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "FAgKBwBnZniPd3aHh3iId3iHN/ZlNVkA"
+    },
+    "Blasker Hills Inn": {
+        "uuid": "d1bd2536-7371-49be-b12d-8c47d2f29070",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "TlkCFwbcRXlzhFiApMtqg3mGhA1HlnAF"
+    },
+    "Myxtyp by Blasker": {
+        "uuid": "f5f4c273-c770-4dcd-b3a5-5616d4c6a856",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "TggGBwAEjJWLlFdqlmeIeHl3FiL95rAI"
+    },
+    "Blasker Hills Certified Breakfast": {
+        "uuid": "64fbcc50-4e77-4f18-9fb4-c13cda84d123",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "DwgGBwBYeGePd5iMh7aHqIiId2CFCGAG"
+    },
+    "Spumoni House": {
+        "uuid": "6d48655b-6772-4898-b8db-c13364eda298",
+        "ext": ".png",
+        "width": 1920,
+        "height": 1017,
+        "thumbhash": "TUkGHwRRpGiginZ3l3h4d3h4RwSKIrAH"
+    }
+}
