@@ -1,3 +1,4 @@
+// File: src/viewer/pages/HallPage.tsx
 import React, { useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
@@ -8,6 +9,7 @@ import AddIcon from '../icons/AddIcon';
 import RemoveIcon from '../icons/RemoveIcon';
 import RoomCard from '../components/RoomCard';
 import PoiCard from '../components/PoiCard';
+import HallCard from '../components/HallCard'; // Import HallCard
 import ArrowsRightLeftIcon from '../icons/ArrowsRightLeftIcon';
 import ArrowLongRightIcon from '../icons/ArrowLongRightIcon';
 import ArrowLongLeftIcon from '../icons/ArrowLongLeftIcon';
@@ -153,74 +155,62 @@ const HallPage: React.FC = () => {
 
       {/* Connections Section - Updated */}
       <div className="mb-8 pt-6 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Connections from this Hall</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Connections for this Hall</h2>
         {(twoWayRoutes.length + oneWayOutRoutes.length + oneWayInRoutes.length) === 0 ? (
           <p className="text-gray-500 italic">No connections listed for this hall.</p>
         ) : (
           <div className="space-y-8">
-            {twoWayRoutes.length > 0 && (
-              <div>
-                <h3 className="text-xl font-medium mb-3 text-gray-700 flex items-center">
-                  <ArrowsRightLeftIcon className="w-5 h-5 mr-2 text-green-600 flex-shrink-0" />
-                  Two-Way Routes
-                </h3>
-                <ul className="space-y-3">
-                  {twoWayRoutes.map(({ hall: connectedHall, connectionTo }) => (
-                    <li key={`tw-${connectionTo.id}`} className="p-4 bg-green-50 border border-green-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150">
-                      <Link to={`/halls/${connectedHall.id}`} className="font-semibold text-green-700 hover:text-green-800 hover:underline">
-                        {connectedHall.name}
-                      </Link>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {connectionTo.name} <span className="text-gray-500">({connectionTo.seconds}s travel)</span>
-                      </p>
-                       <p className="text-xs text-green-600 mt-1 italic">You can travel to and from this hall.</p>
-                    </li>
-                  ))}
-                </ul>
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {twoWayRoutes.map(({ hall: connectedHall, connectionTo }) => (
+                  <HallCard
+                    key={`tw-${connectionTo.id}-${connectedHall.id}`}
+                    hall={connectedHall}
+                    showAddToRouteButton={true}
+                    footerContent={
+                      <>
+                        <p className="text-sm text-gray-600 flex items-center">
+                          <ArrowsRightLeftIcon className="w-5 h-5 mr-2 text-green-600 inline-flex" />
+                          <span>Travel via: {connectionTo.name} <span className="text-gray-500">({connectionTo.seconds}s)</span></span>
+                        </p>
+                      </>
+                    }
+                  />
+                ))}
+                {oneWayOutRoutes.map(({ hall: connectedHall, connectionTo }) => (
+                  <HallCard
+                    key={`owo-${connectionTo.id}-${connectedHall.id}`}
+                    hall={connectedHall}
+                    showAddToRouteButton={true}
+                    footerContent={
+                      <>
+                        <p className="text-sm text-gray-600 flex items-center">
+                          <ArrowLongRightIcon className="w-5 h-5 mr-2 text-blue-600 flex-shrink-0" />
+                          <span>Travel via: {connectionTo.name} <span className="text-gray-500">({connectionTo.seconds}s)</span></span>
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1 italic">This route is one-way.</p>
+                      </>
+                    }
+                  />
+                ))}
+                {oneWayInRoutes.map(({ hall: connectedHall, connectionFrom }) => (
+                  <HallCard
+                    key={`owi-${connectionFrom.id}-${connectedHall.id}`}
+                    hall={connectedHall}
+                    showAddToRouteButton={true}
+                    footerContent={
+                      <>
+                        <p className="text-sm text-gray-600 flex items-center">
+                          <ArrowLongLeftIcon className="w-5 h-5 mr-2 text-orange-600 flex-shrink-0" />
+                          <span>From: {connectionFrom.name} <span className="text-gray-500">({connectionFrom.seconds}s)</span></span>
+                        </p>
+                        <p className="text-xs text-orange-600 mt-1 italic">You can't travel this way.</p>
+                      </>
+                    }
+                  />
+                ))}
               </div>
-            )}
-
-            {oneWayOutRoutes.length > 0 && (
-              <div>
-                <h3 className="text-xl font-medium mb-3 text-gray-700 flex items-center">
-                  <ArrowLongRightIcon className="w-5 h-5 mr-2 text-blue-600 flex-shrink-0" />
-                  One-Way Routes (Leaving this Hall)
-                </h3>
-                <ul className="space-y-3">
-                  {oneWayOutRoutes.map(({ hall: connectedHall, connectionTo }) => (
-                    <li key={`owo-${connectionTo.id}`} className="p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150">
-                      <Link to={`/halls/${connectedHall.id}`} className="font-semibold text-blue-700 hover:text-blue-800 hover:underline">
-                        {connectedHall.name}
-                      </Link>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {connectionTo.name} <span className="text-gray-500">({connectionTo.seconds}s travel)</span>
-                      </p>
-                      <p className="text-xs text-blue-600 mt-1 italic">You can use this route to leave.</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {oneWayInRoutes.length > 0 && (
-              <div>
-                <h3 className="text-xl font-medium mb-3 text-gray-700 flex items-center">
-                  <ArrowLongLeftIcon className="w-5 h-5 mr-2 text-orange-600 flex-shrink-0" />
-                  One-Way Routes (Into this Hall)
-                </h3>
-                <ul className="space-y-3">
-                  {oneWayInRoutes.map(({ hall: connectedHall, connectionFrom }) => (
-                    <li key={`owi-${connectionFrom.id}`} className="p-4 bg-orange-50 border border-orange-200 rounded-lg shadow-sm">
-                      <span className="font-semibold text-orange-700">{connectedHall.name}</span>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Via: {connectionFrom.name} <span className="text-gray-500">({connectionFrom.seconds}s travel from {connectedHall.name})</span>
-                      </p>
-                      <p className="text-xs text-orange-600 mt-1 italic">This route leads into this hall; you cannot use it to leave via this specific path.</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            </div>
           </div>
         )}
       </div>
