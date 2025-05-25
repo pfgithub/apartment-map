@@ -87,70 +87,82 @@ const AllRoomsPage: React.FC = () => {
     };
   }, [data.rooms, data.halls]);
 
-  const displayedRooms = useMemo(() => {
-    let roomsToDisplay = Object.values(data.rooms);
+  const displayedRoomsData = useMemo(() => {
+    let candidateRooms: Room[] = Object.values(data.rooms);
 
+    // Apply standard filters first
     if (filters.availability === 'available') {
-      roomsToDisplay = roomsToDisplay.filter(room => room.available);
+      candidateRooms = candidateRooms.filter(room => room.available);
     } else if (filters.availability === 'unavailable') {
-      roomsToDisplay = roomsToDisplay.filter(room => !room.available);
+      candidateRooms = candidateRooms.filter(room => !room.available);
     }
 
     const priceMinNum = parseFloat(filters.priceMin);
     if (!isNaN(priceMinNum) && filters.priceMin !== '') {
-      roomsToDisplay = roomsToDisplay.filter(room => room.price >= priceMinNum);
+      candidateRooms = candidateRooms.filter(room => room.price >= priceMinNum);
     }
 
     const priceMaxNum = parseFloat(filters.priceMax);
     if (!isNaN(priceMaxNum) && filters.priceMax !== '') {
-      roomsToDisplay = roomsToDisplay.filter(room => room.price <= priceMaxNum);
+      candidateRooms = candidateRooms.filter(room => room.price <= priceMaxNum);
     }
 
     if (filters.bedrooms !== 'any') {
       const bedroomsNum = parseInt(filters.bedrooms, 10);
-      roomsToDisplay = roomsToDisplay.filter(room => room.layout.bedrooms === bedroomsNum);
+      candidateRooms = candidateRooms.filter(room => room.layout.bedrooms === bedroomsNum);
     }
 
     if (filters.bathrooms !== 'any') {
       const bathroomsNum = parseInt(filters.bathrooms, 10);
-      roomsToDisplay = roomsToDisplay.filter(room => room.layout.bathrooms === bathroomsNum);
+      candidateRooms = candidateRooms.filter(room => room.layout.bathrooms === bathroomsNum);
     }
 
-    if (filters.features.kitchen) roomsToDisplay = roomsToDisplay.filter(room => room.layout.has_kitchen);
-    if (filters.features.balcony) roomsToDisplay = roomsToDisplay.filter(room => room.layout.has_balcony);
-    if (filters.features.window) roomsToDisplay = roomsToDisplay.filter(room => room.layout.has_window);
-    if (filters.features.storage) roomsToDisplay = roomsToDisplay.filter(room => room.layout.has_storage);
+    if (filters.features.kitchen) candidateRooms = candidateRooms.filter(room => room.layout.has_kitchen);
+    if (filters.features.balcony) candidateRooms = candidateRooms.filter(room => room.layout.has_balcony);
+    if (filters.features.window) candidateRooms = candidateRooms.filter(room => room.layout.has_window);
+    if (filters.features.storage) candidateRooms = candidateRooms.filter(room => room.layout.has_storage);
 
-    // Nearest Hall and Max Distance filter
+    // Prepare array for further processing, including potential distance
+    let roomsForDisplayProcessing: Array<{ room: Room; distanceToSelectedHall?: number }> = 
+        candidateRooms.map(room => ({ room, distanceToSelectedHall: undefined }));
+
+    // Proximity filtering logic
     const selectedHallId = filters.nearestHall;
-    const maxSeconds = parseFloat(filters.maxDistanceSeconds);
+    const isProximityEnabled = selectedHallId !== 'any';
+    
+    if (isProximityEnabled && data.halls[selectedHallId]) {
+      // Calculate distance for all (currently filtered) rooms if a hall is selected
+      roomsForDisplayProcessing.forEach(item => {
+        const room = item.room;
+        const roomHallId = room.relations.hall;
 
-    if (selectedHallId !== 'any' && !isNaN(maxSeconds) && maxSeconds >= 0 && filters.maxDistanceSeconds !== '') {
-      if (!data.halls[selectedHallId]) { // Selected hall doesn't exist (edge case)
-         // roomsToDisplay remains as is, or could be set to []
-      } else {
-        roomsToDisplay = roomsToDisplay.filter(room => {
-          const roomHallId = room.relations.hall;
-          if (!roomHallId || !data.halls[roomHallId]) return false; // Room must be in a valid hall
-  
-          // If the room is in the selected hall itself, distance is 0
-          if (roomHallId === selectedHallId) {
-            return 0 <= maxSeconds;
-          }
-  
-          // Calculate path from selectedHallId to roomHallId
+        if (!roomHallId || !data.halls[roomHallId]) {
+          item.distanceToSelectedHall = undefined; // Cannot determine room's hall
+          return;
+        }
+
+        if (roomHallId === selectedHallId) {
+          item.distanceToSelectedHall = 0;
+        } else {
           const pathResult = findShortestPath(data, selectedHallId, roomHallId);
-          
-          if (pathResult) {
-            return pathResult.totalSeconds <= maxSeconds;
-          }
-          return false; // No path found, so it doesn't meet criteria
+          item.distanceToSelectedHall = pathResult ? pathResult.totalSeconds : undefined;
+        }
+      });
+
+      // Further filter by max distance if it's set
+      const maxDistanceVal = parseFloat(filters.maxDistanceSeconds);
+      const isDistanceConstraintActive = !isNaN(maxDistanceVal) && maxDistanceVal >= 0 && filters.maxDistanceSeconds !== '';
+      
+      if (isDistanceConstraintActive) {
+        roomsForDisplayProcessing = roomsForDisplayProcessing.filter(item => {
+          return typeof item.distanceToSelectedHall === 'number' && item.distanceToSelectedHall <= maxDistanceVal;
         });
       }
     }
-
-    return roomsToDisplay;
-  }, [data, filters]); // data includes data.rooms, data.halls, data.connections
+    // If proximity is not enabled, or selectedHallId is somehow invalid, distanceToSelectedHall remains undefined.
+    
+    return roomsForDisplayProcessing;
+  }, [data, filters]);
 
   const resetFilters = () => {
     setFilters({
@@ -185,10 +197,10 @@ const AllRoomsPage: React.FC = () => {
         </header>
 
         <p className="text-sm text-gray-600 mb-4">
-          Showing {displayedRooms.length} of {Object.values(data.rooms).length} rooms.
+          Showing {displayedRoomsData.length} of {Object.values(data.rooms).length} rooms.
         </p>
 
-        {displayedRooms.length === 0 ? (
+        {displayedRoomsData.length === 0 ? (
           <div className="text-center py-10 bg-white shadow rounded-lg mt-4">
             <WarningIcon />
             <p className="text-xl text-gray-700 mt-2">No rooms match your current filters.</p>
@@ -196,11 +208,15 @@ const AllRoomsPage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {displayedRooms.map((room: Room) => (
+            {displayedRoomsData.map((item) => (
               <RoomCard
-                key={room.id}
-                room={room}
-                hallName={data.halls[room.relations.hall]?.name}
+                key={item.room.id}
+                room={item.room}
+                hallName={data.halls[item.room.relations.hall]?.name}
+                distanceToSelectedHall={filters.nearestHall !== "any" ? {
+                  hallId: filters.nearestHall,
+                  seconds: item.distanceToSelectedHall ?? 0
+                } : undefined}
               />
             ))}
           </div>

@@ -1,7 +1,7 @@
 // src/viewer/components/RoomCard.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import type { Room } from '../types';
+import type { HallID, Room } from '../types';
 import ImageDisplay from './ImageDisplay';
 import { useRoute } from '../contexts/RouteContext';
 import AddIcon from '../icons/AddIcon';
@@ -12,14 +12,17 @@ import { KitchenIcon } from '../icons/KitchenIcon';
 import { BalconyIcon } from '../icons/BalconyIcon';
 import { WindowIcon } from '../icons/WindowIcon';
 import { StorageIcon } from '../icons/StorageIcon';
+import { useData } from '../contexts/DataContext';
 
 interface RoomCardProps {
   room: Room;
   hallName?: string;
+  distanceToSelectedHall?: {seconds: number, hallId: HallID}; // New prop
 }
 
-const RoomCard: React.FC<RoomCardProps> = ({ room, hallName }) => {
+const RoomCard: React.FC<RoomCardProps> = ({ room, hallName, distanceToSelectedHall }) => {
   const { addItemToRoute, removeItemFromRoute, isItemInRoute } = useRoute();
+  const { data } = useData();
   const routeItem = { id: room.id, type: 'room' as const };
   const inRoute = isItemInRoute(routeItem);
 
@@ -41,7 +44,14 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, hallName }) => {
         </div>
         <div className="p-4 flex flex-col flex-grow">
           <h3 className="text-xl font-semibold mb-1 text-blue-700 group-hover:text-blue-800">{room.name}</h3>
-          {hallName && <p className="text-xs text-gray-500 mb-1">In: {hallName}</p>}
+          
+          {hallName && <p className="text-xs text-gray-500 mb-0.5">In: {hallName}</p>}
+          {distanceToSelectedHall && distanceToSelectedHall.seconds >= 0 && (
+            <p className="text-xs text-purple-600 font-medium mb-1.5">
+              Distance: {distanceToSelectedHall.seconds}s to <Link className='underline' to={`/halls/${distanceToSelectedHall.hallId}`}>{data.halls[distanceToSelectedHall.hallId].name}</Link>
+            </p>
+          )}
+
           <p className="text-gray-600 text-sm mb-2 truncate h-10 flex-shrink-0">{room.description}</p>
           
           <div className="mt-auto"> {/* Pushes content below to the bottom */}
