@@ -15,7 +15,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/root.json');
+        const response = await fetch('/apartment-map/root.json');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -22,9 +22,9 @@ const server = Bun.serve({
         "/apartment-map/*": viewer,
         "/graph.json": new Response(JSON.stringify(graph_json), {headers: {'content-type': "application/json; charset=utf-8"}}),
         "/planner.json": new Response(JSON.stringify(planner_graph), {headers: {'content-type': "application/json; charset=utf-8"}}),
-        "/root.json": new Response(JSON.stringify(newdata), {headers: {'content-type': "application/json; charset=utf-8"}}),
+        "/apartment-map/root.json": new Response(JSON.stringify(newdata), {headers: {'content-type': "application/json; charset=utf-8"}}),
         "/dgdata.txt": new Response(dgdata, {headers: {'content-type': "text/plain; charset=utf-8"}}),
-        "/viewerprompt.txt": () => new Response(genViewerPrompt(), {headers: {'content-type': "text/plain; charset=utf-8"}}),
+        "/apartment-map/viewerprompt.txt": () => new Response(genViewerPrompt(), {headers: {'content-type': "text/plain; charset=utf-8"}}),
         "/cmd": new Response(cmd_mc, {headers: {'content-type': "text/plain; charset=utf-8"}}),
         "/places.json": new Response(JSON.stringify({
             places: sortedplaces_json,
