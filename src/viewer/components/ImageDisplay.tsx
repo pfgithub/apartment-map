@@ -22,10 +22,9 @@ function base64ToUint8Array(base64: string): Uint8Array {
 interface ImageDisplayProps {
   image?: Image;
   className?: string; // Expected to contain sizing and object-fit, e.g., "w-full aspect-16/9 object-cover"
-  alt?: string; // Optional custom alt text, primarily for the placeholder
 }
 
-const ImageDisplay: React.FC<ImageDisplayProps> = ({ image, className = '', alt: customAlt }) => {
+const ImageDisplay: React.FC<ImageDisplayProps> = ({ image, className = '' }) => {
   const [thumbhashDataUrl, setThumbhashDataUrl] = useState<string | undefined>(undefined);
   const [isActualImageLoaded, setIsActualImageLoaded] = useState<boolean>(false);
 
@@ -70,7 +69,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ image, className = '', alt:
       <div
         className={`bg-gray-200 flex items-center justify-center text-gray-400 ${containerSizingClass}`}
         role="img"
-        aria-label={customAlt || "Placeholder image"}
+        aria-label={"Placeholder image"}
       >
         {/* Generic placeholder icon (SVG) */}
         <svg className="w-1/3 h-1/3 opacity-50" fill="currentColor" viewBox="0 0 24 24">
@@ -106,7 +105,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ image, className = '', alt:
       {thumbhashDataUrl && (
         <img
           src={thumbhashDataUrl}
-          alt={image.alt ? `Loading preview for ${image.alt}` : "Loading preview"}
+          alt={""} // not needed because the real dom element has alt text
           className={`absolute top-0 left-0 w-full h-full ${objectFitClass} transition-opacity duration-300 ease-in-out ${showThumbhashLayer ? 'opacity-100' : 'opacity-0'}`}
           style={{ willChange: 'opacity' }}
           aria-hidden="true" // This is a decorative placeholder

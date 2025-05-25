@@ -39,8 +39,7 @@ const HallCard: React.FC<HallCardProps> = ({ hall, showAddToRouteButton = false 
         <div className="flex-shrink-0 w-20 h-20 mr-4">
           <ImageDisplay
             image={hall.image}
-            className="w-full h-full object-cover rounded-md" // Image fills container, covers, and is rounded
-            alt={hall.name} // Pass alt text for accessibility
+            className="w-full h-full object-cover rounded-md"
           />
         </div>
 
