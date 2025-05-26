@@ -1,3 +1,4 @@
+// File src/viewer/App.tsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { DataProvider } from './contexts/DataContext';
@@ -7,6 +8,7 @@ import HomePage from './pages/HomePage.tsx';
 import BuildingPage from './pages/BuildingPage.tsx';
 import HallPage from './pages/HallPage.tsx';
 import RoomPage from './pages/RoomPage';
+import EditRoomPage from './pages/EditRoomPage'; // Import the new page
 import PointOfInterestPage from './pages/PointOfInterestPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
 
@@ -27,6 +29,7 @@ const App: React.FC = () => {
               <Route path="buildings/:id" element={<BuildingPage />} />
               <Route path="halls/:id" element={<HallPage />} />
               <Route path="rooms/:id" element={<RoomPage />} />
+              <Route path="rooms/:id/edit" element={<EditRoomPage />} /> {/* Add edit room route */}
               <Route path="pois/:id" element={<PointOfInterestPage />} />
               <Route path="search" element={<SearchPage />} />
 

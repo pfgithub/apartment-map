@@ -1,3 +1,4 @@
+// File src/viewer/pages/RoomPage.tsx
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
@@ -6,6 +7,7 @@ import ImageDisplay from '../components/ImageDisplay';
 import type { RoomID, HallID, Room } from '../types';
 import AddIcon from '../icons/AddIcon';
 import RemoveIcon from '../icons/RemoveIcon';
+import EditIcon from '../icons/EditIcon'; // Import EditIcon
 import { KitchenIcon } from '../icons/KitchenIcon';
 import { BalconyIcon } from '../icons/BalconyIcon';
 import { WindowIcon } from '../icons/WindowIcon';
@@ -31,7 +33,14 @@ const RoomActions: React.FC<{ room: Room }> = ({ room }) => {
   };
 
   return (
-    <div className="mb-6 text-right">
+    <div className="mb-6 flex justify-end space-x-3">
+      <Link
+        to={`/rooms/${room.id}/edit`}
+        className="px-4 py-2 rounded-md font-semibold text-white bg-blue-500 hover:bg-blue-600 inline-flex items-center transition-colors shadow hover:shadow-md"
+      >
+        <EditIcon className="w-4 h-4 mr-2" />
+        Edit Room
+      </Link>
       <button
         onClick={handleToggleRoute}
         className={`px-4 py-2 rounded-md font-semibold text-white inline-flex items-center
@@ -39,7 +48,7 @@ const RoomActions: React.FC<{ room: Room }> = ({ room }) => {
                     transition-colors shadow hover:shadow-md`}
       >
         {itemInRoute ? <RemoveIcon /> : <AddIcon />}
-        {itemInRoute ? 'Remove from Route' : 'Add to Route'}
+        <span className="ml-2">{itemInRoute ? 'Remove from Route' : 'Add to Route'}</span>
       </button>
     </div>
   );
