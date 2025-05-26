@@ -25,6 +25,7 @@
         },
         "WR-4": {
             "has_balcony": true
-        }
+        },
+        "BP-4": ["balcony", "0bd", "0bth", "5m²"]
     }
 }

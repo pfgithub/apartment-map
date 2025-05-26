@@ -7,7 +7,7 @@ import data from "../data/DATA.txt" with {type: "text"};
 import imgdata from "../data/images.json";
 import overrides from "../data/overrides.json";
 import type { PlannerConnection, PlannerGraph, PlannerPlaceShortcode } from "./planner/types";
-import type { BuildingID, ConnectionID, HallID, RoomID, Root } from "./viewer/types";
+import type { BuildingID, ConnectionID, HallID, RoomID, Root, Image } from "./viewer/types";
 const lines = data.split("\n").map(l => l.trim()).filter(l => l);
 
 type Link = {
@@ -442,12 +442,37 @@ export const newdata: Root = {
 };
 function addRoom(id: HallID, room_num: number) {
     const room_id = (id + "-" + room_num) as RoomID;
-    const override = (overrides as any).rooms[room_id];
+    const override_in = (overrides as any).rooms[room_id];
+    let override: any = {};
+    let image: Image | undefined = undefined;
+    if(Array.isArray(override_in)) {
+        for(const item of override_in) {
+            if(item === "balcony") {
+                override.has_balcony = true;
+            }else if(item === "kitchen") {
+                override.has_kitchen = true;
+            }else if(item === "window") {
+                override.has_window = true;
+            }else if(item === "storage") {
+                override.has_storage = true;
+            }else if(item.endsWith("bd")) {
+                override.bedrooms = +item.slice(0, -2);
+            }else if(item.endsWith("bth")) {
+                override.bathrooms = +item.slice(0, -3);
+            }else if(item.endsWith("m²")) {
+                override.square_meters = +item.slice(0, -2);
+            }else{
+                console.log("failed to parse override: "+override);
+            }
+        }
+    }else{
+        override = override_in;
+    }
     newdata.rooms[room_id] = {
         id: room_id,
         name: room_id,
         description: "No description",
-        image: undefined,
+        image,
 
         price: 100,
         available: true,
@@ -458,6 +483,7 @@ function addRoom(id: HallID, room_num: number) {
             has_kitchen: override?.has_kitchen ?? false,
             has_window: override?.has_window ?? false,
             has_storage: override?.has_storage ?? false,
+            square_meters: override?.square_meters ?? undefined,
         },
         relations: {
             hall: id,
