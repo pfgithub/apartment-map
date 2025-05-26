@@ -123,7 +123,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({ initialImage, onImageChan
         {currentPreviewUrl ? (
           <img src={currentPreviewUrl} alt="Preview" className="max-h-48 w-auto object-contain rounded mb-2" />
         ) : initialImage && !imageManuallySet ? (
-          <ImageDisplay image={initialImage} className="max-h-48 w-auto object-contain rounded mb-2" />
+          <ImageDisplay image={initialImage} className="w-full aspect-16/9 rounded mb-2" />
         ) : (
           <>
             <UploadIcon className="w-12 h-12 text-gray-400 mb-2" />

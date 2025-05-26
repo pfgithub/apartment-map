@@ -10,27 +10,6 @@ import CheckCircleIcon from '../icons/CheckCircleIcon';
 import ExclamationTriangleIcon from '../icons/ExclamationTriangleIcon';
 import ArrowLongLeftIcon from '../icons/ArrowLongLeftIcon';
 
-// Helper to read image dimensions
-function loadImageDimensions(file: File): Promise<{width: number, height: number}> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new window.Image();
-      img.onload = () => {
-        resolve({ width: img.width, height: img.height });
-      };
-      img.onerror = reject;
-      if (e.target?.result) {
-        img.src = e.target.result as string;
-      } else {
-        reject(new Error("FileReader did not successfully read the file."));
-      }
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 const EditRoomPage: React.FC = () => {
   const { id } = useParams<{ id: RoomID }>();
   const { data } = useData();
@@ -111,28 +90,6 @@ const EditRoomPage: React.FC = () => {
       return;
     }
 
-    let imageToSave: Image | undefined = room.image;
-
-    if (newImageFile) {
-      try {
-        const dimensions = await loadImageDimensions(newImageFile);
-        imageToSave = {
-          uuid: crypto.randomUUID(),
-          alt: newImageFile.name,
-          width: dimensions.width,
-          height: dimensions.height,
-          thumbhash: '', // Backend would generate this
-        };
-      } catch (error) {
-        console.error("Error processing new image:", error);
-        setStatusMessage({type: 'error', text: 'Failed to process new image. Please try again.'});
-        setIsLoading(false);
-        return;
-      }
-    } else if (removeCurrentImage) {
-      imageToSave = undefined;
-    }
-
     const updatedRoomData: Room = {
       ...room, // Start with original room data to preserve relations, id
       name: formData.name || room.name,
@@ -148,7 +105,6 @@ const EditRoomPage: React.FC = () => {
         has_storage: formData.layout?.has_storage ?? room.layout.has_storage,
         square_meters: formData.layout?.square_meters ?? room.layout.square_meters,
       },
-      image: imageToSave,
     };
     
     // Ensure all layout boolean fields are explicitly true or false if not present
@@ -158,18 +114,27 @@ const EditRoomPage: React.FC = () => {
     updatedRoomData.layout.has_storage = !!updatedRoomData.layout.has_storage;
 
 
-    // Simulate API call
+    // API call
     console.log('Submitting to /api/update-room:', JSON.stringify(updatedRoomData, null, 2));
     try {
-      // const response = await fetch('/api/update-room', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(updatedRoomData),
-      // });
-      // if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-      
-      // Fake delay for demo
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (newImageFile) {
+        const response = await fetch("/api/image", {
+          method: "PUT",
+          body: newImageFile,
+        });
+        if(!response.ok) throw new Error(`API Error: ${response.statusText}`);
+        const data = await response.json() as Image;
+        updatedRoomData.image = data;
+      } else if (removeCurrentImage) {
+        updatedRoomData.image = undefined;
+      }
+
+      const response = await fetch('/api/update-room', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedRoomData),
+      });
+      if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
 
       setStatusMessage({type: 'success', text: 'Room updated successfully! Refresh to see global changes.'});
       // Update local form data to reflect submission
@@ -178,8 +143,9 @@ const EditRoomPage: React.FC = () => {
       setNewImageFile(null); // Reset new file state
       setRemoveCurrentImage(false); // Reset removal flag
       
-      // Optionally navigate away
-      // navigate(`/rooms/${id}`);
+      // TODO: refetch data
+      // Navigate away
+      navigate(`/rooms/${id}`);
 
     } catch (error) {
       console.error("Failed to update room:", error);

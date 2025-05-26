@@ -447,7 +447,9 @@ function addRoom(id: HallID, room_num: number) {
     let image: Image | undefined = undefined;
     if(Array.isArray(override_in)) {
         for(const item of override_in) {
-            if(item === "balcony") {
+            if(typeof item === "object") {
+                image = item;
+            }else if(item === "balcony") {
                 override.has_balcony = true;
             }else if(item === "kitchen") {
                 override.has_kitchen = true;

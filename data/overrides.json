@@ -26,6 +26,12 @@
         "WR-4": {
             "has_balcony": true
         },
-        "BP-4": ["balcony", "0bd", "0bth", "5m²"]
+        "BP-4": ["balcony", "0bd", "0bth", "5m²", {
+            "uuid": "07ca7c67-e2d5-46dc-8146-01597898056c", 
+            "alt": "",
+            "width": 1920,
+            "height": 1017,
+            "thumbhash": "SBgCBwIFSHV2eZeDhpt4d3mIN4A2A2kD"
+        }]
     }
 }
