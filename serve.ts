@@ -38,7 +38,11 @@ const server = Bun.serve({
         "/api/image": {PUT: async (req) => {
             const originalImageBuffer = await req.arrayBuffer();
 
-            const uuid = crypto.randomUUID();
+            const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", originalImageBuffer));
+            const toHex = (seg: Uint8Array) => [...seg].map(x => x.toString(16).padStart(2, '0')).join('');
+            // eeh probably unique. if it's not it will replace the file = data loss so :/
+            // apparently uuid version 5 is based on sha-1 hash. but we're using sha-256.
+            const uuid = `${toHex(hash.subarray(0, 4))}-${toHex(hash.subarray(4,6))}-${toHex(hash.subarray(6, 8))}-${toHex(hash.subarray(8, 10))}-${toHex(hash.subarray(10, 16))}`;
             console.log(`  UUID: ${uuid}`);
 
             const originalImage = sharp(originalImageBuffer);
@@ -50,7 +54,7 @@ const server = Bun.serve({
             // 4. Resize the image to 100x100
             console.log(`  Resizing to 100x100`);
             const resizedImageBuffer = await originalImage
-                .resize(100, 100, {
+                .resize(Math.min(originalWidth, 100), Math.min(originalHeight, 100), {
                 fit: sharp.fit.fill, // Or 'contain', 'fill', etc. 'cover' is usually good.
                 })
                 .png() // Ensure output is PNG
